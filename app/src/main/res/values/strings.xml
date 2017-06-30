@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">JSP</string>
+    <string name="title_activity_template_manager">templateManager</string>
+    <string name="record_type_str">文本</string>
+    <string name="record_type_num">数值</string>
+    <string name="record_type_time_record">时间记录</string>
+    <string name="record_type_station">站位</string>
+    <string name="record_template_detail_name">数据名称：%s</string>
+    <string name="record_template_detail_type">数据类型：%s</string>
+    <string name="record_template_detail_add">添加数据</string>
+    <string name="record_template_detail_edit">保存修改</string>
+    <string name="button_goto_report">统计分析</string>
+    <string name="text_filter_BC">筛选BC</string>
+    <string name="text_BC_name">BC名称</string>
+    <string name="text_BC_time">时间</string>
+    <string name="text_BC_type">类型</string>
+    <string name="text_BC_save">保存BC</string>
+</resources>

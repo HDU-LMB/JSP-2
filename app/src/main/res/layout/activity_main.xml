@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/toolbox_boder"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/toolbox_boder"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bcName"
+                    android:text="波次"/>
+
+                <EditText
+                    android:id="@+id/editText_bcfilter"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:hint="波次选择"
+                    android:inputType="text" />
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+
+        <ListView
+            android:id="@+id/zw_BCItemListView"
+            android:layout_width="200dp"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1">
+
+        <FrameLayout
+            android:layout_width="30dp"
+            android:layout_height="match_parent">
+
+            <Button
+                android:text="◀"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:id="@+id/button_left" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.99">
+
+            <include
+                layout="@layout/map_view"
+                android:visibility="visible" />
+
+        </FrameLayout>
+
+        <FrameLayout android:layout_height="match_parent"
+            android:layout_width="30dp">
+
+            <Button
+                android:text="▶"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:id="@+id/button_right" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
