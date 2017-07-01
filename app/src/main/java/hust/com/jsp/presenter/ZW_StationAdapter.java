@@ -40,11 +40,18 @@ public class ZW_StationAdapter extends BaseAdapter {
         stationList.add(station);
         notifyDataSetChanged();
     }
+    public void add(int index,Station station){
+        stationList.add(index,station);
+        notifyDataSetChanged();
+    }
     public void remove(Station station){
         stationList.remove(station);
         notifyDataSetChanged();
     }
-
+    public void remove(int index){
+        stationList.remove(index);
+        notifyDataSetChanged();
+    }
     @Override
     public int getCount() {
         return stationList.size();

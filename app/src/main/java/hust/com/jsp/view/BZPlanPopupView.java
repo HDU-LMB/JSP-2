@@ -3,10 +3,14 @@ package hust.com.jsp.view;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.icu.text.TimeZoneFormat;
+import android.support.annotation.DrawableRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -41,11 +45,12 @@ import hust.com.jsp.utils.LabelColorCollection;
 public class BZPlanPopupView extends PopupWindow {
 
     View popView;
-    private Button gasButton,fluidButton,coolButton,airButton,weaponButton,oxygenButton,electricityButton,guidButton;
-    private Button addBZItem,deleteButton,cancelButton,saveBZItem;
+    private TextView gasLabel,fluidLabel,coolLabel,airLabel,weaponLabel,oxygenLabel,electricityLabel,guidLabel;
+    private Button deleteButton,cancelButton,saveBZItem;
     private TextView jzjName,zwName,selectZWName;
-    private TextView aLabel,bLabel,cLabel,dLabel,eLabel,fLabel,gLabel,hLabel,iLabel;
+    private TextView addBZItem,aLabel,bLabel,cLabel,dLabel,eLabel,fLabel,gLabel,hLabel,iLabel;
     private TextView number1Label,number2Label,number3Label,number4Label,number5Label,number6Label,number7Label,number8Label,number9Label,number0Label;
+    private Drawable gasDrawable,fluidDrawable,coolDrawable,airDrawable,weaponDrawable,oxygenDrawable,electricDrawable,guidDrawable,grayDrawable;
 
     private Spinner spinnr;
     private ListView zwStationListView;//所有zw
@@ -80,15 +85,24 @@ public class BZPlanPopupView extends PopupWindow {
         jzjName=(TextView)popView.findViewById(R.id.currentJZJName);
         selectZWName=(TextView)popView.findViewById(R.id.selectStationName);
         zwName=(TextView)popView.findViewById(R.id.currentZWName);
-        gasButton= (Button) popView.findViewById(R.id.gasLabel);
-        fluidButton= (Button) popView.findViewById(R.id.fluidLabel);
-        coolButton= (Button) popView.findViewById(R.id.cooLabel);
-        airButton= (Button) popView.findViewById(R.id.airLabel);
-        weaponButton= (Button) popView.findViewById(R.id.weaponLabel);
-        oxygenButton= (Button) popView.findViewById(R.id.oxygenLabel);
-        electricityButton= (Button) popView.findViewById(R.id.electricityLabel);
-        guidButton= (Button) popView.findViewById(R.id.guidLabel);
-        addBZItem= (Button) popView.findViewById(R.id.addBZItem);
+        gasLabel= (TextView) popView.findViewById(R.id.gasLabel);
+        gasDrawable=gasLabel.getBackground();
+        fluidLabel= (TextView) popView.findViewById(R.id.fluidLabel);
+        fluidDrawable=fluidLabel.getBackground();
+        coolLabel= (TextView) popView.findViewById(R.id.cooLabel);
+        coolDrawable=coolLabel.getBackground();
+        airLabel= (TextView) popView.findViewById(R.id.airLabel);
+        airDrawable=airLabel.getBackground();
+        weaponLabel= (TextView) popView.findViewById(R.id.weaponLabel);
+        weaponDrawable=weaponLabel.getBackground();
+        oxygenLabel= (TextView) popView.findViewById(R.id.oxygenLabel);
+        oxygenDrawable=oxygenLabel.getBackground();
+        electricityLabel= (TextView) popView.findViewById(R.id.electricityLabel);
+        electricDrawable=electricityLabel.getBackground();
+        guidLabel= (TextView) popView.findViewById(R.id.guidLabel);
+        guidDrawable=guidLabel.getBackground();
+        addBZItem= (TextView) popView.findViewById(R.id.addBZItem);
+        grayDrawable=addBZItem.getBackground();
         deleteButton=(Button) popView.findViewById(R.id.deleteBZItem);
         saveBZItem= (Button) popView.findViewById(R.id.saveBZItem);
         cancelButton= (Button) popView.findViewById(R.id.cancelBZItem);
@@ -116,6 +130,7 @@ public class BZPlanPopupView extends PopupWindow {
         number7Label=(TextView)popView.findViewById(R.id.number7Label);
         number8Label=(TextView)popView.findViewById(R.id.number8Label);
         number9Label=(TextView)popView.findViewById(R.id.number9Label);
+        clearBZItemState();
 //        spinner= (Spinner)popView.findViewById(R.id.zwStationSpinner);
         //从数据库表读取ZW信息，这里为测试数据
         stationTotalList.add(new Station(1,new Point(100,100),"A1"));
@@ -134,111 +149,117 @@ public class BZPlanPopupView extends PopupWindow {
             refreshBZItemInfo(0);
         }
 
-        gasButton.setOnClickListener(new View.OnClickListener() {
+
+        gasLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(actions[0]==false) {
                     actions[0]=true;
-
-                    gasButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(0)));
+                    gasLabel.setBackground(gasDrawable);
                 }else {
                     actions[0]=false;
-                    gasButton.setBackground(new ColorDrawable(Color.LTGRAY));
+                    gasLabel.setBackground(grayDrawable);
                 }
             }
         });
 
-        fluidButton.setOnClickListener(new View.OnClickListener() {
+        fluidLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(actions[3]==false) {
                     actions[3]=true;
-                    fluidButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(3)));
+                    fluidLabel.setBackground(fluidDrawable);
                 }else {
                     actions[3]=false;
-                    fluidButton.setBackground(new ColorDrawable(Color.LTGRAY));
+                    fluidLabel.setBackground(grayDrawable);
                 }
             }
         });
 
-        coolButton.setOnClickListener(new View.OnClickListener() {
+        coolLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(actions[6]==false) {
                     actions[6]=true;
-                    coolButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(6)));
+                    coolLabel.setBackground(coolDrawable);
                 }else {
                     actions[6]=false;
-                    coolButton.setBackground(new ColorDrawable(Color.LTGRAY));
+                    coolLabel.setBackground(grayDrawable);
                 }
             }
         });
 
-        airButton.setOnClickListener(new View.OnClickListener() {
+        airLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(actions[1]==false) {
                     actions[1]=true;
-                    airButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(1)));
+                    airLabel.setBackground(airDrawable);
                 }else {
                     actions[1]=false;
-                    airButton.setBackground(new ColorDrawable(Color.LTGRAY));
+                    airLabel.setBackground(grayDrawable);
                 }
             }
         });
 
-        weaponButton.setOnClickListener(new View.OnClickListener() {
+        weaponLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(actions[4]==false) {
                     actions[4]=true;
-                    weaponButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(4)));
+                    weaponLabel.setBackground(weaponDrawable);
                 }else {
                     actions[4]=false;
-                    weaponButton.setBackground(new ColorDrawable(Color.LTGRAY));
+                    weaponLabel.setBackground(grayDrawable);
                 }
             }
         });
 
-        oxygenButton.setOnClickListener(new View.OnClickListener() {
+        oxygenLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(actions[7]==false) {
                     actions[7]=true;
-                    oxygenButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(7)));
+                    oxygenLabel.setBackground(oxygenDrawable);
                 }else {
                     actions[7]=false;
-                    oxygenButton.setBackground(new ColorDrawable(Color.LTGRAY));
+                    oxygenLabel.setBackground(grayDrawable);
                 }
             }
         });
 
-        electricityButton.setOnClickListener(new View.OnClickListener() {
+        electricityLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(actions[2]==false) {
                     actions[2]=true;
-                    electricityButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(2)));
+                    electricityLabel.setBackground(electricDrawable);
                 }else {
                     actions[2]=false;
-                    electricityButton.setBackground(new ColorDrawable(Color.LTGRAY));
+                    electricityLabel.setBackground(grayDrawable);
                 }
             }
         });
 
-        guidButton.setOnClickListener(new View.OnClickListener() {
+        guidLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(actions[5]==false) {
                     actions[5]=true;
-                    guidButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(5)));
+                    guidLabel.setBackground(guidDrawable);
                 }else {
                     actions[5]=false;
-                    guidButton.setBackground(new ColorDrawable(Color.LTGRAY));
+                    guidLabel.setBackground(grayDrawable);
                 }
             }
         });
 
+        aLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         zwListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -268,7 +289,6 @@ public class BZPlanPopupView extends PopupWindow {
         addBZItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                station=new Station();
                 bzPlanItem=new BZPlanItem();
                 actions=new boolean[]{false,false,false,false,false,false,false,false,false};
                 clearBZItemState();
@@ -318,10 +338,17 @@ public class BZPlanPopupView extends PopupWindow {
                 bzPlanItem.setAddGuide(actions[5]);
                 bzPlanItem.setAddCool(actions[6]);
                 bzPlanItem.setAddOxygen(actions[7]);
-                if(!stationList.contains(station))
-                    zwStationAdapter.add(station);
-                if(!bzPlan.getBzPlanItemList().contains(bzPlanItem))
+
+                if(!bzPlan.getBzPlanItemList().contains(bzPlanItem)) {
                     bzPlan.addBZPlanItem(bzPlanItem);
+                    zwListView.setSelection(stationList.size()-1);
+                    if(!stationList.contains(station))
+                        zwStationAdapter.add(station);
+                }else {
+                    int pos=(int)zwListView.getSelectedItemId();
+                    zwStationAdapter.remove(pos+1);
+                    zwStationAdapter.add(pos+1,station);
+                }
                 mapView.refresh();
             }
         });
@@ -342,32 +369,32 @@ public class BZPlanPopupView extends PopupWindow {
         jzjName.setText(jzj.getDisplayName());
         zwName.setText(station.getDisplayName());
         if(actions[0])
-            gasButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(0)));
+            gasLabel.setBackground(gasDrawable);
         if(actions[1])
-            airButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(1)));
+            airLabel.setBackground(airDrawable);
         if(actions[2])
-            electricityButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(2)));
+            electricityLabel.setBackground(electricDrawable);
         if(actions[3])
-            fluidButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(3)));
+            fluidLabel.setBackground(fluidDrawable);
         if(actions[4])
-            weaponButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(4)));
+            weaponLabel.setBackground(weaponDrawable);
         if(actions[5])
-            guidButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(5)));
+            guidLabel.setBackground(guidDrawable);
         if(actions[6])
-            coolButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(6)));
+            coolLabel.setBackground(coolDrawable);
         if(actions[7])
-            oxygenButton.setBackground(new ColorDrawable(LabelColorCollection.getColor(7)));
+            oxygenLabel.setBackground(oxygenDrawable);
     }
 
     private void  clearBZItemState(){
-        gasButton.setBackground(new ColorDrawable(Color.LTGRAY));
-        airButton.setBackground(new ColorDrawable(Color.LTGRAY));
-        electricityButton.setBackground(new ColorDrawable(Color.LTGRAY));
-        fluidButton.setBackground(new ColorDrawable(Color.LTGRAY));
-        weaponButton.setBackground(new ColorDrawable(Color.LTGRAY));
-        guidButton.setBackground(new ColorDrawable(Color.LTGRAY));
-        coolButton.setBackground(new ColorDrawable(Color.LTGRAY));
-        oxygenButton.setBackground(new ColorDrawable(Color.LTGRAY));
+        gasLabel.setBackground(grayDrawable);
+        airLabel.setBackground(grayDrawable);
+        electricityLabel.setBackground(grayDrawable);
+        fluidLabel.setBackground(grayDrawable);
+        weaponLabel.setBackground(grayDrawable);
+        guidLabel.setBackground(grayDrawable);
+        coolLabel.setBackground(grayDrawable);
+        oxygenLabel.setBackground(grayDrawable);
     }
 
 }
