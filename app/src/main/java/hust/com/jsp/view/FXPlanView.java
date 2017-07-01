@@ -249,7 +249,7 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
         paint.setColor(Color.BLACK);
         paint.setTextSize(sepRowNorm/4.0f);
         if(yOffset+move<0 ){
-            move=0;
+            return;
         };
         long itemLeftExpand = fxPlanItem.getStartTime()-this.startViewTime;
         long itemSelfExpand = fxPlanItem.getEndTime()-fxPlanItem.getStartTime();
