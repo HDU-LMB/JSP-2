@@ -73,6 +73,10 @@ public class BCInfo {
         return bcInfoItemList.get(position);
     }
 
+    public void addBCInfoItem(BCInfoItem item){
+        bcInfoItemList.add(item);
+    }
+
     public void setTime(long aLong) {
         this.time = Calendar.getInstance();
         this.time.setTimeInMillis(aLong);

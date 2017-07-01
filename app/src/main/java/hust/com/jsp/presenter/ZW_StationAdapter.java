@@ -12,6 +12,7 @@ import java.util.List;
 
 import hust.com.jsp.R;
 import hust.com.jsp.bean.Station;
+import hust.com.jsp.view.BZPlanPopupView;
 
 /**
  * Created by Michael-Lee on 2017/6/29.
@@ -26,6 +27,7 @@ public class ZW_StationAdapter extends BaseAdapter {
         this.context=context;
         this.setStationList(stationList);
     }
+
 
     public void setStationList(List<Station> stationList){
         if(stationList==null)

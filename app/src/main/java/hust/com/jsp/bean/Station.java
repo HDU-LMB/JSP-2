@@ -11,6 +11,13 @@ public class Station {
     private String displayName;
     private Point location;
 
+    public Station(){}
+
+    public Station(int id,Point loc,String displayName){
+        this.id=id;
+        this.location=loc;
+        this.displayName=displayName;
+    }
     public Station setID(int id){
         this.id = id;
         return this;

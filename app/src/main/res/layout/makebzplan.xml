@@ -22,6 +22,7 @@
             android:layout_height="match_parent"
             android:layout_marginRight="0dp"
             android:id="@+id/currentJZJName"
+            android:textColor="@color/colorTextBlack"
             android:layout_alignParentLeft="true"
             android:gravity="center_vertical"
             android:text="JZJ"
@@ -33,6 +34,7 @@
             android:gravity="center_vertical"
             android:layout_marginLeft="0dp"
             android:id="@+id/currentZWName"
+            android:textColor="@color/colorTextBlack"
             android:textAlignment="center"
             android:layout_alignParentRight="true"
             android:text="ZW"
@@ -54,7 +56,7 @@
                 android:gravity="center_vertical|left"
                 android:id="@+id/selectStationName"
                 android:textAlignment="center"
-                android:text="选择站位:"
+                android:text="选择ZW:"
                 android:textSize="12sp"
                 android:layout_margin="0dp" />
             <LinearLayout
@@ -62,11 +64,17 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2">
 
-                <Spinner
-                    android:id="@+id/zwStationSpinner"
+                <ListView
+                    android:id="@+id/staionTotalListView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center_horizontal"></Spinner>
+                    ></ListView>
+                <!--<Spinner-->
+                    <!--android:id="@+id/zwStationSpinner"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:gravity="center_horizontal"></Spinner>-->
+
             </LinearLayout>
 
 
@@ -116,7 +124,7 @@
             android:id="@+id/cancelBZItem"
             android:layout_width="40dp"
             android:layout_height="30dp"
-            android:text="取消"
+            android:text="关闭"
             android:layout_toLeftOf="@id/saveBZItem"
             android:textSize="9sp"
             android:padding="0dp"

@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:id="@+id/jzjName"
+            android:textColor="@color/colorTextBlack"
             android:background="@drawable/toolbox_boder"
             android:textAlignment="center"/>
     </LinearLayout>

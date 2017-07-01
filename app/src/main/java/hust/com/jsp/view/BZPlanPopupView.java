@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.icu.text.TimeZoneFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -44,27 +46,35 @@ public class BZPlanPopupView extends PopupWindow {
     private TextView jzjName,zwName,selectZWName;
     private TextView aLabel,bLabel,cLabel,dLabel,eLabel,fLabel,gLabel,hLabel,iLabel;
     private TextView number1Label,number2Label,number3Label,number4Label,number5Label,number6Label,number7Label,number8Label,number9Label,number0Label;
-    private Spinner spinner;
-    private ListView zwListView;
+
+    private Spinner spinnr;
+    private ListView zwStationListView;//所有zw
+    private Station selectedStaion;
+    private ListView zwListView;//当前包含的zw
     private BZPlan bzPlan;
     private BZPlanItem bzPlanItem;
     private JZJ jzj;
     private Station station;
     private boolean[] actions;
     private MapView mapView;
-    List<Station> stationList;
+    List<Station> stationList;//当前JZJ（bcplanitem）所添加的zw
+    private List<Station> stationTotalList;//HM上所有的ZW列表
     private ZW_StationAdapter zwStationAdapter;
+    private ZW_StationAdapter zwStationTotalAdapter;
 
-    public BZPlanPopupView(Activity context, final BZPlan bzPlan, final MapView mapView){
+    public BZPlanPopupView(final Activity context, final BZPlan bzPlan, final MapView mapView){
         super(context);
         this.bzPlan=bzPlan;
         this.jzj=bzPlan.getJzj();
         this.mapView=mapView;
         this.stationList=new ArrayList<>();
+        this.stationTotalList=new ArrayList<>();
+        this.selectedStaion=new Station();
         for(BZPlanItem item: bzPlan.getBzPlanItemList()){
             stationList.add(item.getStation());
         }
         this.zwStationAdapter=new ZW_StationAdapter(context,stationList);
+        this.zwStationTotalAdapter=new ZW_StationAdapter(context,stationTotalList);
         LayoutInflater inflater= (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         popView=inflater.inflate(R.layout.makebzplan,null);
         jzjName=(TextView)popView.findViewById(R.id.currentJZJName);
@@ -83,7 +93,10 @@ public class BZPlanPopupView extends PopupWindow {
         saveBZItem= (Button) popView.findViewById(R.id.saveBZItem);
         cancelButton= (Button) popView.findViewById(R.id.cancelBZItem);
         zwListView= (ListView) popView.findViewById(R.id.zwNameListView);
+        zwStationListView=(ListView) popView.findViewById(R.id.staionTotalListView);
         zwListView.setAdapter(zwStationAdapter);
+//        zwListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        zwStationListView.setAdapter(zwStationTotalAdapter);
         aLabel=(TextView)popView.findViewById(R.id.ALabel);
         bLabel=(TextView)popView.findViewById(R.id.BLabel);
         cLabel=(TextView)popView.findViewById(R.id.CLabel);
@@ -93,8 +106,26 @@ public class BZPlanPopupView extends PopupWindow {
         gLabel=(TextView)popView.findViewById(R.id.GLabel);
         hLabel=(TextView)popView.findViewById(R.id.HLabel);
         iLabel=(TextView)popView.findViewById(R.id.ILabel);
-        spinner= (Spinner)popView.findViewById(R.id.zwStationSpinner);
-
+        number0Label=(TextView)popView.findViewById(R.id.number0Label);
+        number1Label=(TextView)popView.findViewById(R.id.number1Label);
+        number2Label=(TextView)popView.findViewById(R.id.number2Label);
+        number3Label=(TextView)popView.findViewById(R.id.number3Label);
+        number4Label=(TextView)popView.findViewById(R.id.number4Label);
+        number5Label=(TextView)popView.findViewById(R.id.number5Label);
+        number6Label=(TextView)popView.findViewById(R.id.number6Label);
+        number7Label=(TextView)popView.findViewById(R.id.number7Label);
+        number8Label=(TextView)popView.findViewById(R.id.number8Label);
+        number9Label=(TextView)popView.findViewById(R.id.number9Label);
+//        spinner= (Spinner)popView.findViewById(R.id.zwStationSpinner);
+        //从数据库表读取ZW信息，这里为测试数据
+        stationTotalList.add(new Station(1,new Point(100,100),"A1"));
+        stationTotalList.add(new Station(2,new Point(200,100),"A2"));
+        stationTotalList.add(new Station(3,new Point(300,100),"A3"));
+        stationTotalList.add(new Station(4,new Point(500,200),"B1"));
+        stationTotalList.add(new Station(1,new Point(600,150),"B2"));
+        stationTotalList.add(new Station(1,new Point(400,300),"C1"));
+        ZW_StationAdapter adapter=new ZW_StationAdapter(context,stationTotalList);
+//        spinner.setAdapter(adapter);
         if(bzPlan.getBzPlanItemList().size()==0) {
             station = new Station();
             bzPlanItem = new BZPlanItem();
@@ -217,6 +248,21 @@ public class BZPlanPopupView extends PopupWindow {
                 refreshBZItemInfo(position);
             }
         });
+        zwStationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedStaion=(Station) zwStationListView.getItemAtPosition(position);
+            }
+        });
+//        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                selectedStaion=(Station)spinner.getSelectedItem();
+//
+//            }
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {}
+//        });
 
         //添加新ZWItem
         addBZItem.setOnClickListener(new View.OnClickListener() {
@@ -258,7 +304,11 @@ public class BZPlanPopupView extends PopupWindow {
         saveBZItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                station.setDisplayName("A"+2);
+                if(selectedStaion.getDisplayName()==null || "".equals(selectedStaion.getDisplayName())){
+                    Toast.makeText(context,"请选择ZW！",Toast.LENGTH_LONG).show();
+                    return;
+                }
+                station=selectedStaion;
                 bzPlanItem.setStation(station);
                 bzPlanItem.setAddGas(actions[0]);
                 bzPlanItem.setAddAir(actions[1]);
@@ -282,6 +332,7 @@ public class BZPlanPopupView extends PopupWindow {
         this.setFocusable(false);
         this.setAnimationStyle(R.style.Widget_AppCompat_Toolbar);
     }
+
 
     private void refreshBZItemInfo(int pos){
         clearBZItemState();

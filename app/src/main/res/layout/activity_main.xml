@@ -20,20 +20,51 @@
                 android:background="@drawable/toolbox_boder"
                 android:orientation="vertical">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/bcName"
-                    android:text="波次"/>
+                    android:layout_height="50dp">
+                    <TextView
+                        android:id="@+id/bcListTipText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:text="BC选择：" />
+                    <Spinner
+                        android:id="@+id/spBCList"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:layout_weight="2"
+                        android:layout_gravity="center_vertical"></Spinner>
 
-                <EditText
-                    android:id="@+id/editText_bcfilter"
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:hint="波次选择"
-                    android:inputType="text" />
-            </LinearLayout>
+                    android:background="@drawable/toolbox_boder">
+                    <TextView
+                        android:id="@+id/bcTipText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:text="当前BC：" />
+                    <TextView
+                        android:id="@+id/currentBCName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="2"
+                        android:textAlignment="center"
+                        android:text="BC01"
+                        android:textColor="@color/colorTextBlack"/>
+                </LinearLayout>
 
+            </LinearLayout>
 
 
         </LinearLayout>

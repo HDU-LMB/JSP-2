@@ -58,6 +58,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     private Queue<View> mRemovedViewQueue = new LinkedList<View>();
     private OnItemSelectedListener mOnItemSelected;
     private OnItemClickListener mOnItemClicked;
+
     private OnItemLongClickListener mOnItemLongClicked;
     private boolean mDataChanged = false;
 

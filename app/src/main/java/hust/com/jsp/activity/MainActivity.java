@@ -14,14 +14,18 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import hust.com.jsp.bean.BCInfo;
 import hust.com.jsp.bean.BCInfoItem;
 import hust.com.jsp.bean.BZPlan;
 import hust.com.jsp.bean.BZPlanItem;
 import hust.com.jsp.bean.JZJ;
+import hust.com.jsp.bean.JZJAction;
 import hust.com.jsp.bean.Station;
 import hust.com.jsp.db.DYDBHelper;
 import hust.com.jsp.presenter.ZW_BCItemAdapter;
@@ -56,9 +60,11 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageCollection imageCollection;
     private JZJItem jzjItem;
-
+    private BCInfo bcInfo;//当前选中的bc
     private ZW_BCItemAdapter zw_bcItemAdapter;
-    private Map<Integer,BZPlan> bcItemBZPlanMap = new TreeMap<>();//单波次下存储该波次下的所有bzplan
+    private List<String> bcListBZJH;
+    private List<BCInfo> bcInfoList;
+    private Map<Integer,BZPlan> bcItemBZPlanMap = new TreeMap<>();//单BC下存储该波次下的所有bzplan
 
 
     private final float[] m_left_value = { 3.0f,  0.0f,  163.84772f,
@@ -201,17 +207,66 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+
+       final TextView currentBCName= (TextView) findViewById(R.id.currentBCName);
+        final Spinner spBCList= (Spinner) findViewById(R.id.spBCList);
+        bcListBZJH=new ArrayList<>();
+        //初始化化已有的BC数据
+        bcListBZJH.add("BC01");
+        bcListBZJH.add("BC02");
+        bcListBZJH.add("BC03");
+        ArrayAdapter spAdapter=new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,bcListBZJH);
+        spBCList.setAdapter(spAdapter);
+
+        //数据库表读取BC信息数据
         DYDBHelper dydbHelper = new DYDBHelper(this);
         SQLiteDatabase db=dydbHelper.getReadableDatabase();
-        BCInfo bcInfo=new BCInfo();
+        bcInfo=new BCInfo();
         bcInfo.readFromDB(db);
+
+        //测试数据
+        bcInfo.setName((String)spBCList.getSelectedItem());
+        JZJ jzj1=new JZJ(1);
+        jzj1.setDisplayName("JZJ01");
+        BCInfoItem bcInfoItem1 = new BCInfoItem(jzj1);
+        bcInfoItem1.setID(1);
+        bcInfoItem1.setJZJ(1);
+        JZJAction action=new JZJAction();
+        action.setName("A1-C1 QF");
+        bcInfoItem1.addAction(action);
+        bcInfoItem1.setName("波次1");
+        bcInfoItem1.setTime(Long.parseLong("1485598200510"));
+        bcInfoItem1.setType("可用");
+        JZJ jzj2=new JZJ(2);
+        jzj2.setDisplayName("JZJ02");
+        BCInfoItem bcInfoItem2 = new BCInfoItem(jzj2);
+        bcInfoItem2.setID(2);
+        bcInfoItem2.setJZJ(2);
+        JZJAction action2=new JZJAction();
+        action2.setName("A1-C3 JL");
+        bcInfoItem2.addAction(action2);
+        bcInfoItem2.setName("波次1");
+        bcInfoItem2.setTime(Long.parseLong("1485598200510"));
+        bcInfoItem2.setType("备用");
+        bcInfo.addBCInfoItem(bcInfoItem1);
+        bcInfo.addBCInfoItem(bcInfoItem2);
+
+        bcInfoList=new ArrayList<>();
+        BCInfo bcInfo2=new BCInfo();
+        bcInfo2.setName("BC02");
+        BCInfo bcInfo3=new BCInfo();
+        bcInfo3.setName("BC03");
+        bcInfoList.add(bcInfo);
+        bcInfoList.add(bcInfo2);
+        bcInfoList.add(bcInfo3);
+
         for(int idx=0;idx<bcInfo.Count();idx++){//从数据库表中初始化数据，即读取波次1的所有bcitemplan
             BZPlan bzPlan=new BZPlan();
             List<BZPlanItem> bzPlanItemList=new ArrayList<>();
             bzPlan.setBzPlanItemList(bzPlanItemList);
             BCInfoItem item= bcInfo.get(idx);
 
-            //读取数据库初始化数据
+            //读取数据库初始化数据，这里是测试数据
             if(idx==0) {
                 JZJ jzj = new JZJ(JZJItem.testID1);
                 BZPlanItem bzPlanItem = new BZPlanItem();
@@ -231,6 +286,20 @@ public class MainActivity extends AppCompatActivity {
         zw_bcItemAdapter=new ZW_BCItemAdapter(this,bcInfo);
         final ListView zwBCItemlistView= (ListView) findViewById(R.id.zw_BCItemListView);
         zwBCItemlistView.setAdapter(zw_bcItemAdapter);
+        spBCList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                currentBCName.setText((String)spBCList.getSelectedItem());
+                bcInfo=bcInfoList.get(position);
+                zw_bcItemAdapter=new ZW_BCItemAdapter(MainActivity.this,bcInfo);
+                zwBCItemlistView.setAdapter(zw_bcItemAdapter);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 //        zwBCItemlistView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 //
 //            @Override
@@ -288,6 +357,8 @@ public class MainActivity extends AppCompatActivity {
                 if(bzPlanPopupView!=null) bzPlanPopupView.dismiss();
                 bzPlanPopupView=new BZPlanPopupView(MainActivity.this,bzPlan,mapView);
                 bzPlanPopupView.setBackgroundDrawable(null);
+                bzPlanPopupView.setFocusable(true);//这两个属性设置用于点击弹出框外部，窗体消失
+                bzPlanPopupView.setOutsideTouchable(true);
                 bzPlanPopupView.showAtLocation(MainActivity.this.findViewById(R.id.zw_BCItemListView), Gravity.LEFT|Gravity.TOP,312,246);
             }
         });
@@ -329,5 +400,6 @@ public class MainActivity extends AppCompatActivity {
 
         return zwListLayer;
     }
+
 
 }

@@ -41,7 +41,7 @@ public class Main2Activity extends AppCompatActivity {
 
     FXPlanView fxPlanView;
 
-    List<String> listDateItems=new ArrayList<>();
+    List<String> listDateItems=new ArrayList<>();//spinner数据源，存储日期(年-月-日)
 //    @Override
 //    protected void onResume(){
 //        fxPlanView.setVisibility(View.VISIBLE);
@@ -203,10 +203,10 @@ public class Main2Activity extends AppCompatActivity {
         LayoutInflater inflater = LayoutInflater.from(this);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View fxjhDialog = inflater.inflate(R.layout.edit_fxjh_info, null);
-        TextView renWuNO=(TextView) fxjhDialog.findViewById(R.id.RenWuNO);
-        TextView fjNO=(TextView)fxjhDialog.findViewById(R.id.jzjNO);
-        TextView fxyNO=(TextView)fxjhDialog.findViewById(R.id.fxyNO);
-        TextView gas=(TextView)fxjhDialog.findViewById(R.id.gas);
+//        TextView renWuNO=(TextView) fxjhDialog.findViewById(R.id.RenWuNO);
+//        TextView fjNO=(TextView)fxjhDialog.findViewById(R.id.jzjNO);
+//        TextView fxyNO=(TextView)fxjhDialog.findViewById(R.id.fxyNO);
+//        TextView gas=(TextView)fxjhDialog.findViewById(R.id.gas);
         final EditText renwuNO = (EditText) fxjhDialog.findViewById(R.id.renWuNO);
         final EditText jzjNOEditText = (EditText) fxjhDialog.findViewById(R.id.jzjNOEditText);
         final EditText fxyNOEditText = (EditText) fxjhDialog.findViewById(R.id.fxyNOEditText);
@@ -251,6 +251,15 @@ public class Main2Activity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                //检查数据
+                if("".equals(renwuNO.getText().toString()) || "".equals(jzjNOEditText.getText().toString())|| "".equals(fxyNOEditText.getText().toString())|| "".equals(gasEditText.getText().toString())){
+                    Toast.makeText(Main2Activity.this, "添加失败，请补充完整数据!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if(flightCheckBox.isChecked()== false && landCheckBox.isChecked()== false) {
+                    Toast.makeText(Main2Activity.this, "添加失败，请勾选复选框!", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 //修改FXJH信息
                 item.setPlanName(renwuNO.getText().toString());
                 item.getJzj().setDisplayName(jzjNOEditText.getText().toString());
@@ -284,7 +293,7 @@ public class Main2Activity extends AppCompatActivity {
         });
         builder.setNegativeButton("Cancel", null);
         builder.create().show();
-
+//        Toast.makeText(Main2Activity.this, "添加成功!", Toast.LENGTH_LONG).show();
     }
 
     //添加新的FXJH信息
@@ -293,10 +302,10 @@ public class Main2Activity extends AppCompatActivity {
         LayoutInflater inflater = LayoutInflater.from(this);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View fxjhDialog = inflater.inflate(R.layout.edit_fxjh_info, null);
-        TextView renWuNO=(TextView) fxjhDialog.findViewById(R.id.RenWuNO);
-        TextView fjNO=(TextView)fxjhDialog.findViewById(R.id.jzjNO);
-        TextView fxyNO=(TextView)fxjhDialog.findViewById(R.id.fxyNO);
-        TextView gas=(TextView)fxjhDialog.findViewById(R.id.gas);
+//        TextView renWuNO=(TextView) fxjhDialog.findViewById(R.id.RenWuNO);
+//        TextView fjNO=(TextView)fxjhDialog.findViewById(R.id.jzjNO);
+//        TextView fxyNO=(TextView)fxjhDialog.findViewById(R.id.fxyNO);
+//        TextView gas=(TextView)fxjhDialog.findViewById(R.id.gas);
         final EditText renwuNO = (EditText) fxjhDialog.findViewById(R.id.renWuNO);
         final EditText jzjNOEditText = (EditText) fxjhDialog.findViewById(R.id.jzjNOEditText);
         final EditText fxyNOEditText = (EditText) fxjhDialog.findViewById(R.id.fxyNOEditText);
@@ -315,7 +324,6 @@ public class Main2Activity extends AppCompatActivity {
         flightTime.setMinute(calendar.get(Calendar.MINUTE));
         landTime.setHour(calendar.get(Calendar.HOUR_OF_DAY)+8);
         landTime.setMinute(calendar.get(Calendar.MINUTE));
-
         flightCheckBox.setChecked(true);
 
         builder.setView(fxjhDialog);
@@ -323,6 +331,16 @@ public class Main2Activity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                //检查数据
+                if("".equals(renwuNO.getText().toString()) || "".equals(jzjNOEditText.getText().toString())|| "".equals(fxyNOEditText.getText().toString())|| "".equals(gasEditText.getText().toString())){
+                    Toast.makeText(Main2Activity.this, "添加失败，请补充完整数据!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if(flightCheckBox.isChecked()== false && landCheckBox.isChecked()== false) {
+                    Toast.makeText(Main2Activity.this, "添加失败，请勾选复选框!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 //新增FXJH信息
                 FXPlanItem item=new FXPlanItem();
                 Station station = new Station();
@@ -406,4 +424,7 @@ public class Main2Activity extends AppCompatActivity {
            // adapter.notifyDataSetChanged();
         }
     }
+
+
+
 }
