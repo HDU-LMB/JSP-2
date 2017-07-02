@@ -82,17 +82,17 @@
         android:layout_height="match_parent"
         android:weightSum="1">
 
-        <FrameLayout
-            android:layout_width="30dp"
-            android:layout_height="match_parent">
+        <!--<FrameLayout-->
+            <!--android:layout_width="30dp"-->
+            <!--android:layout_height="match_parent">-->
 
-            <Button
-                android:text="◀"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:id="@+id/button_left" />
-        </FrameLayout>
+            <!--<Button-->
+                <!--android:text="◀"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="bottom"-->
+                <!--android:id="@+id/button_left" />-->
+        <!--</FrameLayout>-->
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -105,16 +105,28 @@
 
         </FrameLayout>
 
-        <FrameLayout android:layout_height="match_parent"
-            android:layout_width="30dp">
+        <FrameLayout
+            android:layout_width="30dp"
+            android:layout_height="match_parent">
 
             <Button
-                android:text="▶"
+                android:text="◀"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="bottom"
-                android:id="@+id/button_right" />
+                android:id="@+id/button_TimeProgress" />
         </FrameLayout>
+
+        <!--<FrameLayout android:layout_height="match_parent"-->
+            <!--android:layout_width="30dp">-->
+
+            <!--<Button-->
+                <!--android:text="▶"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="bottom"-->
+                <!--android:id="@+id/button_right" />-->
+        <!--</FrameLayout>-->
 
     </LinearLayout>
 

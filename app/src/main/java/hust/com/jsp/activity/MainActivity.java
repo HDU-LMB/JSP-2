@@ -173,38 +173,38 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        Button button_right = (Button) findViewById(R.id.button_right);
-        Button button_left = (Button) findViewById(R.id.button_left);
-
-        button_right.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                float[] p1 = {1.0f,0.0f};
-                float[] p2 = {0.0f,0.0f};
-                matrix_left.mapPoints(p1);
-                matrix_left.mapPoints(p2);
-                float x = p1[0]-p2[0];
-                float y= p1[1]-p2[1];
-                mapView.setCurrentZoom((float)Math.sqrt(x*x+y*y));
-                mapView.getMatrix().set(matrix_left);
-                mapView.refresh();
-            }
-        });
-
-        button_left.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                float[] p1 = {1.0f,0.0f};
-                float[] p2 = {0.0f,0.0f};
-                matrix_right.mapPoints(p1);
-                matrix_right.mapPoints(p2);
-                float x = p1[0]-p2[0];
-                float y= p1[1]-p2[1];
-                mapView.setCurrentZoom((float)Math.sqrt(x*x+y*y));
-                mapView.getMatrix().set(matrix_right);
-                mapView.refresh();
-            }
-        });
+//        Button button_right = (Button) findViewById(R.id.button_right);
+//        Button button_left = (Button) findViewById(R.id.button_left);
+//
+//        button_right.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                float[] p1 = {1.0f,0.0f};
+//                float[] p2 = {0.0f,0.0f};
+//                matrix_left.mapPoints(p1);
+//                matrix_left.mapPoints(p2);
+//                float x = p1[0]-p2[0];
+//                float y= p1[1]-p2[1];
+//                mapView.setCurrentZoom((float)Math.sqrt(x*x+y*y));
+//                mapView.getMatrix().set(matrix_left);
+//                mapView.refresh();
+//            }
+//        });
+//
+//        button_left.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                float[] p1 = {1.0f,0.0f};
+//                float[] p2 = {0.0f,0.0f};
+//                matrix_right.mapPoints(p1);
+//                matrix_right.mapPoints(p2);
+//                float x = p1[0]-p2[0];
+//                float y= p1[1]-p2[1];
+//                mapView.setCurrentZoom((float)Math.sqrt(x*x+y*y));
+//                mapView.getMatrix().set(matrix_right);
+//                mapView.refresh();
+//            }
+//        });
 
 
 
