@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TimePicker;
 
 import com.onlylemi.mapview.library.MapView;
+import com.onlylemi.mapview.library.MapViewListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,11 +34,15 @@ import hust.com.jsp.R;
 import hust.com.jsp.bean.BCInfo;
 import hust.com.jsp.bean.BLInfo;
 import hust.com.jsp.bean.JZJ;
+import hust.com.jsp.bean.Location;
+import hust.com.jsp.dao.LocationDAO;
+import hust.com.jsp.db.JSPDBHelper;
 import hust.com.jsp.presenter.BCHListAdapter;
 import hust.com.jsp.presenter.BCJZJHLAdapter;
 import hust.com.jsp.presenter.BCJZJListAdapter;
 import hust.com.jsp.view.BLJZJLayer;
 import hust.com.jsp.view.HorizontalListView;
+import hust.com.jsp.view.LocationLayer;
 
 /**
  * Created by lm on 2017/6/27.
@@ -55,6 +60,8 @@ public class BCDetailActivity extends AppCompatActivity {
     private int jzjID=0;
     private boolean isseleted=false;
     private Map<Integer,List<BLInfo>> blMap=new TreeMap<>();
+    private LocationDAO locationDAO;
+    private List<Location> locationList;
     Calendar calendar = Calendar.getInstance();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,6 +70,8 @@ public class BCDetailActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_bcdetail);
+        locationDAO=new LocationDAO(this);
+        locationList=locationDAO.getAllLocation();
         jzjList=new ArrayList<JZJ>();
         bcjzjList=new ArrayList<JZJ>();
         bcInfoList=new ArrayList<BCInfo>();
@@ -84,6 +93,13 @@ public class BCDetailActivity extends AppCompatActivity {
             }
             mapView.loadMap(bitmap);
         }
+        for(Location info:locationList){
+            LocationLayer layer=new LocationLayer(mapView,getResources(),info);
+            Log.v("bc","location:"+info.getPoint().toString());
+            mapView.addLayer(layer);
+
+        }
+        mapView.refresh();
         jzjListAdapter=new BCJZJListAdapter(this, R.layout.bc_jzj_item,bcjzjList);
         ListView jzjListView= (ListView) findViewById(R.id.bc_jzj_listview);
         jzjListView.setAdapter(jzjListAdapter);
@@ -149,12 +165,24 @@ public class BCDetailActivity extends AppCompatActivity {
 
             }
         });
+        mapView.setMapViewListener(new MapViewListener() {
+            @Override
+            public void onMapLoadSuccess() {
+            }
+
+            @Override
+            public void onMapLoadFail() {
+
+            }
+        });
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveBCInfo();
             }
         });
+
+
     }
     private void saveBCInfo(){
         // TODO: 2017/6/29
@@ -174,13 +202,18 @@ public class BCDetailActivity extends AppCompatActivity {
     }
     private void refreshMap(int bcID){
         mapView.clearLayer();
-
         List<BLInfo> blInfoList=blMap.get(bcID);
         for(BLInfo info:blInfoList){
             BLJZJLayer layer=new BLJZJLayer(mapView,getResources());
             layer.setJzjID(info.getJzjid());
             Log.v("bc",info.getPoint().toString()+" id  "+info.getJzjid());
             layer.setLocation(info.getPoint());
+            mapView.addLayer(layer);
+        }
+
+        for(Location info:locationList){
+            LocationLayer layer=new LocationLayer(mapView,getResources(),info);
+            Log.v("bc","location:"+info.getPoint().toString());
             mapView.addLayer(layer);
         }
         Log.v("bc",String.valueOf(mapView.getLayers().size()));
