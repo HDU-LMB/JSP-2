@@ -23,21 +23,30 @@ public class BCInfo {
 
     private int id;
     private String name;
-    private Calendar time;
+    private Calendar startTime;
+    private Calendar endTime;
     private String type;
 
     List<BCInfoItem> bcInfoItemList;
-    public BCInfo(String name,Calendar time){
+    public BCInfo(String name,Calendar startTime){
         this.name=name;
-        this.time=time;
+        this.startTime=startTime;
     }
     public BCInfo(){
         this.id = new Random().nextInt();
         this.bcInfoItemList = new ArrayList<>();
     }
 
-    public void setTime(Calendar time) {
-        this.time = time;
+    public void setStartTime(Calendar startTime) {
+        this.startTime = startTime;
+    }
+
+    public Calendar getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Calendar endTime) {
+        this.endTime = endTime;
     }
 
     public String getName(){
@@ -48,17 +57,26 @@ public class BCInfo {
         return bcInfoItemList.size();
     }
 
-    public String getDisplayTime() {
-        if(time != null){
+    public String getStartDisplayTime() {
+        if(startTime != null){
             SimpleDateFormat pFormat = new SimpleDateFormat("HH:mm:ss", Locale.CHINA);
-            Log.v("Time",pFormat.format(time.getTime()));
-            return pFormat.format(time.getTime());
+            Log.v("Time",pFormat.format(startTime.getTime()));
+            return pFormat.format(startTime.getTime());
         }
         else{
             return "";
         }
     }
-
+    public String getEndDisplayTime() {
+        if(endTime != null){
+            SimpleDateFormat pFormat = new SimpleDateFormat("HH:mm:ss", Locale.CHINA);
+            Log.v("Time",pFormat.format(endTime.getTime()));
+            return pFormat.format(endTime.getTime());
+        }
+        else{
+            return "";
+        }
+    }
     public String getJZJString() {
         StringBuilder sb = new StringBuilder();
         for (BCInfoItem bcInfoItem :
@@ -77,11 +95,14 @@ public class BCInfo {
         bcInfoItemList.add(item);
     }
 
-    public void setTime(long aLong) {
-        this.time = Calendar.getInstance();
-        this.time.setTimeInMillis(aLong);
+    public void setStartTime(long aLong) {
+        this.startTime = Calendar.getInstance();
+        this.startTime.setTimeInMillis(aLong);
     }
-
+    public void setEndTime(long aLong) {
+        this.endTime = Calendar.getInstance();
+        this.endTime.setTimeInMillis(aLong);
+    }
     public void setID(int anInt) {
         this.id = anInt;
     }
@@ -94,7 +115,7 @@ public class BCInfo {
 
     public void readFromDB(SQLiteDatabase db) {
         this.bcInfoItemList = new ArrayList<>();
-        Cursor cursor = db.query(DYDBHelper.BC_ITEM_TABLE,new String[]{"id","jzjid","actionlist","name","time","bctype"},"",new String[]{},"","","");
+        Cursor cursor = db.query(DYDBHelper.BC_ITEM_TABLE,new String[]{"id","jzjid","actionlist","name","startTime","bctype"},"",new String[]{},"","","");
         while(cursor.moveToNext()){
             JZJ jzj=new JZJ(cursor.getInt(1));
             jzj.setDisplayName(cursor.getString(3));

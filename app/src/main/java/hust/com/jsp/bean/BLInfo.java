@@ -10,7 +10,8 @@ public class BLInfo {
     PointF point=new PointF();
     int bcid;
     int jzjid;
-
+    int type;
+    JZJ jzj;
 
     public PointF getPoint() {
         return point;
@@ -23,6 +24,21 @@ public class BLInfo {
         this.point.y=y;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+    public JZJ getJZJ(){
+        jzj=new JZJ(jzjid,"jzj1","beiyong",1);
+
+        return jzj;
+    }
+    public void setJZJ(JZJ jzj){
+        this.jzj=jzj;
+    }
     public int getBcid() {
         return bcid;
     }
@@ -37,5 +53,14 @@ public class BLInfo {
 
     public void setJzjid(int jzjid) {
         this.jzjid = jzjid;
+    }
+    public int typerCir(){
+        if(this.type==3){
+            this.type=0;
+        }
+        else{
+            this.type++;
+        }
+        return this.type;
     }
 }

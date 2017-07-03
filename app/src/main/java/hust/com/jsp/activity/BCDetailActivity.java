@@ -3,6 +3,7 @@ package hust.com.jsp.activity;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -22,6 +23,7 @@ import android.widget.TimePicker;
 
 import com.onlylemi.mapview.library.MapView;
 import com.onlylemi.mapview.library.MapViewListener;
+import com.onlylemi.mapview.library.layer.BitmapLayer;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -62,6 +64,8 @@ public class BCDetailActivity extends AppCompatActivity {
     private Map<Integer,List<BLInfo>> blMap=new TreeMap<>();
     private LocationDAO locationDAO;
     private List<Location> locationList;
+    private Map<Integer,BLJZJLayer> layerMap;
+    private int clickType=0;
     Calendar calendar = Calendar.getInstance();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,6 +80,7 @@ public class BCDetailActivity extends AppCompatActivity {
         bcjzjList=new ArrayList<JZJ>();
         bcInfoList=new ArrayList<BCInfo>();
         jzjList=getAllJZJ();
+        layerMap=new TreeMap<>();
      //   initData();
         initView();
     }
@@ -98,6 +103,30 @@ public class BCDetailActivity extends AppCompatActivity {
             Log.v("bc","location:"+info.getPoint().toString());
             mapView.addLayer(layer);
 
+        }
+        for(final JZJ jzj:jzjList){
+            BLJZJLayer layer=new BLJZJLayer(mapView,getResources(),jzj);
+            layer.setOnBitmapClickListener(new BitmapLayer.OnBitmapClickListener() {
+                @Override
+                public void onBitmapClick(BitmapLayer layer) {
+                    List<BLInfo> blInfoList=blMap.get(bcID);
+                    for(BLInfo info:blInfoList){
+                        if(info.getJzjid()==jzj.getId()) {
+                            clickCir();
+                            Log.v("jzjlayer",jzj.getId()+"    type:"+clickType);
+                            info.setType(clickType);
+                            if(info.getType()==3){
+                                blInfoList.remove(info);
+                              //  mapView.removeLayer(layer);
+                                Log.v("bc layer",mapView.getLayers().size()+"");
+                                //mapView.refresh();
+                            }
+                        }
+                    }
+                    refreshBCJZJList(bcID);
+                }
+            });
+            layerMap.put(jzj.getId(),layer);
         }
         mapView.refresh();
         jzjListAdapter=new BCJZJListAdapter(this, R.layout.bc_jzj_item,bcjzjList);
@@ -125,6 +154,11 @@ public class BCDetailActivity extends AppCompatActivity {
                 Log.v("bcdetail",String.valueOf(bcInfo.getId()));
                 refreshBCJZJList(bcID);
                 refreshMap(bcID);
+                if (((HorizontalListView)parent).getTag() != null){
+                    ((View)((HorizontalListView)parent).getTag()).setBackgroundDrawable(null);
+                }
+                ((HorizontalListView)parent).setTag(view);
+                view.setBackgroundColor(Color.GRAY);
             }
         });
         jzjHListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -134,6 +168,11 @@ public class BCDetailActivity extends AppCompatActivity {
                 jzjID=info.getId();
                 Log.v("bcdetail",String.valueOf(info.getId()));
                 isseleted=true;
+                if (((HorizontalListView)parent).getTag() != null){
+                    ((View)((HorizontalListView)parent).getTag()).setBackgroundDrawable(null);
+                }
+                ((HorizontalListView)parent).setTag(view);
+                view.setBackgroundColor(Color.GRAY);
 
             }
         });
@@ -161,6 +200,7 @@ public class BCDetailActivity extends AppCompatActivity {
                     refreshMap(bcID);
                     Log.v("bcdetail","add");
                     isseleted=false;
+                    clickType=0;
                 }
 
             }
@@ -200,12 +240,11 @@ public class BCDetailActivity extends AppCompatActivity {
         }
         Log.v("bc","jzj id"+String.valueOf(jzj.getId()));
     }
-    private void refreshMap(int bcID){
+    private void refreshMap(final int bcID){
         mapView.clearLayer();
         List<BLInfo> blInfoList=blMap.get(bcID);
-        for(BLInfo info:blInfoList){
-            BLJZJLayer layer=new BLJZJLayer(mapView,getResources());
-            layer.setJzjID(info.getJzjid());
+        for(final BLInfo info:blInfoList){
+            BLJZJLayer layer=layerMap.get(info.getJZJ().getId());
             Log.v("bc",info.getPoint().toString()+" id  "+info.getJzjid());
             layer.setLocation(info.getPoint());
             mapView.addLayer(layer);
@@ -223,19 +262,29 @@ public class BCDetailActivity extends AppCompatActivity {
         bcjzjList.clear();
         List<BLInfo> blInfoList=blMap.get(bcID);
         for(BLInfo info:blInfoList){
-            JZJ jzj=new JZJ(info.getJzjid(),"JZJ"+info.getJzjid(),"BY1");
-            bcjzjList.add(jzj);
+            JZJ jzj;
+            switch (info.getType()){
+                case 1:
+                    jzj=new JZJ(info.getJzjid(),"JZJ"+info.getJzjid(),"非备用",1);
+                    bcjzjList.add(jzj);
+                    break;
+                case 2:
+                    jzj=new JZJ(info.getJzjid(),"JZJ"+info.getJzjid(),"备用",2);
+                    bcjzjList.add(jzj);
+                    break;
+            }
+
         }
         jzjListAdapter.notifyDataSetChanged();
     }
     private List<JZJ> getAllJZJ(){
         List<JZJ> jzjList=new ArrayList<JZJ>();
-        jzjList.add(new JZJ(1,"JZJ-1","BY"));
-        jzjList.add(new JZJ(2,"JZJ-2","BY1"));
-        jzjList.add(new JZJ(3,"JZJ-3","BY"));
-        jzjList.add(new JZJ(4,"JZJ-4","BY1"));
-        jzjList.add(new JZJ(5,"JZJ-5","BY"));
-        jzjList.add(new JZJ(6,"JZJ-6","BY1"));
+        jzjList.add(new JZJ(1,"JZJ-1","BY",1));
+        jzjList.add(new JZJ(2,"JZJ-2","BY1",2));
+        jzjList.add(new JZJ(3,"JZJ-3","BY",1));
+        jzjList.add(new JZJ(4,"JZJ-4","BY1",2));
+        jzjList.add(new JZJ(5,"JZJ-5","BY",1));
+        jzjList.add(new JZJ(6,"JZJ-6","BY1",2));
         return  jzjList;
     }
     private void initData(){
@@ -261,6 +310,8 @@ public class BCDetailActivity extends AppCompatActivity {
         final EditText etBCName = (EditText) bcDialog.findViewById(R.id.et_bc_name);
         final TimePicker tpTime = (TimePicker) bcDialog.findViewById(R.id.tp_time);
         final DatePicker dpTime = (DatePicker) bcDialog.findViewById(R.id.dp_time);
+        final TimePicker tpEndTime = (TimePicker) bcDialog.findViewById(R.id.tp_end_time);
+        final DatePicker dpEndTime = (DatePicker) bcDialog.findViewById(R.id.dp_end_time);
         final Calendar calendar = Calendar.getInstance();
         builder.setView(bcDialog);
         builder.setTitle("ADD BC");
@@ -273,7 +324,9 @@ public class BCDetailActivity extends AppCompatActivity {
                 bcInfo.setName(bcName);
                 bcInfo.setID(new Random().nextInt());
                 calendar.set(dpTime.getYear(),dpTime.getMonth(),dpTime.getDayOfMonth(),tpTime.getHour(),tpTime.getMinute());
-                bcInfo.setTime(calendar.getTimeInMillis());
+                bcInfo.setStartTime(calendar.getTimeInMillis());
+                calendar.set(dpEndTime.getYear(),dpEndTime.getMonth(),dpEndTime.getDayOfMonth(),tpEndTime.getHour(),tpEndTime.getMinute());
+                bcInfo.setEndTime(calendar.getTimeInMillis());
                 bcInfoList.add(bcInfo);
                 bchListAdapter.notifyDataSetChanged();
                 List<BLInfo> blInfoList=new ArrayList<BLInfo>();
@@ -284,7 +337,12 @@ public class BCDetailActivity extends AppCompatActivity {
         builder.setNegativeButton("Cancel", null);
         builder.create().show();
     }
-    class JZJaddChecked{
-
+    private void clickCir(){
+        if(clickType==3){
+            clickType=0;
+        }
+        else{
+            clickType++;
+        }
     }
 }

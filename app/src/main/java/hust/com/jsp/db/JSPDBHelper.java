@@ -24,16 +24,16 @@ public class JSPDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_LOCATION);
-        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"A1","280","180","-200"});
-        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"A2","480","180","-180"});
-        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"A3","680","180","-180"});
-        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"A4","880","180","-180"});
-        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"A5","980","180","-160"});
-        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"B1","280","430","0"});
-        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"B2","480","430","0"});
-        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"B3","680","430","0"});
-        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"B4","880","430","0"});
-        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"B5","1080","430","0"});
+        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"A1","160","60","-200"});
+        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"A2","260","60","-180"});
+        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"A3","360","60","-180"});
+        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"A4","460","60","-180"});
+        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"A5","560","60","-160"});
+        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"B1","160","220","0"});
+        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"B2","275","220","0"});
+        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"B3","390","220","0"});
+        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"B4","500","220","0"});
+        db.execSQL("insert into location(name,x,y,angle) values(?,?,?,?)",new String[]{"B5","600","220","0"});
     }
 
     @Override

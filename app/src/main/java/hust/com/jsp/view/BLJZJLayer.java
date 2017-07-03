@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.onlylemi.mapview.library.MapView;
@@ -30,10 +31,18 @@ public class BLJZJLayer extends MapBaseLayer {
     private MapView mapView;
     private BitmapLayer.OnBitmapClickListener onBitmapClickListener;
 
-    public BLJZJLayer(MapView mapView, Resources res){
+    public BLJZJLayer(MapView mapView, Resources res, final JZJ jzj){
         super(mapView);
         this.mapView=mapView;
-        this.bitmap = BitmapFactory.decodeResource(res, R.drawable.jzj);
+        switch (jzj.getJzjType()){
+            case 1:
+                this.bitmap = BitmapFactory.decodeResource(res, R.drawable.jzj);
+                break;
+            case 2:
+                this.bitmap = BitmapFactory.decodeResource(res, R.drawable.jzj2);
+                break;
+        }
+
         Matrix matrix = new Matrix();
         matrix.postScale(0.1f, 0.1f);
         Bitmap dstbmp = Bitmap.createBitmap(this.bitmap, 0, 0, this.bitmap.getWidth(), this.bitmap.getHeight(),

@@ -42,9 +42,18 @@ public class BCJZJHLAdapter extends ArrayAdapter<JZJ>{
             view=convertView;
             viewHolder=(ViewHolder)view.getTag();
         }
-        viewHolder.imageViewJZJ.setImageResource(R.drawable.jzj);
+        switch (jzj.getJzjType()){
+            case 1:
+                viewHolder.imageViewJZJ.setImageResource(R.drawable.jzj);
+                viewHolder.editTextTYPE.setText("JZJ1");
+                break;
+            case 2:
+                viewHolder.imageViewJZJ.setImageResource(R.drawable.jzj2);
+                viewHolder.editTextTYPE.setText("JZJ2");
+                break;
+        }
         viewHolder.editTextJZJ.setText(jzj.getDisplayName());
-        viewHolder.editTextTYPE.setText("TYPE");
+
         return view;
     }
     class ViewHolder{

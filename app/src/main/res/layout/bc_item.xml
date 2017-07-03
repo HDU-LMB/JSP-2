@@ -5,9 +5,12 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent">
 
+
+
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="0dip"
+        android:layout_weight="1">
 
         <TextView
             android:id="@+id/textView1"
@@ -22,18 +25,20 @@
             android:layout_height="wrap_content"
             android:ems="6"
             android:text="Name" />
+
     </TableRow>
 
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="0dip"
+        android:layout_weight="1" >
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="6"
-            android:text="TIME" />
+            android:text="START TIME" />
 
         <TextView
             android:id="@+id/editText2"
@@ -41,6 +46,27 @@
             android:layout_height="wrap_content"
             android:ems="6"
             android:text="Name" />
+
     </TableRow>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="6"
+            android:text="END TIME" />
+
+        <TextView
+            android:id="@+id/editText3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="6"
+            android:text="Name" />
+
+    </TableRow>
+
 
 </TableLayout>

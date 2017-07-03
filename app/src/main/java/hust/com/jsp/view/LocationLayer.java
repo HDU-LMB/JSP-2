@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.onlylemi.mapview.library.MapView;
@@ -36,9 +37,10 @@ public class LocationLayer extends MapBaseLayer {
                 matrix, true);
 
         this.baseLayer = new BitmapLayer(mapView,dstbmp);
-        float[] point= mapView.convertScreenXY2MapXY(location.getX(),location.getY());
+/*        float[] point= mapView.convertScreenXY2MapXY(location.getX(),location.getY());
         PointF pointF=new PointF(point[0],point[1]);
-        this.baseLayer.setLocation(pointF);
+        Log.v("loca","p"+pointF);*/
+        this.baseLayer.setLocation(location.getPoint());
     }
 
     @Override

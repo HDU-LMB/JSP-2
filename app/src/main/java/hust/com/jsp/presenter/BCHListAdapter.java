@@ -35,6 +35,7 @@ public class BCHListAdapter extends ArrayAdapter<BCInfo>{
             viewHolder=new ViewHolder();
             viewHolder.editTextName= (TextView) view.findViewById(R.id.editText1);
             viewHolder.editTextTime= (TextView) view.findViewById(R.id.editText2);
+            viewHolder.editEndTime= (TextView) view.findViewById(R.id.editText3);
             view.setTag(viewHolder);
         }
         else {
@@ -42,11 +43,13 @@ public class BCHListAdapter extends ArrayAdapter<BCInfo>{
             viewHolder=(ViewHolder)view.getTag();
         }
         viewHolder.editTextName.setText(bcInfo.getName());
-        viewHolder.editTextTime.setText(bcInfo.getDisplayTime());
+        viewHolder.editTextTime.setText(bcInfo.getStartDisplayTime());
+        viewHolder.editEndTime.setText(bcInfo.getEndDisplayTime());
         return view;
     }
     class ViewHolder{
         TextView editTextName;
         TextView editTextTime;
+        TextView editEndTime;
     }
 }

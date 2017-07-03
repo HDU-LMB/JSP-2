@@ -27,7 +27,7 @@ public class BCInfoSeries {
         DYDBHelper db = DYDBHelper.getInstance();
 
     }
-
+/*
     public void readFromDB(){
         DYDBHelper dbHelper = DYDBHelper.getInstance();
         this.bcInfoList = new ArrayList<>();
@@ -42,7 +42,7 @@ public class BCInfoSeries {
             bcInfoList.add(bcInfo);
         }
         db.close();
-    }
+    }*/
 
     public void add(BCInfo bcInfo) {
         this.bcInfoList.add(bcInfo);
