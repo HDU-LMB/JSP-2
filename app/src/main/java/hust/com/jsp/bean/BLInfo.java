@@ -23,7 +23,16 @@ public class BLInfo {
         this.point.x=x;
         this.point.y=y;
     }
-
+    public float getX(){
+        return this.point.x;
+    }
+    public float getY(){
+        return this.point.y;
+    }
+    public void setPoint(float x,float y){
+        this.point.x=x;
+        this.point.y=y;
+    }
     public int getType() {
         return type;
     }

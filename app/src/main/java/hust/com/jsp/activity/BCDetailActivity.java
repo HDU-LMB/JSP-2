@@ -37,6 +37,9 @@ import hust.com.jsp.bean.BCInfo;
 import hust.com.jsp.bean.BLInfo;
 import hust.com.jsp.bean.JZJ;
 import hust.com.jsp.bean.Location;
+import hust.com.jsp.dao.BCDAO;
+import hust.com.jsp.dao.BLDAO;
+import hust.com.jsp.dao.JZJDAO;
 import hust.com.jsp.dao.LocationDAO;
 import hust.com.jsp.db.JSPDBHelper;
 import hust.com.jsp.presenter.BCHListAdapter;
@@ -62,11 +65,14 @@ public class BCDetailActivity extends AppCompatActivity {
     private int jzjID=0;
     private boolean isseleted=false;
     private Map<Integer,List<BLInfo>> blMap=new TreeMap<>();
-    private LocationDAO locationDAO;
     private List<Location> locationList;
     private Map<Integer,BLJZJLayer> layerMap;
     private int clickType=0;
     Calendar calendar = Calendar.getInstance();
+    private LocationDAO locationDAO;
+    private JZJDAO jzjDAO;
+    private BLDAO blDAO;
+    private BCDAO bcDAO;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.v("asd","create"+BCDetailActivity.this);
@@ -75,13 +81,16 @@ public class BCDetailActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_bcdetail);
         locationDAO=new LocationDAO(this);
+        jzjDAO=new JZJDAO(this);
+        blDAO=new BLDAO(this);
+        bcDAO=new BCDAO(this);
         locationList=locationDAO.getAllLocation();
         jzjList=new ArrayList<JZJ>();
         bcjzjList=new ArrayList<JZJ>();
         bcInfoList=new ArrayList<BCInfo>();
         jzjList=getAllJZJ();
         layerMap=new TreeMap<>();
-     //   initData();
+        initData();
         initView();
     }
     private void initView(){
@@ -219,6 +228,7 @@ public class BCDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 saveBCInfo();
+                saveBLInfo();
             }
         });
 
@@ -227,6 +237,17 @@ public class BCDetailActivity extends AppCompatActivity {
     private void saveBCInfo(){
         // TODO: 2017/6/29
         Log.v("bc","save");
+        for(BCInfo info:bcInfoList){
+            if(info.getId()==bcID){
+                bcDAO.addInfo(info);
+            }
+        }
+    }
+    private void saveBLInfo(){
+        List<BLInfo> blInfoList=blMap.get(bcID);
+        for(BLInfo info:blInfoList){
+            blDAO.addInfo(info);
+        }
     }
     private void removeJZJfromBC(JZJ jzj){
         List<BLInfo> blInfoList=blMap.get(bcID);
@@ -262,14 +283,14 @@ public class BCDetailActivity extends AppCompatActivity {
         bcjzjList.clear();
         List<BLInfo> blInfoList=blMap.get(bcID);
         for(BLInfo info:blInfoList){
-            JZJ jzj;
+            JZJ jzj=jzjDAO.getJZJ(info.getJzjid());
             switch (info.getType()){
                 case 1:
-                    jzj=new JZJ(info.getJzjid(),"JZJ"+info.getJzjid(),"非备用",1);
+                    jzj.setJzjBeiyong("非备用");
                     bcjzjList.add(jzj);
                     break;
                 case 2:
-                    jzj=new JZJ(info.getJzjid(),"JZJ"+info.getJzjid(),"备用",2);
+                    jzj.setJzjBeiyong("备用");
                     bcjzjList.add(jzj);
                     break;
             }
@@ -279,28 +300,17 @@ public class BCDetailActivity extends AppCompatActivity {
     }
     private List<JZJ> getAllJZJ(){
         List<JZJ> jzjList=new ArrayList<JZJ>();
-        jzjList.add(new JZJ(1,"JZJ-1","BY",1));
-        jzjList.add(new JZJ(2,"JZJ-2","BY1",2));
-        jzjList.add(new JZJ(3,"JZJ-3","BY",1));
-        jzjList.add(new JZJ(4,"JZJ-4","BY1",2));
-        jzjList.add(new JZJ(5,"JZJ-5","BY",1));
-        jzjList.add(new JZJ(6,"JZJ-6","BY1",2));
+        jzjList=jzjDAO.getAllJZJ();
         return  jzjList;
     }
     private void initData(){
 
-        calendar.set(2017,6,28,12,0,0);
-        bcInfoList.add(new BCInfo("BC1",calendar));
-        calendar.set(2017,6,28,15,0,0);
-        bcInfoList.add(new BCInfo("BC2",calendar));
-        bcInfoList.add(new BCInfo("BC3",calendar));
-        bcInfoList.add(new BCInfo("BC4",calendar));
-        bcInfoList.add(new BCInfo("BC5",calendar));
-        bcInfoList.add(new BCInfo("BC1",calendar));
-        bcInfoList.add(new BCInfo("BC2",calendar));
-        bcInfoList.add(new BCInfo("BC3",calendar));
-        bcInfoList.add(new BCInfo("BC4",calendar));
-        bcInfoList.add(new BCInfo("BC5",calendar));
+        bcInfoList=bcDAO.getAll();
+        for(BCInfo info:bcInfoList){
+            List<BLInfo> blInfoList=blDAO.getById(info.getId());
+            blMap.put(info.getId(),blInfoList);
+        }
+
     }
     private void addBCInfo()
     {
