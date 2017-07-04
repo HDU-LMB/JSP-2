@@ -41,7 +41,6 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder holder;
     private Canvas canvas;
 
-
     private long startViewTime;
     private long endViewTime;
 

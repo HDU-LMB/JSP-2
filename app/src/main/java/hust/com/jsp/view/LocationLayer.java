@@ -15,48 +15,32 @@ import com.onlylemi.mapview.library.layer.MapBaseLayer;
 
 import hust.com.jsp.R;
 import hust.com.jsp.bean.JZJ;
+import hust.com.jsp.bean.Location;
 
-/**
- * Created by hust on 2016/12/13.
- */
+public class LocationLayer extends MapBaseLayer {
 
-public class BLJZJLayer extends MapBaseLayer {
-
-    private PointF location;
     private Bitmap bitmap;
     private BitmapLayer baseLayer;
-    private JZJ jzj;
-    private int jzjID;
-    private final double radius = 30.0;
+    private Location location;
     private MapView mapView;
     private BitmapLayer.OnBitmapClickListener onBitmapClickListener;
 
-    public BLJZJLayer(MapView mapView, Resources res, final JZJ jzj){
+    public LocationLayer(MapView mapView, Resources res,Location location){
         super(mapView);
         this.mapView=mapView;
-        switch (jzj.getJzjType()){
-            case 1:
-                this.bitmap = BitmapFactory.decodeResource(res, R.drawable.jzj);
-                break;
-            case 2:
-                this.bitmap = BitmapFactory.decodeResource(res, R.drawable.jzj2);
-                break;
-        }
-
+        this.location=location;
+        this.bitmap = BitmapFactory.decodeResource(res, R.drawable.location);
         Matrix matrix = new Matrix();
+        matrix.setRotate(location.getAngle(), this.bitmap.getWidth() / 2, this.bitmap.getHeight() / 2);
         matrix.postScale(0.1f, 0.1f);
         Bitmap dstbmp = Bitmap.createBitmap(this.bitmap, 0, 0, this.bitmap.getWidth(), this.bitmap.getHeight(),
                 matrix, true);
-        this.baseLayer = new BitmapLayer(mapView,dstbmp);
-      //  baseLayer.setAutoScale(true);
-    }
 
-    public void setLocation(PointF loc)
-    {
-        float[] point= mapView.convertScreenXY2MapXY(loc.x,loc.y);
+        this.baseLayer = new BitmapLayer(mapView,dstbmp);
+/*        float[] point= mapView.convertScreenXY2MapXY(location.getX(),location.getY());
         PointF pointF=new PointF(point[0],point[1]);
-        this.location = pointF;
-        this.baseLayer.setLocation(pointF);
+        Log.v("loca","p"+pointF);*/
+        this.baseLayer.setLocation(location.getPoint());
     }
 
     @Override
@@ -75,19 +59,4 @@ public class BLJZJLayer extends MapBaseLayer {
         this.baseLayer.setOnBitmapClickListener(onBitmapClickListener);
     }
 
-    public JZJ getJzj() {
-        return jzj;
-    }
-
-    public void setJzj(JZJ jzj) {
-        this.jzj = jzj;
-    }
-
-    public int getJzjID() {
-        return jzjID;
-    }
-
-    public void setJzjID(int jzjID) {
-        this.jzjID = jzjID;
-    }
 }

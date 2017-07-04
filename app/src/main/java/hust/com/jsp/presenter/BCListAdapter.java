@@ -71,7 +71,7 @@ public class BCListAdapter extends BaseAdapter {
 
         BCInfo bcInfo = (BCInfo) this.getItem(position);
         vh.tv_hc_name.setText(bcInfo.getName());
-        vh.tv_hc_time.setText(bcInfo.getDisplayTime());
+     //   vh.tv_hc_time.setText(bcInfo.getDisplayTime());
         vh.tv_hc_jzjlist.setText(bcInfo.getJZJString());
         if(focus == position) vh.backGround.setBackgroundColor(Color.LTGRAY);
         else vh.backGround.setBackgroundColor(Color.TRANSPARENT);

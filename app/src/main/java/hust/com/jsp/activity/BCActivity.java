@@ -46,7 +46,7 @@ public class BCActivity extends AppCompatActivity {
 
         DYDBHelper dydbHelper = new DYDBHelper(this);
         BCInfoSeries bcInfoSeries = new BCInfoSeries();
-        bcInfoSeries.readFromDB();
+/*        bcInfoSeries.readFromDB();*/
         bcListAdapter = new BCListAdapter(this,bcInfoSeries);
 
         ListView list_bcList = (ListView)findViewById(R.id.zw_BCItemListView);
@@ -87,7 +87,7 @@ public class BCActivity extends AppCompatActivity {
         bcDetailAdapter.resetInfo(bcInfo);
         bcDetailAdapter.setBcInfo(bcInfo);
         edit_bc_name.setText(bcInfo.getName());
-        edit_bc_time.setText(bcInfo.getDisplayTime());
+      //  edit_bc_time.setText(bcInfo.getDisplayTime());
         edit_bc_type.setText(bcInfo.getType());
         bcDetailAdapter.notifyDataSetChanged();
         bcListAdapter.notifyDataSetChanged();

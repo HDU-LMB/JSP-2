@@ -10,16 +10,17 @@ import java.util.List;
 public class JZJ {
     private int id;
     private String displayName;
-    private JZJType jzjType;
+    private int jzjType;
     private String jzjBeiyong;
     private Station nearstStation;
-    public JZJ(int id,String name,String by){
+    public JZJ(int id,String name,String by,int jzjType){
         this.id=id;
         this.displayName=name;
         this.jzjBeiyong=by;
+        this.jzjType=jzjType;
     }
 
-    public JZJType getJzjType() {
+    public int getJzjType() {
         return jzjType;
     }
 
@@ -31,7 +32,7 @@ public class JZJ {
         this.jzjBeiyong = jzjBeiyong;
     }
 
-    public void setJzjType(JZJType jzjType) {
+    public void setJzjType(int jzjType) {
         this.jzjType = jzjType;
     }
     private static List<JZJ> jzjList = new ArrayList<>();
