@@ -53,10 +53,10 @@ public class BLJZJLayer extends MapBaseLayer {
 
     public void setLocation(PointF loc)
     {
-        float[] point= mapView.convertScreenXY2MapXY(loc.x,loc.y);
+/*        float[] point= mapView.convertScreenXY2MapXY(loc.x,loc.y);
         PointF pointF=new PointF(point[0],point[1]);
-        this.location = pointF;
-        this.baseLayer.setLocation(pointF);
+        this.location = pointF;*/
+        this.baseLayer.setLocation(loc);
     }
 
     @Override

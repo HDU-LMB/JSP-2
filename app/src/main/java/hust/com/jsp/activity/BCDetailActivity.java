@@ -45,6 +45,7 @@ import hust.com.jsp.db.JSPDBHelper;
 import hust.com.jsp.presenter.BCHListAdapter;
 import hust.com.jsp.presenter.BCJZJHLAdapter;
 import hust.com.jsp.presenter.BCJZJListAdapter;
+import hust.com.jsp.utils.LocationTools;
 import hust.com.jsp.view.BLJZJLayer;
 import hust.com.jsp.view.HorizontalListView;
 import hust.com.jsp.view.LocationLayer;
@@ -185,7 +186,7 @@ public class BCDetailActivity extends AppCompatActivity {
 
             }
         });
-        jzjListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+/*        jzjListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 JZJ info=bcjzjList.get(position);
@@ -193,7 +194,7 @@ public class BCDetailActivity extends AppCompatActivity {
                 refreshBCJZJList(bcID);
 
             }
-        });
+        });*/
         mapView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -202,7 +203,8 @@ public class BCDetailActivity extends AppCompatActivity {
                     BLInfo info=new BLInfo();
                     info.setBcid(bcID);
                     info.setJzjid(jzjID);
-                    info.setPoint(mapView.getTouchPoint());
+                    Location location= LocationTools.getNearLoaction(mapView.getTouchPoint(),locationList);
+                    info.setPoint(location.getPoint());
                     blInfoList.add(info);
                     blMap.put(bcID,blInfoList);
                     refreshBCJZJList(bcID);
@@ -265,7 +267,7 @@ public class BCDetailActivity extends AppCompatActivity {
         mapView.clearLayer();
         List<BLInfo> blInfoList=blMap.get(bcID);
         for(final BLInfo info:blInfoList){
-            BLJZJLayer layer=layerMap.get(info.getJZJ().getId());
+            BLJZJLayer layer=layerMap.get(info.getJzjid());
             Log.v("bc",info.getPoint().toString()+" id  "+info.getJzjid());
             layer.setLocation(info.getPoint());
             mapView.addLayer(layer);
