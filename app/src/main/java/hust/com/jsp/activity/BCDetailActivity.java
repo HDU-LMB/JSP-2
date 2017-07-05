@@ -107,7 +107,7 @@ public class BCDetailActivity extends AppCompatActivity {
                 return;
             }
             mapView.loadMap(bitmap);
-        }
+       }
         for(Location info:locationList){
             LocationLayer layer=new LocationLayer(mapView,getResources(),info);
             Log.v("bc","location:"+info.getPoint().toString());

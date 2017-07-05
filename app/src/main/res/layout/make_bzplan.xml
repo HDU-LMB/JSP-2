@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:padding="0dp"
     android:layout_margin="-1dp"
-    android:background="@drawable/toolbox_boder">
+    android:background="@drawable/fill_boder_style">
 
     <RelativeLayout
         android:id="@+id/parent_TopLayout"
@@ -18,14 +18,13 @@
         android:background="@drawable/toolbox_boder">
 
         <TextView
-            android:layout_width="50dp"
+            android:layout_width="49dp"
             android:layout_height="match_parent"
             android:layout_marginRight="0dp"
             android:id="@+id/currentJZJName"
             android:textColor="@color/colorTextBlack"
             android:layout_alignParentLeft="true"
             android:gravity="center_vertical"
-
             android:textSize="12sp"
             android:layout_margin="0dp" />
         <TextView
@@ -37,9 +36,9 @@
             android:textColor="@color/colorTextBlack"
             android:textAlignment="center"
             android:layout_alignParentRight="true"
-
             android:textSize="12sp"
             android:layout_margin="0dp"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -50,32 +49,25 @@
             android:layout_toLeftOf="@id/currentZWName">
 
             <TextView
+                android:id="@+id/spendTimeText"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical|left"
-                android:id="@+id/selectStationName"
+                android:gravity="center_vertical"
                 android:textAlignment="center"
-                android:text="选择ZW:"
+                android:layout_weight="1"
                 android:textSize="12sp"
-                android:layout_margin="0dp" />
-            <LinearLayout
+                android:layout_margin="0dp"
+                android:text="时间(min):"/>
+            <TextView
+                android:id="@+id/spendTime"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="2">
-
-                <ListView
-                    android:id="@+id/staionTotalListView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    ></ListView>
-                <!--<Spinner-->
-                    <!--android:id="@+id/zwStationSpinner"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:gravity="center_horizontal"></Spinner>-->
-
-            </LinearLayout>
+                android:gravity="center_vertical"
+                android:textAlignment="textStart"
+                android:layout_weight="1"
+                android:textSize="12sp"
+                android:layout_marginLeft="3dp"
+                android:text="0"/>
 
 
         </LinearLayout>
@@ -100,20 +92,12 @@
             android:textSize="9sp"
             android:padding="0dp"
             android:layout_margin="0dp"/>
-        <Button
-            android:id="@+id/cancelBZItem"
-            android:layout_width="40dp"
-            android:layout_height="30dp"
-            android:text="关闭"
-            android:layout_toLeftOf="@id/saveBZItem"
-            android:textSize="9sp"
-            android:padding="0dp"
-            android:layout_margin="0dp"/>
+
         <Button
             android:id="@+id/deleteBZItem"
             android:layout_width="40dp"
             android:layout_height="30dp"
-            android:layout_toLeftOf="@id/cancelBZItem"
+            android:layout_toLeftOf="@id/saveBZItem"
             android:text="删除"
             android:textSize="9sp"
             android:padding="0dp"
@@ -531,7 +515,7 @@
                     android:layout_marginTop="5dp"
                     android:background="@drawable/label_boderstyle"
                     android:textAlignment="center"
-                    android:text="delete"/>
+                    android:text="×"/>
 
             </LinearLayout>
 

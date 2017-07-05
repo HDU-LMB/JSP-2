@@ -9,6 +9,7 @@ import android.graphics.Color;
 public class BZPlanItem {
 
     private Station station; //ZW
+    private float spendTime;
 
     private boolean addGas;//油
     private  boolean addAir;//气
@@ -62,6 +63,14 @@ public class BZPlanItem {
 
     public Station getStation() {
         return station;
+    }
+
+    public float getSpendTime() {
+        return spendTime;
+    }
+
+    public void setSpendTime(float spendTime) {
+        this.spendTime = spendTime;
     }
 
     public boolean isAddGas() {

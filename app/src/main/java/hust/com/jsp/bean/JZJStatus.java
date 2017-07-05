@@ -7,6 +7,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import hust.com.jsp.utils.LabelColorCollection;
+
 /**
  * Created by hust on 2016/12/28.
  */
@@ -18,6 +20,9 @@ public class JZJStatus {
     public static final int STATUS_3 = 0x003;
     public static final int STATUS_4 = 0x004;
     public static final int STATUS_5 = 0x005;
+    public static final int STATUS_6 = 0x006;
+    public static final int STATUS_7 = 0x007;
+    public static final int STATUS_8 = 0x008;
 
     private static List<JZJStatusItem> statusList;
     private Map<Integer,Integer> statusValues;
@@ -35,15 +40,21 @@ public class JZJStatus {
     public static void initialize(){
         statusList = new ArrayList<>();
         JZJStatusItem jzjStatusItem;
-        jzjStatusItem = new JZJStatusItem(JZJStatus.STATUS_1).setName("A").setColor(Color.rgb(49,183,231));//BLUE
+        jzjStatusItem = new JZJStatusItem(JZJStatus.STATUS_1).setName("油").setColor(LabelColorCollection.getColor(0));
         statusList.add(jzjStatusItem);
-        jzjStatusItem = new JZJStatusItem(JZJStatus.STATUS_2).setName("B").setColor(Color.rgb(0,255,255));//WHITE
+        jzjStatusItem = new JZJStatusItem(JZJStatus.STATUS_2).setName("气").setColor(LabelColorCollection.getColor(1));
         statusList.add(jzjStatusItem);
-        jzjStatusItem = new JZJStatusItem(JZJStatus.STATUS_3).setName("C").setColor(Color.rgb(255,158,0));//RED
+        jzjStatusItem = new JZJStatusItem(JZJStatus.STATUS_3).setName("电").setColor(LabelColorCollection.getColor(2));
         statusList.add(jzjStatusItem);
-        jzjStatusItem = new JZJStatusItem(JZJStatus.STATUS_4).setName("D").setColor(Color.GREEN);
+        jzjStatusItem = new JZJStatusItem(JZJStatus.STATUS_4).setName("液").setColor(LabelColorCollection.getColor(3));
         statusList.add(jzjStatusItem);
-        jzjStatusItem = new JZJStatusItem(JZJStatus.STATUS_5).setName("E").setColor(Color.rgb(158,252,230));//LTGRAY
+        jzjStatusItem = new JZJStatusItem(JZJStatus.STATUS_5).setName("弹").setColor(LabelColorCollection.getColor(4));
+        statusList.add(jzjStatusItem);
+        jzjStatusItem = new JZJStatusItem(JZJStatus.STATUS_6).setName("导").setColor(LabelColorCollection.getColor(5));
+        statusList.add(jzjStatusItem);
+        jzjStatusItem = new JZJStatusItem(JZJStatus.STATUS_7).setName("冷").setColor(LabelColorCollection.getColor(6));
+        statusList.add(jzjStatusItem);
+        jzjStatusItem = new JZJStatusItem(JZJStatus.STATUS_8).setName("氧").setColor(LabelColorCollection.getColor(7));
         statusList.add(jzjStatusItem);
     }
 
