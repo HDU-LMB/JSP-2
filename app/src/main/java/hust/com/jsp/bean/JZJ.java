@@ -13,6 +13,9 @@ public class JZJ {
     private int jzjType;
     private String jzjBeiyong;
     private Station nearstStation;
+    public JZJ(){
+
+    };
     public JZJ(int id,String name,String by,int jzjType){
         this.id=id;
         this.displayName=name;

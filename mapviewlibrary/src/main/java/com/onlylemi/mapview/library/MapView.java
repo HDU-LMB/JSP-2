@@ -508,7 +508,16 @@ public class MapView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
     public PointF getTouchPoint() {
-        return touchPoint;
+        float[] point= convertScreenXY2MapXY(touchPoint.x,touchPoint.y);
+        PointF pointF=new PointF(point[0],point[1]);
+        return pointF;
     }
-
+    public void removeLayer(MapBaseLayer layer){
+        for(int i=0;i<layers.size();i++){
+            if(layers.get(i)==layer){
+                layers.remove(i);
+                i--;
+            }
+        }
+    }
 }

@@ -56,7 +56,12 @@ public class BCInfo {
     public int Count() {
         return bcInfoItemList.size();
     }
-
+    public long getLongStartTime(){
+        return startTime.getTimeInMillis();
+    }
+    public long getLongEndTime(){
+        return endTime.getTimeInMillis();
+    }
     public String getStartDisplayTime() {
         if(startTime != null){
             SimpleDateFormat pFormat = new SimpleDateFormat("HH:mm:ss", Locale.CHINA);
