@@ -119,6 +119,7 @@ public class BCDetailActivity extends AppCompatActivity {
             layer.setOnBitmapClickListener(new BitmapLayer.OnBitmapClickListener() {
                 @Override
                 public void onBitmapClick(BitmapLayer layer) {
+                    layer.isVisible=true;
                     List<BLInfo> blInfoList=blMap.get(bcID);
                     for(BLInfo info:blInfoList){
                         if(info.getJzjid()==jzj.getId()) {
@@ -129,7 +130,8 @@ public class BCDetailActivity extends AppCompatActivity {
                                 blInfoList.remove(info);
                               //  mapView.removeLayer(layer);
                                 Log.v("bc layer",mapView.getLayers().size()+"");
-                                //mapView.refresh();
+                                layer.isVisible=false;
+                                mapView.refresh();
                             }
                         }
                     }
