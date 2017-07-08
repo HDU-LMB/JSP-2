@@ -20,11 +20,15 @@ import android.widget.TextView;
 
 import hust.com.jsp.bean.BCInfo;
 import hust.com.jsp.bean.BCInfoItem;
+import hust.com.jsp.bean.BLInfo;
 import hust.com.jsp.bean.BZPlan;
 import hust.com.jsp.bean.BZPlanItem;
 import hust.com.jsp.bean.JZJ;
 import hust.com.jsp.bean.JZJAction;
 import hust.com.jsp.bean.Station;
+import hust.com.jsp.dao.BCDAO;
+import hust.com.jsp.dao.BLDAO;
+import hust.com.jsp.dao.JZJDAO;
 import hust.com.jsp.db.DYDBHelper;
 import hust.com.jsp.presenter.ZW_BCItemAdapter;
 import hust.com.jsp.utils.ImageCollection;
@@ -66,10 +70,15 @@ public class MainActivity extends AppCompatActivity {
     private Spinner spBCList;//点击选择当前BC
     private List<String> bcListBZJH;//spBCList关联的数据源
     private List<BCInfo> bcInfoList;//某BL下所有的BC
+
+
     private Map<Integer,BZPlan> bcItemBZPlanMap = new TreeMap<>();//某BL下BC存储该波次下的所有bzplan
     private List<BZPlan> bzPlanList=new ArrayList<>();//某BL下所有所有的bzplan，用于绘画时间甘特图
     private Button showProgressButton;//点击显示或隐藏时间甘特图
     private BZPlan_TimeProgressLayer timeProgressLayer;//mapView中底部的绘画时间甘特图的图层
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView(){
+
 
         mapView = (MapView) findViewById(R.id.MapView);
 
@@ -150,6 +160,12 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+
+
+
+
 
     }
 
