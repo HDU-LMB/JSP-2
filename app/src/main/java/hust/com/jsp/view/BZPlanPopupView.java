@@ -56,6 +56,7 @@ public class BZPlanPopupView extends PopupWindow {
     private List<Station> stationTotalList;//HM上所有的ZW列表
     private ZW_StationAdapter zwStationAdapter;
     private ZW_StationAdapter zwStationTotalAdapter;
+    private int position=0;
 
     public BZPlanPopupView(final Activity context, final BZPlan bzPlan, final MapView mapView){
         super(context);
@@ -409,6 +410,7 @@ public class BZPlanPopupView extends PopupWindow {
             }
         });
 
+
         zwListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -458,9 +460,10 @@ public class BZPlanPopupView extends PopupWindow {
                     zwStationAdapter.remove(station);
 
                 if(stationList.size()!=0) {
-                    zwListView.setSelection(stationList.size() - 1);
+                    position=stationList.size()-1;
+//                    zwListView.setSelection(stationList.size()-1);
 //                    if (zwListView.isSelected())
-                    refreshBZItemInfo((int) zwListView.getSelectedItemId());
+                    refreshBZItemInfo(position);
                 }
                 mapView.refresh();
             }
@@ -488,19 +491,19 @@ public class BZPlanPopupView extends PopupWindow {
                 bzPlanItem.setAddCool(actions[6]);
                 bzPlanItem.setAddOxygen(actions[7]);
 
-                if(isAdd) zwStationAdapter.add(station);
-                if(!bzPlan.getBzPlanItemList().contains(bzPlanItem)) {
+                if(isAdd) {
+                    zwStationAdapter.add(station);
                     bzPlan.addBZPlanItem(bzPlanItem);
-                    zwListView.setSelection(stationList.size()-1);
-//                    if(!stationList.contains(station))
-//                        zwStationAdapter.add(station);
-                }else {
+//                    zwStationAdapter.notifyDataSetChanged();
+//                    position=stationList.size()-1;
+//                    zwListView.setSelection(zwStationAdapter.getCount()-1);
+                }else {//修改ZW
                     int pos=(int)zwListView.getSelectedItemId();
-                    zwStationAdapter.remove(pos);
-                    zwStationAdapter.add(pos,station);
-                    zwListView.setSelection(pos);
+//                    zwStationAdapter.remove(pos);
+//                    zwStationAdapter.add(pos,station);
                 }
                 isAdd=false;
+                refreshBZItemInfo(0);
                 mapView.refresh();
             }
         });

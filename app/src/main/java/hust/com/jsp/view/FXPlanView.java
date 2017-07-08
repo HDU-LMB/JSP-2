@@ -43,7 +43,7 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
 
     private long startViewTime;
     private long endViewTime;
-
+    private int motionEvent=0;
     private float width;
     private float height;
     private float sepLeftTitle;
@@ -57,7 +57,7 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
     public float getPointY() {
         return pointY;
     }
-
+    public int getMotionEvent(){return motionEvent;}
     private Map<Integer,FXPlanItem> itemMap=new TreeMap<>();
     public  Map<Integer, FXPlanItem> getItemMap() {
         return itemMap;
@@ -311,11 +311,11 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 pointY=event.getY();
-                Log.v("fx","press");
+                Log.v("fx","press");motionEvent=MotionEvent.ACTION_DOWN;
                 Log.v("fx",getContext().getClass().getName());
                 break;
             case MotionEvent.ACTION_MOVE:
-                move=(event.getY()-pointY)<0?(move-1):(move+1);
+                move=(event.getY()-pointY)<0?(move-1):(move+1);motionEvent=MotionEvent.ACTION_MOVE;
                 if(event.getY()-pointY<0){
                     refresh();
                     Log.v("fx","Down"+String.valueOf(move));

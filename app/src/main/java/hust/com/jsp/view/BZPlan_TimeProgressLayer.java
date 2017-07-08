@@ -33,7 +33,6 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
     private float height;
     private PointF location;
     private List<BZPlan> bzPlanList;
-
     private float widthUnit;//方框单位时间下的长度
     private float heightLabel;//方框的高
     private float marginTop;//上下方框之间间隙
@@ -44,12 +43,16 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
         this.bzPlanList=bzPlanList;
         this.width=1600;
         this.height=260;
-        this.widthUnit=3;
+        this.widthUnit=4;
         this.heightLabel=20;
         this.marginTop=5;
         this.bitmap= Bitmap.createBitmap((int)width,(int)height,Bitmap.Config.ARGB_8888);//创建一个空白bitmap
         this.baseLayer=new BitmapLayer(mapView,bitmap);
         this.baseLayer.setLocation(new PointF(0.0f,630.0f));
+    }
+
+    public void setBzPlanList(List<BZPlan> bzPlanList) {
+        this.bzPlanList = bzPlanList;
     }
 
     public void setLocation(PointF loc)
@@ -59,7 +62,7 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
     }
     @Override
     public void onTouch(MotionEvent event) {
-
+        this.baseLayer.onTouch(event);
     }
 
     @Override
@@ -79,24 +82,34 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
         if(bzPlanList==null || bzPlanList.size()==0) return;
 
         paint.setColor(Color.BLACK);
-        float top=5+location.y;
-        float left=5;
+        float top0=15+location.y;
+        float top;
+        float left=50;
         float right;
         float bottom;
+        canvas.drawLine(left,top0,left,top0+this.height,paint);//纵坐标
+        canvas.drawLine(left,top0,left+this.width,top0,paint);//横坐标
+        for(int i=1;i<=50;i++){
+            left=50+i*widthUnit*10;
+            canvas.drawLine(left,top0,left,top0+3,paint);//横坐标刻度
+            canvas.drawText(i*10+"",left-10,top0-3,paint);
+        }
+        top0+=8;
         for(int i=0;i<bzPlanList.size();i++){
             BZPlan bzPlan=bzPlanList.get(i);
             JZJ jzj=bzPlan.getJzj();
-            top+=i*(heightLabel+marginTop);
-            left=50;
+            top=top0+i*(heightLabel+marginTop);
+            left=53;
             bottom=top+heightLabel;
             float textLeng = paint.measureText(jzj.getDisplayName());
-            canvas.drawText(jzj.getDisplayName(),(left-textLeng)-2,(top+bottom)/2+5,paint);//画JZJ名称
+            canvas.drawText(jzj.getDisplayName(),(left-textLeng)-6,(top+bottom)/2+5,paint);//画JZJ名称
 
             for(int j=0;j<bzPlan.getBzPlanItemList().size();j++){
                 BZPlanItem bzItem=bzPlan.getBzPlanItemList().get(j);
 
                 right=left+widthUnit*bzItem.getSpendTime();
                 canvas.drawRect(left,top,right,bottom,paint);//画每个ZW上任务花费的时间
+                canvas.drawText(bzItem.getStation().getDisplayName(),(left+right)/2-10,(top+bottom)/2+5,paint);//画ZW名称
                 left=right;
             }
         }

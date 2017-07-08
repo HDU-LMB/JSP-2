@@ -10,6 +10,12 @@ public class BZPlan {
     private JZJ jzj;
     private List<BZPlanItem> bzPlanItemList;
 
+    public void setQfTime(long qfTime) {
+        this.qfTime = qfTime;
+    }
+
+    private long qfTime;
+
     public JZJ getJzj() {
         return jzj;
     }

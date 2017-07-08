@@ -2,6 +2,7 @@ package hust.com.jsp.bean;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import hust.com.jsp.db.DYDBHelper;
@@ -17,7 +18,7 @@ import java.util.Random;
  * Created by admin on 2017/5/9.
  */
 
-public class BCInfo {
+public class BCInfo implements Comparable{
 
 
 
@@ -139,5 +140,10 @@ public class BCInfo {
 
     public String getType() {
         return type;
+    }
+
+    @Override
+    public int compareTo(@NonNull Object o) {
+        return this.id-((BCInfo)o).id;
     }
 }

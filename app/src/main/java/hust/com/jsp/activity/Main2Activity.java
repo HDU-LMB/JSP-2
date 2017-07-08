@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -143,6 +144,8 @@ public class Main2Activity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
+                int event=fxPlanView.getMotionEvent();
+                if(event== MotionEvent.ACTION_MOVE) return;
                 int rowNO=(int) (fxPlanView.getPointY()/fxPlanView.getSepRowNorm());
                 if(fxPlanView.getItemMap().containsKey(rowNO))
                 {
