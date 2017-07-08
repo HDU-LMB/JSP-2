@@ -361,7 +361,7 @@
                     android:textAlignment="center"
                     android:text="H"/>
                 <TextView
-                    android:id="@+id/ILabel"
+                    android:id="@+id/ZLabel"
                     android:layout_width="40dp"
                     android:layout_height="20dp"
                     android:padding="0dp"
@@ -369,7 +369,7 @@
                     android:layout_marginTop="5dp"
                     android:background="@drawable/label_boderstyle"
                     android:textAlignment="center"
-                    android:text="I"/>
+                    android:text="Z"/>
 
             </LinearLayout>
 
