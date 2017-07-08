@@ -37,7 +37,7 @@ public class BZPlanPopupView extends PopupWindow {
     private TextView gasLabel,fluidLabel,coolLabel,airLabel,weaponLabel,oxygenLabel,electricityLabel,guidLabel;
     private Button deleteButton,saveBZItem;
     private TextView jzjName,spendTime,zwName, deleteZWName;
-    private TextView addBZItem,aLabel,bLabel,cLabel,dLabel,eLabel,fLabel,gLabel,hLabel,iLabel;
+    private TextView addBZItem,aLabel,bLabel,cLabel,dLabel,eLabel,fLabel,gLabel,hLabel, zLabel;
     private TextView number1Label,number2Label,number3Label,number4Label,number5Label,number6Label,number7Label,number8Label,number9Label,number0Label;
     private Drawable gasDrawable,fluidDrawable,coolDrawable,airDrawable,weaponDrawable,oxygenDrawable,electricDrawable,guidDrawable,grayDrawable;
     private boolean isAdd;//新否为添加新项
@@ -111,7 +111,7 @@ public class BZPlanPopupView extends PopupWindow {
         fLabel=(TextView)popView.findViewById(R.id.FLabel);
         gLabel=(TextView)popView.findViewById(R.id.GLabel);
         hLabel=(TextView)popView.findViewById(R.id.HLabel);
-        iLabel=(TextView)popView.findViewById(R.id.ILabel);
+        zLabel =(TextView)popView.findViewById(R.id.ZLabel);
         number0Label=(TextView)popView.findViewById(R.id.number0Label);
         number1Label=(TextView)popView.findViewById(R.id.number1Label);
         number2Label=(TextView)popView.findViewById(R.id.number2Label);
@@ -324,10 +324,10 @@ public class BZPlanPopupView extends PopupWindow {
                 zwName.setText(putValue.prefix+putValue.sequence);
             }
         });
-        iLabel.setOnClickListener(new View.OnClickListener() {
+        zLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                putValue.prefix="I";
+                putValue.prefix="Z";
                 zwName.setText(putValue.prefix+putValue.sequence);
             }
         });
@@ -475,7 +475,7 @@ public class BZPlanPopupView extends PopupWindow {
             @Override
             public void onClick(View v) {
                 if("".equals(zwName.getText())){
-                    Toast.makeText(context,"请选择ZW！",Toast.LENGTH_SHORT);
+                    Toast.makeText(context,"请选择ZW！",Toast.LENGTH_LONG);
                     return;
                 }
                 station.setDisplayName(zwName.getText().toString());

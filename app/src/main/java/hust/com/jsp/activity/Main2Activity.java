@@ -256,11 +256,11 @@ public class Main2Activity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 //检查数据
                 if("".equals(renwuNO.getText().toString()) || "".equals(jzjNOEditText.getText().toString())|| "".equals(fxyNOEditText.getText().toString())|| "".equals(gasEditText.getText().toString())){
-                    Toast.makeText(Main2Activity.this, "添加失败，请补充完整数据!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Main2Activity.this, "修改失败，请补充完整数据!", Toast.LENGTH_LONG).show();
                     return;
                 }
                 if(flightCheckBox.isChecked()== false && landCheckBox.isChecked()== false) {
-                    Toast.makeText(Main2Activity.this, "添加失败，请勾选复选框!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Main2Activity.this, "修改失败，请勾选复选框!", Toast.LENGTH_LONG).show();
                     return;
                 }
                 //修改FXJH信息
