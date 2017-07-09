@@ -71,7 +71,7 @@ public class BZPlanPopupView extends PopupWindow {
             stationList.add(item.getStation());
         }
         this.zwStationAdapter=new ZW_StationAdapter(context,stationList);
-        this.zwStationTotalAdapter=new ZW_StationAdapter(context,stationTotalList);
+//        this.zwStationTotalAdapter=new ZW_StationAdapter(context,stationTotalList);
         LayoutInflater inflater= (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         popView=inflater.inflate(R.layout.make_bzplan,null);
         jzjName=(TextView)popView.findViewById(R.id.currentJZJName);
@@ -126,13 +126,13 @@ public class BZPlanPopupView extends PopupWindow {
         clearBZItemState();
 //        spinner= (Spinner)popView.findViewById(R.id.zwStationSpinner);
         //从数据库表读取ZW信息，这里为测试数据
-        stationTotalList.add(new Station(1,new Point(100,100),"A1"));
-        stationTotalList.add(new Station(2,new Point(200,100),"A2"));
-        stationTotalList.add(new Station(3,new Point(300,100),"A3"));
-        stationTotalList.add(new Station(4,new Point(500,200),"B1"));
-        stationTotalList.add(new Station(1,new Point(600,150),"B2"));
-        stationTotalList.add(new Station(1,new Point(400,300),"C1"));
-        ZW_StationAdapter adapter=new ZW_StationAdapter(context,stationTotalList);
+//        stationTotalList.add(new Station(1,new Point(100,100),"A1"));
+//        stationTotalList.add(new Station(2,new Point(200,100),"A2"));
+//        stationTotalList.add(new Station(3,new Point(300,100),"A3"));
+//        stationTotalList.add(new Station(4,new Point(500,200),"B1"));
+//        stationTotalList.add(new Station(1,new Point(600,150),"B2"));
+//        stationTotalList.add(new Station(1,new Point(400,300),"C1"));
+//        ZW_StationAdapter adapter=new ZW_StationAdapter(context,stationTotalList);
 //        spinner.setAdapter(adapter);
         if(bzPlan.getBzPlanItemList().size()==0) {
             this.isAdd=true;
@@ -498,9 +498,13 @@ public class BZPlanPopupView extends PopupWindow {
 //                    position=stationList.size()-1;
 //                    zwListView.setSelection(zwStationAdapter.getCount()-1);
                 }else {//修改ZW
-                    int pos=(int)zwListView.getSelectedItemId();
-//                    zwStationAdapter.remove(pos);
-//                    zwStationAdapter.add(pos,station);
+                    stationList.clear();
+                    for(BZPlanItem item: bzPlan.getBzPlanItemList()){
+                        stationList.add(item.getStation());
+                    }
+                    zwStationAdapter.notifyDataSetChanged();
+//                    zwStationAdapter=new ZW_StationAdapter(context,stationList);
+//                    zwListView.setAdapter(zwStationAdapter);
                 }
                 isAdd=false;
                 refreshBZItemInfo(0);

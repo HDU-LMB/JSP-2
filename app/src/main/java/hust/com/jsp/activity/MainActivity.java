@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
     private List<BCInfo> bcInfoList;//某BL下所有的BC
     private Map<Integer,BZPlan> bcItemBZPlanMap ;//某BL下BC存储该波次下的所有bzplan
     private Map<BCInfo,Map<Integer,BZPlan>> bcList_ItemMap=new TreeMap<>();//存储所有的BC
-    private List<BZPlan> bzPlanList;//某BL下所有所有的bzplan，用于绘画时间甘特图
+    private List<BZPlan> bzPlanList;//某BC下所有所有的bzplan，用于绘画时间甘特图
     private Map<BCInfo,List<BZPlan>> bzListMap=new TreeMap<>();//存储所有BC的bzPlanList
     private Button showProgressButton;//点击显示或隐藏时间甘特图
     private BZPlan_TimeProgressLayer timeProgressLayer;//mapView中底部的绘画时间甘特图的图层
