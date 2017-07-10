@@ -24,6 +24,7 @@ import hust.com.jsp.bean.BCInfoItem;
 import hust.com.jsp.bean.BLInfo;
 import hust.com.jsp.bean.BZPlan;
 import hust.com.jsp.bean.BZPlanItem;
+import hust.com.jsp.bean.BZPlan_TimeSchemaOrder;
 import hust.com.jsp.bean.JZJ;
 import hust.com.jsp.bean.JZJAction;
 import hust.com.jsp.bean.Location;
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageCollection imageCollection;
     private JZJItem jzjItem;
     private BCInfo bcInfo;//当前选中的bc
-    private TextView currentBCName;
+//    private TextView currentBCName;
     private ZWListLayer zwListLayer;//mapView中最上面显示的ZW及任务（如加油、弹）的图层
     private ZW_BCItemAdapter zw_bcItemAdapter;
     private Spinner spBCList;//点击选择当前BC
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     private Map<BCInfo,Map<Integer,BZPlan>> bcList_ItemMap=new TreeMap<>();//存储所有的BC
     private List<BZPlan> bzPlanList;//某BC下所有所有的bzplan，用于绘画时间甘特图
     private Map<BCInfo,List<BZPlan>> bzListMap=new TreeMap<>();//存储所有BC的bzPlanList
+    private Button calculateTimeProgress;
     private Button showProgressButton;//点击显示或隐藏时间甘特图
     private BZPlan_TimeProgressLayer timeProgressLayer;//mapView中底部的绘画时间甘特图的图层
 
@@ -260,11 +262,20 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        calculateTimeProgress=(Button) findViewById(R.id.button_CalculateTimeProgress);
+        calculateTimeProgress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BZPlan_TimeSchemaOrder timeSchemaOrder=new BZPlan_TimeSchemaOrder(bzPlanList);
+                timeSchemaOrder.initSchemaItem();
+            }
+        });
     }
 
     private void initBL_BC(){
 
-        currentBCName= (TextView) findViewById(R.id.currentBCName);
+//        currentBCName= (TextView) findViewById(R.id.currentBCName);
         spBCList= (Spinner) findViewById(R.id.spBCList);
 
         //初始化化已有的BC数据
@@ -342,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
         spBCList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                currentBCName.setText((String)spBCList.getSelectedItem());
+//                currentBCName.setText((String)spBCList.getSelectedItem());
 
                 bcInfo=bcInfoList.get(position);
                 bzPlanList=bzListMap.get(bcInfo);

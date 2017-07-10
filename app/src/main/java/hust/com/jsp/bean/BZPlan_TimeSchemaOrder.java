@@ -51,12 +51,15 @@ public class BZPlan_TimeSchemaOrder {
     private int getZWNodeList(){
         for(Map.Entry<String,List<JZJ>> entry : zwFJListMap.entrySet()){
             List<JZJ> jzjList=entry.getValue();
+            String zwName=entry.getKey();
+            Station station=new Station();
+            station.setDisplayName(zwName);
             JZJ[] jzjs=new JZJ[jzjList.size()];
             for(int i=0;i<jzjList.size();i++){
                 jzjs[i]=jzjList.get(i);
             }
             List<ZWNode> listZWNode=new ArrayList<>();//保存所有的全排列
-            arrange(jzjs,0,listZWNode);
+            arrange(jzjs,0,listZWNode,station);
             zwNodeListMap.put(entry.getKey(),listZWNode);
         }
         int num=1;
@@ -74,13 +77,13 @@ public class BZPlan_TimeSchemaOrder {
             jzjArray[j] = tmp;
         }
     }
-    private void arrange(JZJ[] jzjArray, int st,List<ZWNode> listZWNode) {  //递归实现jzjArray[st]到jzjArray[len-1]的全排列
+    private void arrange(JZJ[] jzjArray, int st,List<ZWNode> listZWNode,Station station) {  //递归实现jzjArray[st]到jzjArray[len-1]的全排列
         if(st==jzjArray.length-1)  {
-            ZWNode head=new ZWNode(jzjArray[0]);
+            ZWNode head=new ZWNode(jzjArray[0],station);
             ZWNode h=head;
             for(int j=1; j<jzjArray.length; j++)
             {
-                ZWNode node=new ZWNode(jzjArray[j]);
+                ZWNode node=new ZWNode(jzjArray[j],station);
                 h.next=node;
                 h=h.next;
             }
@@ -88,15 +91,124 @@ public class BZPlan_TimeSchemaOrder {
         } else{           //否则，依次递归调用。
             for(int i=st; i<jzjArray.length; i++) {
                 swap(jzjArray,st,i);
-                arrange(jzjArray,st+1,listZWNode);
+                arrange(jzjArray,st+1,listZWNode,station);
                 swap(jzjArray,st,i);//复位
             }
         }
     }
 
-    private void initSchemaItem(){
+    private Map<Integer,List<ZWNode>> getSchemaOrderCombine(){
+        Map<Integer,List<ZWNode>> schemaCombineMap=new HashMap<>();
+
+        int count=0;
+        for(Map.Entry<String,List<ZWNode>> entry : zwNodeListMap.entrySet()) {
+            String zwName = entry.getKey();
+            List<ZWNode> zwNodeList = entry.getValue();
+            List<JZJ> jzjList = zwFJListMap.get(zwName);
+            if (jzjList.size() > 1) {
+                schemaCombineMap.put(count,zwNodeList);
+                count++;
+            }
+        }
+        List<List<ZWNode>> arr=new ArrayList<>();
+        for(int j=0;j<count;j++){
+            arr.add(schemaCombineMap.get(j));
+        }
+        List<List<ZWNode>> arr1=new ArrayList<>();
+        List<List<ZWNode>> arr2=new ArrayList<>();
+        int len=1;
+        for(int i=0;i<arr.size();i++){
+            len=len*arr.get(i).size();
+            arr2=new ArrayList<>();
+            for(int j=0;j<len;j++){
+                List<ZWNode> list=new ArrayList<>();
+                ZWNode head=arr.get(i).get(j%arr.get(i).size());
+                ZWNode newH=cloneNodeList(head);
+                list.add(newH);
+                while(newH.next!=null){
+                    newH=newH.next;
+                }
+                JZJ jzj=new JZJ(0).setDisplayName("flag");
+                ZWNode flag1=new ZWNode(jzj);
+                newH.next=flag1;
+                if(i==0)
+                    arr2.add(list);
+                else {
+                    List<ZWNode> list2=new ArrayList<>();
+                    ZWNode h=arr1.get(j / arr.get(i).size()).get(0);
+                    ZWNode cloneH=cloneNodeList(h);
+                    list2.add(cloneH);
+                    arr2.add(list2);
+                    while(cloneH.next!=null){
+                        cloneH=cloneH.next;
+                    }
+                    cloneH.next=list.get(0);
+
+                }
+            }
+            arr1=arr2;
+        }
+        Map<Integer,List<ZWNode>> schemaMap=new HashMap<>();
+        for(int i=0;i<arr2.size();++i){
+            List<ZWNode> list=new ArrayList<>();
+            ZWNode oldHead,pNode,qNode;
+            oldHead=arr2.get(i).get(0);
+            pNode=oldHead;
+            qNode=oldHead;
+            String flag;
+            while(qNode.next!=null){
+                pNode=qNode;
+                qNode=qNode.next;
+                flag=qNode.jzj.getDisplayName();
+                if("flag".equals(flag)){
+                    pNode.next=null;
+                    list.add(oldHead);
+                    qNode=qNode.next;
+                    pNode=qNode;
+                    oldHead=qNode;
+                }
+                if(qNode==null) break;
+            }
+
+            schemaMap.put(i,list);
+        }
+
+        return schemaMap;
+    }
+
+    private ZWNode cloneNodeList(ZWNode head){
+        ZWNode pNode=head;
+        ZWNode cloneNode=null,cloneHead=null;
+        if(pNode!=null){
+            cloneHead=new ZWNode(new JZJ(1));
+            cloneHead.jzj=pNode.jzj;
+            cloneHead.actionStartTime=pNode.actionStartTime;
+            cloneHead.actionEndTime=pNode.actionEndTime;
+            cloneHead.spendTime=pNode.spendTime;
+            cloneHead.station=pNode.station;
+            cloneHead.next=null;
+            cloneNode=cloneHead;
+            pNode=pNode.next;
+        }
+        while (pNode!=null){
+            ZWNode temp=new ZWNode(new JZJ(1));
+            temp.jzj=pNode.jzj;
+            temp.actionStartTime=pNode.actionStartTime;
+            temp.actionEndTime=pNode.actionEndTime;
+            temp.spendTime=pNode.spendTime;
+            temp.station=pNode.station;
+            temp.next=null;
+            cloneNode.next=temp;
+            cloneNode=cloneNode.next;
+            pNode=pNode.next;
+        }
+        return cloneHead;
+    }
+
+    public void initSchemaItem(){
         getZWListPlan();
         int num=getZWNodeList();
+        getBZPlanNoConflictNodeList();
         for(int i=0;i<num;i++){
             BZPlanSchemaItem schemaItem=new BZPlanSchemaItem(i);
             for(Map.Entry<JZJ,ZWNode> entry : jzjZWNodeListNoConflictMap.entrySet()) {
@@ -105,27 +217,72 @@ public class BZPlan_TimeSchemaOrder {
             schemaList.add(schemaItem);
         }
 
-        for(Map.Entry<String,List<ZWNode>> entry : zwNodeListMap.entrySet()){
-            String zwName=entry.getKey();
-            List<ZWNode> zwNodeList=entry.getValue();
-            List<JZJ> jzjList=zwFJListMap.get(zwName);
-            if(jzjList.size()>1){
-                for(ZWNode head:zwNodeList){
-                    //TODO
-                    //怎么样把个方案加上相应节点
-                    int len=zwNodeList.size();
-
-                    for(int i=0;i<schemaList.size();i++){
-                        BZPlanSchemaItem schemaItem=schemaList.get(i);
-                        Map<JZJ,ZWNode> jzjZWNodeMap=schemaItem.jzjZWNodeMap;
-                        ZWNode oldHead=jzjZWNodeMap.get(jzjList.get(k));
-                    }
-
-                }
-
+        Map<Integer,List<ZWNode>> schemaMap=getSchemaOrderCombine();
+        for(Map.Entry<Integer,List<ZWNode>> entry:schemaMap.entrySet()){
+            int id=entry.getKey();
+            List<ZWNode> list=entry.getValue();
+            BZPlanSchemaItem schemaItem=schemaList.get(id);
+            Map<JZJ,ZWNode> jzjZWNodeMap=schemaItem.jzjZWNodeMap;
+            for(ZWNode insertHead:list) {//全排列链表
+                JZJ insertJzj = insertHead.jzj;//排列链表当前节点指向的JZJ
+                String zwName=insertHead.station.getDisplayName();
+                List<JZJ> jzjList=zwFJListMap.get(zwName);
+                getSchemaItemOrder(jzjZWNodeMap,zwName,jzjList,insertHead,insertJzj);
             }
         }
 
+        //TEST CODE
+        for(int i=0;i<schemaList.size();i++){
+            Log.v("schema"," id="+i);
+            BZPlanSchemaItem schemaItem=schemaList.get(i);
+            Map<JZJ,ZWNode> jzjZWNodeMap=schemaItem.jzjZWNodeMap;
+            for(Map.Entry<JZJ,ZWNode> entry:jzjZWNodeMap.entrySet()){
+                ZWNode p=entry.getValue();
+//                Log.v(entry.getKey()+" ",p.station.getDisplayName()+"->");
+                String str=entry.getKey().getDisplayName()+" "+p.station.getDisplayName()+"->";
+                while (p.next!=null){
+                    p=p.next;
+                    str+=p.station.getDisplayName()+"->";
+                }
+                Log.v("",str);
+            }
+        }
+    }
+
+    //单方案某处插入节点
+    private void getSchemaItemOrder(Map<JZJ,ZWNode> jzjZWNodeMap,String zwName,List<JZJ> jzjList,ZWNode insertHead,JZJ insertJzj){
+
+            for(int j=0;j<jzjList.size();j++) {//对占用该zw的所有JZJ
+                ZWNode oldHead = jzjZWNodeMap.get(jzjList.get(j));
+                ZWNode pre = oldHead;
+                String zwNameSchema = "";//指向zw为zwName的节点
+                if (oldHead != null) {
+                    zwNameSchema = oldHead.station.getDisplayName();
+                }
+                while (!zwName.equals(zwNameSchema)) {
+                    if (oldHead.next != null) {
+                        pre = oldHead;
+                        oldHead = oldHead.next;
+                        zwNameSchema = oldHead.station.getDisplayName();
+                    }
+                }
+                ZWNode cloneNewHead=cloneNodeList(insertHead);
+                if( !insertJzj.getDisplayName().equals(pre.jzj.getDisplayName())){//需要等待,即要插入节点
+                    if(pre.equals(oldHead)){//头结点插入
+                        jzjZWNodeMap.put(pre.jzj,cloneNewHead);
+                        while (cloneNewHead.next!=null &&cloneNewHead.next.jzj.equals(pre.jzj)){
+                            cloneNewHead=cloneNewHead.next;
+                        }
+                        cloneNewHead.next=pre;
+                    }else {//中间节点插入
+                        pre.next=cloneNewHead;
+                        while (cloneNewHead.next!=null && !cloneNewHead.next.jzj.equals(pre.jzj)){
+                            cloneNewHead=cloneNewHead.next;
+                        }
+                        cloneNewHead.next=oldHead;
+                    }
+                }
+            }
     }
 
     private void getBZPlanNoConflictNodeList(){
@@ -165,7 +322,7 @@ public class BZPlan_TimeSchemaOrder {
             this.totalSpendTime=0;
             this.jzjZWNodeMap =new HashMap<>();
         }
-
+        //TODO 这里插入的节点不为同一个，因此需修改
         //计算该方案下的关键路径时间
         float getSchemaTime(){
 
@@ -186,7 +343,7 @@ public class BZPlan_TimeSchemaOrder {
                             head.actionStartTime=tickTock;
                             clock=true;
                         }
-                    }else {
+                    }else {//需等待的点
                         if(head.next!=null && head.actionEndTime!=0) {
                             if(head.next.jzj.equals(jzj))
                                 head.next.actionStartTime=head.actionEndTime;
