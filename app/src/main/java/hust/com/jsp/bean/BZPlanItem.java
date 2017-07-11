@@ -10,6 +10,8 @@ public class BZPlanItem {
 
     private Station station; //ZW
     private float spendTime;
+    private float startTime;
+    private float endTime;
 
     private boolean addGas;//油
     private  boolean addAir;//气
@@ -72,6 +74,23 @@ public class BZPlanItem {
     public void setSpendTime(float spendTime) {
         this.spendTime = spendTime;
     }
+
+    public float getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(float startTime) {
+        this.startTime = startTime;
+    }
+
+    public float getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(float endTime) {
+        this.endTime = endTime;
+    }
+
 
     public boolean isAddGas() {
         return addGas;

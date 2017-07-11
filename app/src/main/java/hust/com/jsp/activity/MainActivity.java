@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
         mapView.addLayer(timeProgressLayer);
         timeProgressLayer.isVisible=true;
 
+
         mapView.refresh();
 
         mapView.setOnClickListener(new View.OnClickListener(){
@@ -269,6 +270,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 BZPlan_TimeSchemaOrder timeSchemaOrder=new BZPlan_TimeSchemaOrder(bzPlanList);
                 timeSchemaOrder.initSchemaItem();
+                List<BZPlan> bzPlanTimeList=timeSchemaOrder.getSchemaTimeProgress();
+                timeProgressLayer.setBzPlanList(bzPlanTimeList);
+                timeProgressLayer.setShowTimeProgress(true);
+
+                mapView.refresh();
             }
         });
     }
@@ -358,6 +364,7 @@ public class MainActivity extends AppCompatActivity {
                 bcInfo=bcInfoList.get(position);
                 bzPlanList=bzListMap.get(bcInfo);
                 timeProgressLayer.setBzPlanList(bzPlanList);
+                timeProgressLayer.setShowTimeProgress(false);
                 bcItemBZPlanMap=bcList_ItemMap.get(bcInfo);
                 zw_bcItemAdapter=new ZW_BCItemAdapter(MainActivity.this,bcInfo);
                 zwBCItemlistView.setAdapter(zw_bcItemAdapter);
@@ -384,6 +391,8 @@ public class MainActivity extends AppCompatActivity {
                 bzPlan.setJzj(jzj);
                 zwListLayer.setBzPlan(bzPlan);
 
+                timeProgressLayer.setBzPlanList(bzPlanList);
+                timeProgressLayer.setShowTimeProgress(false);
                 mapView.refresh();
 
                 if(bzPlanPopupView!=null) bzPlanPopupView.dismiss();

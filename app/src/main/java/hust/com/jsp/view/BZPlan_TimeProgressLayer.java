@@ -32,6 +32,7 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
     private float width;//外围方框宽
     private float height;
     private PointF location;
+    private boolean isShowTimeProgress;
     private List<BZPlan> bzPlanList;
     private float widthUnit;//方框单位时间下的长度
     private float heightLabel;//方框的高
@@ -40,6 +41,7 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
     public BZPlan_TimeProgressLayer(MapView mapView,List<BZPlan> bzPlanList){
         super(mapView);
         this.mapView=mapView;
+        this.isShowTimeProgress=false;
         this.bzPlanList=bzPlanList;
         this.width=1600;
         this.height=260;
@@ -54,6 +56,12 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
     public void setBzPlanList(List<BZPlan> bzPlanList) {
         this.bzPlanList = bzPlanList;
     }
+
+
+    public void setShowTimeProgress(boolean showTimeProgress) {
+        isShowTimeProgress = showTimeProgress;
+    }
+
 
     public void setLocation(PointF loc)
     {
@@ -104,17 +112,30 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
             float textLeng = paint.measureText(jzj.getDisplayName());
             canvas.drawText(jzj.getDisplayName(),(left-textLeng)-6,(top+bottom)/2+5,paint);//画JZJ名称
 
-            for(int j=0;j<bzPlan.getBzPlanItemList().size();j++){
-                BZPlanItem bzItem=bzPlan.getBzPlanItemList().get(j);
+            if(!isShowTimeProgress) {
+                for (int j = 0; j < bzPlan.getBzPlanItemList().size(); j++) {
+                    BZPlanItem bzItem = bzPlan.getBzPlanItemList().get(j);
 
-                right=left+widthUnit*bzItem.getSpendTime();
-                canvas.drawRect(left,top,right,bottom,paint);//画每个ZW上任务花费的时间
-                canvas.drawText(bzItem.getStation().getDisplayName(),(left+right)/2-10,(top+bottom)/2+5,paint);//画ZW名称
-                left=right;
+                    right = left + widthUnit * bzItem.getSpendTime();
+                    canvas.drawRect(left, top, right, bottom, paint);//画每个ZW上任务花费的时间
+                    canvas.drawText(bzItem.getStation().getDisplayName(), (left + right) / 2 - 10, (top + bottom) / 2 + 5, paint);//画ZW名称
+                    left = right;
+                }
+            }else {
+                for (int j = 0; j < bzPlan.getBzPlanItemList().size(); j++) {
+                    BZPlanItem bzItem = bzPlan.getBzPlanItemList().get(j);
+
+                    left = 53 + widthUnit * bzItem.getStartTime();
+                    right = left + widthUnit * bzItem.getSpendTime();
+                    canvas.drawRect(left, top, right, bottom, paint);//画每个ZW上任务花费的时间
+                    canvas.drawText(bzItem.getStation().getDisplayName(), (left + right) / 2 - 10, (top + bottom) / 2 + 5, paint);//画ZW名称
+//                left=right;
+                }
             }
         }
 
     }
+
 
 
 }
