@@ -27,6 +27,22 @@ public class LocationDAO {
         return  list;
 
     }
+    public Location getInfoByPonit(float x,float y){
+        Cursor cursor=db.rawQuery("select * from location where x=? and y=?",new String[]{String.valueOf(x),String.valueOf(y)});
+        Location info=toInfo(cursor);
+        return  info;
+    }
+    private Location toInfo(Cursor cursor){
+        Location info=new Location();
+        while(cursor.moveToNext()) {
+            info.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            info.setName(cursor.getString(cursor.getColumnIndex("name")));
+            info.setX(cursor.getFloat(cursor.getColumnIndex("x")));
+            info.setY(cursor.getFloat(cursor.getColumnIndex("y")));
+            info.setAngle(cursor.getFloat(cursor.getColumnIndex("angle")));
+        }
+        return info;
+    }
     private List<Location> toList(Cursor cursor){
         List<Location> list=new ArrayList<>();
         while(cursor.moveToNext()){
