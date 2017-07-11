@@ -77,8 +77,8 @@ public class MainActivity extends AppCompatActivity {
     private ZW_BCItemAdapter zw_bcItemAdapter;
     private Spinner spBCList;//点击选择当前BC
     private List<String> bcList_SpinnerSource;//spBCList关联的数据源
-    private List<BCInfo> bcInfoList;//某BL下所有的BC
-    private Map<Integer,BZPlan> bcItemBZPlanMap ;//某BL下BC存储该波次下的所有bzplan
+    private List<BCInfo> bcInfoList;//某BC下所有的BCInfo
+    private Map<Integer,BZPlan> bcItemBZPlanMap ;//某Bc下存储该波次下的所有bzplan
     private Map<BCInfo,Map<Integer,BZPlan>> bcList_ItemMap=new TreeMap<>();//存储所有的BC
     private List<BZPlan> bzPlanList;//某BC下所有所有的bzplan，用于绘画时间甘特图
     private Map<BCInfo,List<BZPlan>> bzListMap=new TreeMap<>();//存储所有BC的bzPlanList
@@ -96,7 +96,94 @@ public class MainActivity extends AppCompatActivity {
     private LocationDAO locationDAO;
     private Map<Integer,BLJZJLayer> layerMap;
 
-    public void setRefreshData(){}
+    public static MainActivity getInstance() {
+        return instance;
+    }
+
+    private static MainActivity instance;
+
+    public MainActivity(){
+        instance=this;
+    }
+
+    public void refreshData(){
+        this.jzjItem = new JZJItem(JZJItem.testID1);
+
+        jzjDAO=new JZJDAO(this);
+        blDAO=new BLDAO(this);
+        bcDAO=new BCDAO(this);
+        locationDAO=new LocationDAO(this);
+        bcjzjList=new ArrayList<JZJ>();
+        bcInfoList=new ArrayList<BCInfo>();
+        bcList_SpinnerSource =new ArrayList<>();
+        locationList=locationDAO.getAllLocation();
+        bcItemBZPlanMap = new TreeMap<>();
+        bzPlanList=new ArrayList<>();
+        layerMap=new TreeMap<>();
+        jzjList=getAllJZJ();
+        bcList_ItemMap=new TreeMap<>();//存储所有的BC
+        bzListMap=new TreeMap<>();//存储所有BC的bzPlanList
+        blMap=new TreeMap<>();
+
+        bcInfoList=bcDAO.getAll();//获取所有BC
+        for(BCInfo info:bcInfoList){
+            bcInfo=info;
+            List<BLInfo> blInfoList=blDAO.getById(info.getId());
+            blMap.put(info.getId(),blInfoList);//根据bcid获取相关BL
+            bcList_SpinnerSource.add(info.getName());
+
+            bcjzjList.clear();
+            //根据BL获取JZJ
+            for(BLInfo blInfo:blInfoList){
+
+                JZJ jzj=jzjDAO.getJZJ(blInfo.getJzjid());
+                BCInfoItem bcInfoItem=new BCInfoItem(jzj);
+                switch (blInfo.getType()){
+                    case 1:
+                        jzj.setJzjBeiyong("非备用");
+                        bcjzjList.add(jzj);
+                        break;
+                    case 2:
+                        jzj.setJzjBeiyong("备用");
+                        bcjzjList.add(jzj);
+                        break;
+                }
+                bcInfoItem.setType(jzj.getJzjBeiyong());
+                bcInfo.addBCInfoItem(bcInfoItem);
+                if(jzj.getId()!=0){
+                    bcjzjList.add(jzj);
+                }
+            }
+        }
+        for(BCInfo bcInfo:bcInfoList){
+            bcItemBZPlanMap=new TreeMap<>();
+            bzPlanList=new ArrayList<>();
+            for(int idx=0;idx<bcInfo.Count();idx++) {//从数据库表中初始化数据，即读取波次1的所有bcitemplan
+                BZPlan bzPlan = new BZPlan();
+                List<BZPlanItem> bzPlanItemList = new ArrayList<>();
+                bzPlan.setBzPlanItemList(bzPlanItemList);
+                BCInfoItem bcItem = bcInfo.get(idx);
+                bcItem.setID(idx);
+                JZJ jzj = bcItem.getJzj();
+                bzPlan.setJzj(jzj);
+
+                bcItemBZPlanMap.put(bcItem.getID(), bzPlan);
+                bzPlanList.add(bzPlan);
+            }
+
+            bcList_ItemMap.put(bcInfo,bcItemBZPlanMap);
+            bzListMap.put(bcInfo,bzPlanList);
+        }
+
+        for(final JZJ jzj:jzjList){
+            BLJZJLayer layer=new BLJZJLayer(mapView,getResources(),jzj);
+
+            layerMap.put(jzj.getId(),layer);
+        }
+        ArrayAdapter spAdapter=new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item, bcList_SpinnerSource);
+        spBCList.setAdapter(spAdapter);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
         bzPlanList=new ArrayList<>();
         layerMap=new TreeMap<>();
         jzjList=getAllJZJ();
+        bcList_ItemMap=new TreeMap<>();//存储所有的BC
 
         initView();
 
