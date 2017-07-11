@@ -97,9 +97,11 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
         float bottom;
         canvas.drawLine(left,top0,left,top0+this.height,paint);//纵坐标
         canvas.drawLine(left,top0,left+this.width,top0,paint);//横坐标
+        paint.setTextSize(14);
+        paint.setStrokeWidth(1);
         for(int i=1;i<=50;i++){
             left=50+i*widthUnit*10;
-            canvas.drawLine(left,top0,left,top0+3,paint);//横坐标刻度
+            canvas.drawLine(left,top0,left,top0+4,paint);//横坐标刻度
             canvas.drawText(i*10+"",left-10,top0-3,paint);
         }
         top0+=8;

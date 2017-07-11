@@ -97,6 +97,7 @@ public class BZPlan_TimeSchemaOrder {
         }
     }
 
+    //获得所有的组合方案排列key:方案编号，value：方案链表插入的链表头
     private Map<Integer,List<ZWNode>> getSchemaOrderCombine(){
         Map<Integer,List<ZWNode>> schemaCombineMap=new HashMap<>();
 
@@ -175,7 +176,7 @@ public class BZPlan_TimeSchemaOrder {
 
         return schemaMap;
     }
-
+    //复制链表
     private ZWNode cloneNodeList(ZWNode head){
         ZWNode pNode=head;
         ZWNode cloneNode=null,cloneHead=null;
@@ -205,6 +206,70 @@ public class BZPlan_TimeSchemaOrder {
         return cloneHead;
     }
 
+    //没有资源冲突的理想链表，通过复制该链表并插入相应的等待节点得到一个方案
+    private void getBZPlanNoConflictNodeList(){
+        for(BZPlan bzplan:bzPlanList){
+            JZJ jzj=bzplan.getJzj();
+            List<BZPlanItem> bzPlanItems=bzplan.getBzPlanItemList();
+            if(bzplan.getBzPlanItemList().size()>0) {//有数据的话
+                ZWNode head = new ZWNode(jzj);
+                ZWNode h = head;
+                for (int i = 0; i < bzPlanItems.size(); i++) {
+                    BZPlanItem bzItem = bzPlanItems.get(i);
+                    Station station = bzItem.getStation();
+                    String zwName = station.getDisplayName();
+                    if (i == 0) {
+                        head.station = station;
+                        head.spendTime = bzItem.getSpendTime();
+                    } else {
+                        ZWNode node = new ZWNode(jzj, station);
+                        node.spendTime = bzItem.getSpendTime();
+                        h.next = node;
+                        h = h.next;
+                    }
+                }
+                jzjZWNodeListNoConflictMap.put(jzj, head);
+            }
+        }
+    }
+
+    //单方案某处插入节点
+    private void getSchemaItemOrder(Map<JZJ,ZWNode> jzjZWNodeMap,String zwName,List<JZJ> jzjList,ZWNode insertHead,JZJ insertJzj){
+
+        for(int j=0;j<jzjList.size();j++) {//对占用该zw的所有JZJ
+            ZWNode oldHead = jzjZWNodeMap.get(jzjList.get(j));
+            ZWNode pre = oldHead;
+            String zwNameSchema = "";//指向zw为zwName的节点
+            if (oldHead != null) {
+                zwNameSchema = oldHead.station.getDisplayName();
+            }
+            while (!zwName.equals(zwNameSchema)) {
+                if (oldHead.next != null) {
+                    pre = oldHead;
+                    oldHead = oldHead.next;
+                    zwNameSchema = oldHead.station.getDisplayName();
+                }
+            }
+            ZWNode cloneNewHead=cloneNodeList(insertHead);
+            if( !insertJzj.getDisplayName().equals(pre.jzj.getDisplayName())){//需要等待,即要插入节点
+                if(pre.equals(oldHead)){//头结点插入
+                    jzjZWNodeMap.put(pre.jzj,cloneNewHead);
+                    while (cloneNewHead.next!=null && !cloneNewHead.next.jzj.getDisplayName().equals(pre.jzj.getDisplayName())){
+                        cloneNewHead=cloneNewHead.next;
+                    }
+                    cloneNewHead.next=pre;
+                }else {//中间节点插入
+                    pre.next=cloneNewHead;
+                    while (cloneNewHead.next!=null && !cloneNewHead.next.jzj.getDisplayName().equals(pre.jzj.getDisplayName())){
+                        cloneNewHead=cloneNewHead.next;
+                    }
+                    cloneNewHead.next=oldHead;
+                }
+            }
+        }
+    }
+
+    //得到所有的组合方案
     public void initSchemaItem(){
         getZWListPlan();
         int num=getZWNodeList();
@@ -238,7 +303,6 @@ public class BZPlan_TimeSchemaOrder {
             Map<JZJ,ZWNode> jzjZWNodeMap=schemaItem.jzjZWNodeMap;
             for(Map.Entry<JZJ,ZWNode> entry:jzjZWNodeMap.entrySet()){
                 ZWNode p=entry.getValue();
-//                Log.v(entry.getKey()+" ",p.station.getDisplayName()+"->");
                 String str=entry.getKey().getDisplayName()+"： "+"F"+p.jzj.getDisplayName().split("-")[1]+p.station.getDisplayName()+"->";
                 while (p.next!=null){
                     p=p.next;
@@ -249,7 +313,7 @@ public class BZPlan_TimeSchemaOrder {
         }
     }
 
-
+    //得到最优的方案，并返回数据
     public List<BZPlan> getSchemaTimeProgress(){
         int id=0;
         float time=Integer.MAX_VALUE;
@@ -261,25 +325,27 @@ public class BZPlan_TimeSchemaOrder {
                 id=i;
             }
         }
-        Log.v("schema","id="+id);
+        Log.v("schema","id="+id);//TSET CODE
         BZPlanSchemaItem schemaItem=schemaList.get(id);
         Map<JZJ,ZWNode> jzjZWNodeMap=schemaItem.jzjZWNodeMap;
-        for(Map.Entry<JZJ,ZWNode> entry:jzjZWNodeMap.entrySet()){//TSET CODE
+
+        //TSET CODE-BEGIN
+        for(Map.Entry<JZJ,ZWNode> entry:jzjZWNodeMap.entrySet()){
             JZJ jzj=entry.getKey();
             ZWNode node=entry.getValue();
             String str="";
-            str+=node.station.getDisplayName()+":"+"st="+node.actionStartTime+" et="+node.actionEndTime+",";//TEST CODE
+            str+=node.station.getDisplayName()+":"+"st="+node.actionStartTime+" et="+node.actionEndTime+",";
             while (node.next!=null){
                 node=node.next;
                 str+=node.station.getDisplayName()+":"+"st="+node.actionStartTime+" et="+node.actionEndTime+",";//TEST CODE
             }
             Log.v(jzj.getDisplayName(),str);
-        }
+        }//TEST CODE-END
+
        for(Map.Entry<JZJ,ZWNode> entry:jzjZWNodeMap.entrySet()){
            JZJ jzj=entry.getKey();
            ZWNode node=entry.getValue();
            BZPlan bzPlan=new BZPlan();
-           String str="";//TSET CODE
            for(int i=0;i<bzPlanList.size();i++){
                if(bzPlanList.get(i).getJzj().getDisplayName().equals(jzj.getDisplayName()))
                    bzPlan=bzPlanList.get(i);
@@ -291,74 +357,12 @@ public class BZPlan_TimeSchemaOrder {
                if(bzPlan.getJzj().getDisplayName().equals(node.jzj.getDisplayName())){
                    bzItem.setStartTime(node.actionStartTime);
                    bzItem.setEndTime(node.actionEndTime);
-                   str+="st="+node.actionStartTime+" et="+node.actionEndTime+",";//TEST CODE
                    node=node.next;
                }
            }
-           Log.v(jzj.getDisplayName(),str);
        }
 
         return bzPlanList;
-    }
-
-    //单方案某处插入节点
-    private void getSchemaItemOrder(Map<JZJ,ZWNode> jzjZWNodeMap,String zwName,List<JZJ> jzjList,ZWNode insertHead,JZJ insertJzj){
-
-            for(int j=0;j<jzjList.size();j++) {//对占用该zw的所有JZJ
-                ZWNode oldHead = jzjZWNodeMap.get(jzjList.get(j));
-                ZWNode pre = oldHead;
-                String zwNameSchema = "";//指向zw为zwName的节点
-                if (oldHead != null) {
-                    zwNameSchema = oldHead.station.getDisplayName();
-                }
-                while (!zwName.equals(zwNameSchema)) {
-                    if (oldHead.next != null) {
-                        pre = oldHead;
-                        oldHead = oldHead.next;
-                        zwNameSchema = oldHead.station.getDisplayName();
-                    }
-                }
-                ZWNode cloneNewHead=cloneNodeList(insertHead);
-                if( !insertJzj.getDisplayName().equals(pre.jzj.getDisplayName())){//需要等待,即要插入节点
-                    if(pre.equals(oldHead)){//头结点插入
-                        jzjZWNodeMap.put(pre.jzj,cloneNewHead);
-                        while (cloneNewHead.next!=null && !cloneNewHead.next.jzj.getDisplayName().equals(pre.jzj.getDisplayName())){
-                            cloneNewHead=cloneNewHead.next;
-                        }
-                        cloneNewHead.next=pre;
-                    }else {//中间节点插入
-                        pre.next=cloneNewHead;
-                        while (cloneNewHead.next!=null && !cloneNewHead.next.jzj.getDisplayName().equals(pre.jzj.getDisplayName())){
-                            cloneNewHead=cloneNewHead.next;
-                        }
-                        cloneNewHead.next=oldHead;
-                    }
-                }
-            }
-    }
-
-    private void getBZPlanNoConflictNodeList(){
-        for(BZPlan bzplan:bzPlanList){
-            JZJ jzj=bzplan.getJzj();
-            List<BZPlanItem> bzPlanItems=bzplan.getBzPlanItemList();
-            ZWNode head=new ZWNode(jzj);
-            ZWNode h=head;
-            for(int i=0;i<bzPlanItems.size();i++){
-                BZPlanItem bzItem=bzPlanItems.get(i);
-                Station station=bzItem.getStation();
-                String zwName=station.getDisplayName();
-                if(i==0){
-                    head.station=station;
-                    head.spendTime=bzItem.getSpendTime();
-                }else {
-                    ZWNode node=new ZWNode(jzj,station);
-                    node.spendTime=bzItem.getSpendTime();
-                    h.next=node;
-                    h=h.next;
-                }
-            }
-            jzjZWNodeListNoConflictMap.put(jzj,head);
-        }
     }
 
 
@@ -375,7 +379,6 @@ public class BZPlan_TimeSchemaOrder {
             this.jzjZWNodeMap = new HashMap<>();
         }
 
-//        /TODO 这里插入的节点不为同一个，因此需修改
         //计算该方案下的关键路径时间
         float getSchemaTime(){
 
@@ -394,35 +397,41 @@ public class BZPlan_TimeSchemaOrder {
                             head = head.next;
                         if ((tickTock - head.actionStartTime) == head.spendTime) {
                             head.actionEndTime = tickTock;
-//                            if ((tickTock - head.actionStartTime) == head.spendTime) {
-                                String zwName = head.station.getDisplayName();
-                                List<JZJ> jzjList = zwFJListMap.get(zwName);
-                                if (jzjList.size() > 1) {         //通知其他FJ,告诉其已释放ZW资源
-                                    for (int index = 0; index < jzjList.size(); index++) {
-                                        JZJ jzj1 = jzjList.get(index);
-                                        if (!jzj.getDisplayName().equals(jzj1.getDisplayName())) {
-                                            ZWNode node = jzjZWNodeMap.get(jzj1);
-                                            while (node != null && !node.station.getDisplayName().equals(head.station.getDisplayName())) {
-                                                node = node.next;
-                                            }
-                                            while(node.next != null && node.next.station.getDisplayName().equals(head.station.getDisplayName()) && node.actionStartTime!=0 && node.actionEndTime!=0){
-                                                node=node.next;
-                                            }
-                                            if(node.actionEndTime==0) {
-                                                node.actionEndTime = head.actionEndTime;
+
+                            //通知其他FJ,告诉其已释放ZW资源
+                            String zwName = head.station.getDisplayName();
+                            List<JZJ> jzjList = zwFJListMap.get(zwName);
+                            if (jzjList.size() > 1) {
+                                for (int index = 0; index < jzjList.size(); index++) {
+                                    JZJ jzj1 = jzjList.get(index);
+                                    if (!jzj.getDisplayName().equals(jzj1.getDisplayName())) {
+                                        ZWNode node = jzjZWNodeMap.get(jzj1);
+                                        while (node != null && !node.station.getDisplayName().equals(head.station.getDisplayName())) {
+                                            node = node.next;
+                                        }
+                                        while (node.next != null && node.next.station.getDisplayName().equals(head.station.getDisplayName()) && node.actionStartTime != 0 && node.actionEndTime != 0) {
+                                            node = node.next;
+                                        }
+                                        if (node.actionEndTime == 0) {
+                                            node.actionEndTime = head.actionEndTime;
+                                            if (node.next != null)
+                                                node.next.actionStartTime = head.actionEndTime;
+                                            //对于资源冲突的ZW1，如果F1-ZW1的et=50min,而F2-ZW0的et=60，说明不用等待，因为资源已释放
+                                            if(node.actionEndTime<node.actionStartTime){
+                                                node.actionEndTime=node.actionStartTime;
                                                 if (node.next != null)
                                                     node.next.actionStartTime = head.actionEndTime;
                                             }
                                         }
                                     }
                                 }
+                            }
 
-                                if (head.next != null) {
-                                    head = head.next;
-                                    head.actionStartTime = tickTock;
-                                    clock = true;
-                                }
-//                            }
+                            if (head.next != null) {
+                                head = head.next;
+                                head.actionStartTime = tickTock;
+                                clock = true;
+                            }
                         }
                         if (head.actionEndTime == 0)
                             clock = true;
@@ -430,11 +439,7 @@ public class BZPlan_TimeSchemaOrder {
                     if(!head.jzj.getDisplayName().equals(jzj.getDisplayName())){
                         while (head.next != null && head.actionEndTime != 0)
                             head = head.next;
-                        if(head.next!=null && head.actionEndTime!=0) {//等待资源
-                            head.next.actionStartTime=head.actionEndTime;
-                            head=head.next;
-                            clock=true;
-                        }
+
                         if (head.actionEndTime == 0)
                             clock = true;
                     }
@@ -446,128 +451,6 @@ public class BZPlan_TimeSchemaOrder {
             }
             Log.v("schema"+id+" totalSpendTime=",totalSpendTime+"");
             return totalSpendTime;
-        }
-//        //计算该方案下的关键路径时间
-//        float getSchemaTime() {
-//
-//            float tickTock = 0;
-//            boolean clock = true;
-//
-//            while (clock) {
-//                clock = false;
-//                for (Map.Entry<JZJ, ZWNode> entry : jzjZWNodeMap.entrySet()) {
-//                    ZWNode head = entry.getValue();
-//                    JZJ jzj = entry.getKey();
-//                    if (head.jzj.getDisplayName().equals(jzj.getDisplayName())) {//无资源冲突的节点
-//                        if (head.actionEndTime == 0) {
-//                            if ((tickTock - head.actionStartTime) == head.spendTime) {
-//                                head.actionEndTime = tickTock;
-//                                if (head.next != null) {
-//                                    head = head.next;
-//                                    head.actionStartTime = tickTock;
-//                                    clock = true;
-//                                }
-//                            }
-//                        } else {
-//                            while (head.next != null && head.actionEndTime != 0)
-//                                head = head.next;
-//                            if ((tickTock - head.actionStartTime) == head.spendTime) {
-//                                head.actionEndTime = tickTock;
-//                                if (head.next != null) {
-//                                    head = head.next;
-//                                    head.actionStartTime = tickTock;
-//                                    clock = true;
-//                                }
-//                            }
-//                        }
-//                        if (head.actionEndTime == 0)
-//                            clock = true;
-//                    }
-////                    }else if(head.jzj.getDisplayName().equals(jzj.getDisplayName()) && head.actionEndTime!=0){
-////                        while (head.next!=null && head.actionEndTime!=0)
-////                            head=head.next;
-////                        if(head.actionEndTime!=0)
-////                            clock=true;
-////                    }
-//                    else {//需等待的点
-////                        if (head.actionEndTime == 0) {//先查询资源是否已空出
-////                            ZWNode node = jzjZWNodeMap.get(jzj);
-////                            while (node != null && !node.station.getDisplayName().equals(head.station.getDisplayName())) {
-////                                node = node.next;
-////                            }
-////                            if (node.actionEndTime != 0) {//资源空出
-////                                head.actionEndTime = node.actionEndTime;
-////                                if (head.next != null) {
-////                                    head.next.actionStartTime = node.actionEndTime;
-////                                    head = head.next;
-////                                }
-////                            }
-////                            clock = true;
-////                        } else {
-//////                            if(head.next.jzj.getDisplayName().equals(jzj.getDisplayName()))
-////                            head.next.actionStartTime = head.actionEndTime;
-////                            head = head.next;
-////                            while (head != null && head.actionEndTime != 0)
-////                                head = head.next;
-////                            if (head.jzj.getDisplayName().equals(jzj.getDisplayName()))
-////                                if ((tickTock - head.actionStartTime) == head.spendTime) {
-////                                    head.actionEndTime = tickTock;
-////                                    if (head.next != null) {
-////                                        head = head.next;
-////                                        head.actionStartTime = tickTock;
-////                                        clock = true;
-////                                    }
-////                                } else {
-////
-////                                }
-////                            clock = true;
-////                        }
-////                        checkNodeTime(head, jzj,tickTock);
-//                        if (head.actionEndTime == 0) clock = true;
-//                    }
-//                }
-//
-//                if (!clock) totalSpendTime = tickTock;
-//                tickTock++;
-//            }
-//            Log.v("schema" + id + " totalSpendTime=", totalSpendTime + "");
-//            return totalSpendTime;
-//        }
-
-        private void checkNodeTime(ZWNode head, JZJ jzj, float tickTock) {
-            if (head.actionEndTime == 0) {//先查询资源是否已空出
-                ZWNode node = jzjZWNodeMap.get(jzj);
-                while (node != null && !node.station.getDisplayName().equals(head.station.getDisplayName())) {
-                    node = node.next;
-                }
-                if (node.actionEndTime != 0) {//资源空出
-                    head.actionEndTime = node.actionEndTime;
-                    if (head.next != null) {
-                        head.next.actionStartTime = node.actionEndTime;
-                        head = head.next;
-                    }
-                }
-//                clock = true;
-            } else {
-//                            if(head.next.jzj.getDisplayName().equals(jzj.getDisplayName()))
-                head.next.actionStartTime = head.actionEndTime;
-                head = head.next;
-                while (head != null && head.actionEndTime != 0)
-                    head = head.next;
-                if (head.jzj.getDisplayName().equals(jzj.getDisplayName()))
-                    if ((tickTock - head.actionStartTime) == head.spendTime) {
-                        head.actionEndTime = tickTock;
-                        if (head.next != null) {
-                            head = head.next;
-                            head.actionStartTime = tickTock;
-//                            clock = true;
-                        }
-                    } else {
-                        checkNodeTime(head, jzj,tickTock);
-                    }
-//                clock = true;
-            }
-
         }
     }
 

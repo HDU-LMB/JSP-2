@@ -36,7 +36,7 @@ public class ScheduleActivity extends AppCompatActivity {
         TabHost.TabSpec tabSpec3 = tabHost_schedule.newTabSpec("FXJH").setIndicator("FXJH").setContent(intent3);
         tabHost_schedule.addTab(tabSpec3);
 
-        Intent intent1 = new Intent();
+        final Intent intent1 = new Intent();
         intent1.setClass(getApplicationContext(), BCDetailActivity.class);
         TabHost.TabSpec tabSpec1 = tabHost_schedule.newTabSpec("编辑BC").setIndicator("编辑BC").setContent(intent1);
         tabHost_schedule.addTab(tabSpec1);
@@ -74,6 +74,7 @@ public class ScheduleActivity extends AppCompatActivity {
                         if(fxPlanView != null) fxPlanView.setVisibility(View.INVISIBLE);
                         if(mapView != null) mapView.setVisibility(View.VISIBLE);
                         if(mapView1 != null) mapView1.setVisibility(View.INVISIBLE);
+
                         break;
                 }
             }

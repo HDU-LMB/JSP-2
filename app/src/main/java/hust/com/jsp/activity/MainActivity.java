@@ -96,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
     private LocationDAO locationDAO;
     private Map<Integer,BLJZJLayer> layerMap;
 
+    public void setRefreshData(){}
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
