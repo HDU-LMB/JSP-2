@@ -3,6 +3,7 @@ package hust.com.jsp.activity;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -85,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
     private Button calculateTimeProgress;
     private Button showProgressButton;//点击显示或隐藏时间甘特图
     private BZPlan_TimeProgressLayer timeProgressLayer;//mapView中底部的绘画时间甘特图的图层
+    private Button scrollUpTimeProgressLayer;
+    private Button scrollDownTimeProgressLayer;
+    private SeekBar seekBarTimeProgress;
 
     private Map<Integer,List<BLInfo>> blMap=new TreeMap<>();
     private List<Location> locationList;
@@ -94,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     private BLDAO blDAO;
     private BCDAO bcDAO;
     private LocationDAO locationDAO;
-    private Map<Integer,BLJZJLayer> layerMap;
+    private Map<Integer,BLJZJLayer> layerMap;//key-jzj.ID，value-jzjLayer
 
     public static MainActivity getInstance() {
         return instance;
@@ -252,11 +257,11 @@ public class MainActivity extends AppCompatActivity {
         mapView.addLayer(objectLayer);//添加图层
 
         timeProgressLayer=new BZPlan_TimeProgressLayer(mapView,bzPlanList);
-        timeProgressLayer.setLocation(new PointF(0,630));
+        timeProgressLayer.setLocation(new PointF(0,560));
         mapView.addLayer(timeProgressLayer);
         timeProgressLayer.isVisible=true;
 
-
+        mapView.getMatrix().setTranslate(0,-55);
         mapView.refresh();
 
         mapView.setOnClickListener(new View.OnClickListener(){
@@ -354,6 +359,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        seekBarTimeProgress=(SeekBar) findViewById(R.id.timeSeekBar);
+        seekBarTimeProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.v("SeekBar",""+progress);
+                JZJ jzj1=new JZJ();
+                for(JZJ jzj:jzjList){
+                    if(jzj.getDisplayName().equals("JZJ-2"))
+                        jzj1=jzj;
+                }
+
+                if(progress<20){
+                    layerMap.get(jzj1.getId()).setLocation(new PointF(160, 60));
+                    layerMap.get(jzj1.getId()).setAngle(-200);
+                }else{
+                    layerMap.get(jzj1.getId()).setLocation(new PointF(350, 150));
+                    layerMap.get(jzj1.getId()).setAngle(-270);
+                }
+                mapView.refresh();
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
         calculateTimeProgress=(Button) findViewById(R.id.button_CalculateTimeProgress);
         calculateTimeProgress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -365,6 +396,31 @@ public class MainActivity extends AppCompatActivity {
                 timeProgressLayer.setShowTimeProgress(true);
 
                 mapView.refresh();
+            }
+        });
+
+        scrollUpTimeProgressLayer=(Button) findViewById(R.id.button_ScrollUpTimeProgress);
+        scrollUpTimeProgressLayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PointF loc=timeProgressLayer.getLocation();
+                if((loc.y-50)>140) {
+                    loc.y -= 50;
+                    timeProgressLayer.setLocation(loc);
+                    mapView.refresh();
+                }
+            }
+        });
+        scrollDownTimeProgressLayer=(Button) findViewById(R.id.button_ScrollDownTimeProgress);
+        scrollDownTimeProgressLayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PointF loc=timeProgressLayer.getLocation();
+                if((560-loc.y)>=50) {
+                    loc.y += 50;
+                    timeProgressLayer.setLocation(loc);
+                    mapView.refresh();
+                }
             }
         });
     }
@@ -473,6 +529,12 @@ public class MainActivity extends AppCompatActivity {
         zwBCItemlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (((ListView)parent).getTag() != null){
+                    ((View)((ListView)parent).getTag()).setBackgroundDrawable(null);
+                }
+                ((ListView)parent).setTag(view);
+                view.setBackgroundColor(Color.LTGRAY);
+
                 BCInfoItem bcinfoItem= (BCInfoItem) zwBCItemlistView.getItemAtPosition(position);
 
                 BZPlan bzPlan=bcItemBZPlanMap.get(bcinfoItem.getID());
@@ -503,6 +565,8 @@ public class MainActivity extends AppCompatActivity {
             BLJZJLayer layer=layerMap.get(info.getJzjid());
             Log.v("bc",info.getPoint().toString()+" id  "+info.getJzjid());
             layer.setLocation(info.getPoint());
+            Location location=locationDAO.getInfoByPonit(info.getX(),info.getY());
+            layer.setAngle(location.getAngle());
             mapView.addLayer(layer);
         }
 

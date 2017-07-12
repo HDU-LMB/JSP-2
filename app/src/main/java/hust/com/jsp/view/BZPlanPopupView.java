@@ -2,8 +2,10 @@ package hust.com.jsp.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,7 +24,9 @@ import hust.com.jsp.R;
 import hust.com.jsp.bean.BZPlan;
 import hust.com.jsp.bean.BZPlanItem;
 import hust.com.jsp.bean.JZJ;
+import hust.com.jsp.bean.Location;
 import hust.com.jsp.bean.Station;
+import hust.com.jsp.dao.LocationDAO;
 import hust.com.jsp.presenter.ZW_StationAdapter;
 
 
@@ -57,9 +61,12 @@ public class BZPlanPopupView extends PopupWindow {
     private ZW_StationAdapter zwStationAdapter;
     private ZW_StationAdapter zwStationTotalAdapter;
     private int position=0;
-
+    private Context context;
+    private LocationDAO locationDAO;
+    private List<Location> locationList;
     public BZPlanPopupView(final Activity context, final BZPlan bzPlan, final MapView mapView){
         super(context);
+        this.context=context;
         this.bzPlan=bzPlan;
         this.isAdd=false;
         this.jzj=bzPlan.getJzj();
@@ -67,6 +74,8 @@ public class BZPlanPopupView extends PopupWindow {
         this.stationList=new ArrayList<>();
         this.stationTotalList=new ArrayList<>();
         this.selectedStaion=new Station();
+        locationDAO=new LocationDAO(context);
+        locationList=locationDAO.getAllLocation();
         for(BZPlanItem item: bzPlan.getBzPlanItemList()){
             stationList.add(item.getStation());
         }
@@ -410,10 +419,29 @@ public class BZPlanPopupView extends PopupWindow {
             }
         });
 
+        zwListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.v("ZWListView","item selected");
+                if (((ListView)parent).getTag() != null){
+                    ((View)((ListView)parent).getTag()).setBackgroundDrawable(null);
+                }
+                ((ListView)parent).setTag(view);
+                view.setBackgroundColor(Color.LTGRAY);
 
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         zwListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
                 Station station= (Station) zwListView.getItemAtPosition(position);
                 bzPlanItem=bzPlan.getBzPlanItemList().get(position);
                 refreshBZItemInfo(position);
@@ -459,12 +487,9 @@ public class BZPlanPopupView extends PopupWindow {
                 if(stationList.contains(station))
                     zwStationAdapter.remove(station);
 
-                if(stationList.size()!=0) {
-                    position=stationList.size()-1;
-//                    zwListView.setSelection(stationList.size()-1);
-//                    if (zwListView.isSelected())
-                    refreshBZItemInfo(position);
-                }
+                if(zwStationAdapter.getCount()!=0) {
+                    refreshBZItemInfo(zwStationAdapter.getCount()-1);
+                }else refreshBZItemInfo(-1);
                 mapView.refresh();
             }
         });
@@ -474,12 +499,28 @@ public class BZPlanPopupView extends PopupWindow {
         saveBZItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if("".equals(zwName.getText())){
                     Toast.makeText(context,"请选择ZW！",Toast.LENGTH_LONG);
                     return;
                 }
+                int flag=0;
+                for(Location info:locationList){
+                    if(info.getName().equals(zwName.getText().toString())){
+                        flag=1;
+                    }
+                }
+                if(flag==0){
+                    Log.v("bzplanview","没有该站位，请重新选择！");
+                    return;
+                }
                 station.setDisplayName(zwName.getText().toString());
-
+                for(Location info:locationList){
+                    if(info.getName().equals(zwName.getText().toString())){
+                        station.setLocation(info.getPoint());
+                        station.setAngle(info.getAngle());
+                    }
+                }
                 bzPlanItem.setSpendTime(calculateSpendTime());
                 bzPlanItem.setStation(station);
                 bzPlanItem.setAddGas(actions[0]);
@@ -507,7 +548,7 @@ public class BZPlanPopupView extends PopupWindow {
 //                    zwListView.setAdapter(zwStationAdapter);
                 }
                 isAdd=false;
-                refreshBZItemInfo(0);
+                refreshBZItemInfo(stationList.size()-1);
                 mapView.refresh();
             }
         });
@@ -521,7 +562,11 @@ public class BZPlanPopupView extends PopupWindow {
 
 
     private void refreshBZItemInfo(int pos){
-        clearBZItemState();
+        if(pos<0){
+            clearBZItemState();
+            return;
+        }
+
         bzPlanItem=bzPlan.getBzPlanItemList().get(pos);
         station=bzPlanItem.getStation();
         actions=bzPlanItem.getActions();
@@ -549,6 +594,7 @@ public class BZPlanPopupView extends PopupWindow {
     }
 
     private void  clearBZItemState(){
+        jzjName.setText("");
         gasLabel.setBackground(grayDrawable);
         airLabel.setBackground(grayDrawable);
         electricityLabel.setBackground(grayDrawable);

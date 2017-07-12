@@ -1,11 +1,13 @@
 package hust.com.jsp.view;
 
+import android.app.Notification;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.onlylemi.mapview.library.MapView;
@@ -44,7 +46,7 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
         this.isShowTimeProgress=false;
         this.bzPlanList=bzPlanList;
         this.width=1600;
-        this.height=260;
+        this.height=800;
         this.widthUnit=4;
         this.heightLabel=20;
         this.marginTop=5;
@@ -62,6 +64,9 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
         isShowTimeProgress = showTimeProgress;
     }
 
+    public PointF getLocation() {
+        return location;
+    }
 
     public void setLocation(PointF loc)
     {
@@ -90,7 +95,7 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
         if(bzPlanList==null || bzPlanList.size()==0) return;
 
         paint.setColor(Color.BLACK);
-        float top0=15+location.y;
+        float top0=20+location.y;
         float top;
         float left=50;
         float right;

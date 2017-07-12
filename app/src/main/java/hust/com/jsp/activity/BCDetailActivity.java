@@ -189,7 +189,7 @@ public class BCDetailActivity extends AppCompatActivity {
                     ((View)((HorizontalListView)parent).getTag()).setBackgroundDrawable(null);
                 }
                 ((HorizontalListView)parent).setTag(view);
-                view.setBackgroundColor(Color.GRAY);
+                view.setBackgroundColor(Color.LTGRAY);
             }
         });
         jzjHListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -203,7 +203,7 @@ public class BCDetailActivity extends AppCompatActivity {
                     ((View)((HorizontalListView)parent).getTag()).setBackgroundDrawable(null);
                 }
                 ((HorizontalListView)parent).setTag(view);
-                view.setBackgroundColor(Color.GRAY);
+                view.setBackgroundColor(Color.LTGRAY);
 
             }
         });

@@ -7,10 +7,9 @@
         android:layout_width="200dp"
         android:layout_height="match_parent"
         android:background="@drawable/toolbox_boder"
-        android:orientation="vertical"
-        android:weightSum="1">
+        android:orientation="vertical">
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -70,92 +69,123 @@
             </LinearLayout>
 
 
-        </FrameLayout>
+        </LinearLayout>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-
-        </FrameLayout>
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <ListView
-                android:id="@+id/zw_BCItemListView"
-                android:layout_width="200dp"
-                android:layout_height="match_parent" />
-
-        </FrameLayout>
-
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:weightSum="1">
-
-        <!--<FrameLayout-->
-            <!--android:layout_width="30dp"-->
-            <!--android:layout_height="match_parent">-->
-
-            <!--<Button-->
-                <!--android:text="◀"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="bottom"-->
-                <!--android:id="@+id/button_left" />-->
-        <!--</FrameLayout>-->
-
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.99">
+            android:orientation="vertical">
 
-            <include
-                layout="@layout/map_view"
-                android:visibility="visible" />
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="30dp"
-            android:layout_height="match_parent">
-
-            <Button
-                android:text="Cal"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="0.97">
 
-                android:layout_gravity="top"
-                android:id="@+id/button_CalculateTimeProgress" />
+                <ListView
+                    android:id="@+id/zw_BCItemListView"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent" />
 
-            <Button
-                android:text="◀"
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="0.03"
+                android:layout_gravity="bottom">
 
-                android:layout_gravity="bottom"
-                android:id="@+id/button_TimeProgress" />
-        </FrameLayout>
+                <Button
+                    android:text="Cal"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:padding="0dp"
+                    android:layout_gravity="top"
+                    android:id="@+id/button_CalculateTimeProgress" />
+            </LinearLayout>
 
-        <!--<FrameLayout android:layout_height="match_parent"-->
-            <!--android:layout_width="30dp">-->
+        </LinearLayout>
 
-            <!--<Button-->
-                <!--android:text="▶"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="bottom"-->
-                <!--android:id="@+id/button_right" />-->
-        <!--</FrameLayout>-->
+
+
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="0dp"
+        android:layout_margin="0dp"
+        android:weightSum="1">
+
+        <SeekBar
+            android:id="@+id/timeSeekBar"
+            android:layout_width="match_parent"
+            android:background="@drawable/rect_fill_graystyle"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="3dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/timeSeekBar">
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:padding="0dp"
+                android:layout_margin="0dp"
+                android:orientation="vertical"
+                android:layout_weight="0.99">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_above="@id/timeSeekBar">
+                    <include
+                        layout="@layout/map_view"
+                        android:visibility="visible" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_margin="0dp"
+                android:padding="0dp"
+                android:layout_gravity="right">
+
+
+                <Button
+                    android:text="▼"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginTop="-8dp"
+                    android:id="@+id/button_ScrollDownTimeProgress" />
+                <Button
+                    android:text="▲"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_above="@id/button_ScrollDownTimeProgress"
+                    android:layout_marginTop="-8dp"
+                    android:layout_marginBottom="-10dp"
+                    android:id="@+id/button_ScrollUpTimeProgress" />
+                <Button
+                    android:text="◀"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_above="@id/button_ScrollUpTimeProgress"
+                    android:layout_margin="-6dp"
+                    android:id="@+id/button_TimeProgress" />
+
+            </RelativeLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>

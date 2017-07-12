@@ -393,8 +393,13 @@ public class BZPlan_TimeSchemaOrder {
                     while (head.next != null && head.actionEndTime != 0)
                         head = head.next;
                     if(head.jzj.getDisplayName().equals(jzj.getDisplayName())){
-                        while (head.next != null && head.actionEndTime != 0)
+                        while (head.next != null && head.actionEndTime != 0) {
+                            if(head.actionStartTime>head.actionEndTime) {
+                                head.actionEndTime = head.actionStartTime;
+                                head.next.actionStartTime = head.actionEndTime;
+                            }
                             head = head.next;
+                        }
                         if ((tickTock - head.actionStartTime) == head.spendTime) {
                             head.actionEndTime = tickTock;
 
@@ -407,9 +412,16 @@ public class BZPlan_TimeSchemaOrder {
                                     if (!jzj.getDisplayName().equals(jzj1.getDisplayName())) {
                                         ZWNode node = jzjZWNodeMap.get(jzj1);
                                         while (node != null && !node.station.getDisplayName().equals(head.station.getDisplayName())) {
+                                            if(head.actionStartTime>head.actionEndTime)
+                                                head.actionEndTime=head.actionStartTime;
+                                            if(head.next!=null) head.next.actionStartTime=head.actionEndTime;
                                             node = node.next;
                                         }
                                         while (node.next != null && node.next.station.getDisplayName().equals(head.station.getDisplayName()) && node.actionStartTime != 0 && node.actionEndTime != 0) {
+                                            if(head.actionStartTime>head.actionEndTime) {
+                                                head.actionEndTime = head.actionStartTime;
+                                                head.next.actionStartTime = head.actionEndTime;
+                                            }
                                             node = node.next;
                                         }
                                         if (node.actionEndTime == 0) {
@@ -437,9 +449,13 @@ public class BZPlan_TimeSchemaOrder {
                             clock = true;
                     }//else {//需等待的点
                     if(!head.jzj.getDisplayName().equals(jzj.getDisplayName())){
-                        while (head.next != null && head.actionEndTime != 0)
+                        while (head.next != null && head.actionEndTime != 0) {
+                            if(head.actionStartTime>head.actionEndTime) {
+                                head.actionEndTime = head.actionStartTime;
+                                head.next.actionStartTime = head.actionEndTime;
+                            }
                             head = head.next;
-
+                        }
                         if (head.actionEndTime == 0)
                             clock = true;
                     }

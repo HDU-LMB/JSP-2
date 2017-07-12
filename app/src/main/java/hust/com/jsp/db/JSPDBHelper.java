@@ -80,6 +80,7 @@ public class JSPDBHelper extends SQLiteOpenHelper {
         db.execSQL("insert into bcinfo(id,name,starttime,endtime) values(?,?,?,?)",new String[]{"1","BC-1","1336226501635","1336226501635"});
         //添加bl
         db.execSQL("insert into blinfo(bcid,jzjid,x,y,type) values(?,?,?,?,?)",new String[]{"1","1","160","60","1"});
+        db.execSQL("insert into blinfo(bcid,jzjid,x,y,type) values(?,?,?,?,?)",new String[]{"1","2","160","220","1"});
 
     }
 }
