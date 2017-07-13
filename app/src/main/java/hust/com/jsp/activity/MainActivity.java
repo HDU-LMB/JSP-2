@@ -353,28 +353,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         seekBarTimeProgress=(SeekBar) findViewById(R.id.timeSeekBar);
+        seekBarTimeProgress.setMax(370);
         seekBarTimeProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 Log.v("Timeprogress","T="+progress);
-
-                for(int i=0;i<bzPlanTimeList.size();i++){
-                    BZPlan bzPlan=bzPlanTimeList.get(i);
-                    List<BZPlanItem> bzItemList=bzPlan.getBzPlanItemList();
-                    JZJ jzj=bzPlan.getJzj();
-                    int jzjID=jzj.getId();
-                    BLJZJLayer jzjLayer=layerMap.get(jzjID);
-                    for(int j=0;j<bzItemList.size();j++) {
-                        BZPlanItem bzItem=bzItemList.get(j);
-                        Station station=bzItem.getStation();
-                        if(progress>=bzItem.getStartTime()) {
-                            jzjLayer.setLocation(station.getLocation());
-                            jzjLayer.setAngle(station.getAngle());
-                        }
-                    }
-                }
-
-
+                refreshMapRefTime(progress,bzPlanTimeList);
                 mapView.refresh();
             }
             @Override
@@ -422,7 +406,63 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    /**
+     * 根据拖动条更新Mapview
+     * @param time 进度条时间
+     * @param bzList 输入bz计划
+     */
+    private void refreshMapRefTime(float time , List<BZPlan> bzList){
+        if(bzList==null){
+            return;
+        }
+        for(BZPlan bzPlan:bzList){
+            List<BZPlanItem> bzPlanItemList=bzPlan.getBzPlanItemList();
+            if(bzPlanItemList.size()==0){
+                continue;
+            }
+            int flag=0;
+            Station station= new Station();
+            float timeper=Float.MAX_VALUE;
+            BLJZJLayer layer=layerMap.get(bzPlan.getJzj().getId());
+            for(int i=0;i<bzPlanItemList.size();i++){
+                BZPlanItem bzPlanItem=bzPlanItemList.get(i);
+                if(bzPlanItem.getStartTime()<=time&&bzPlanItem.getEndTime()>time){
+                    flag=1;
+                    station=bzPlanItem.getStation();
+                    timeper=(time-bzPlanItem.getStartTime())/bzPlanItem.getSpendTime();
+                    break;
+                }
+                else if(time>bzPlanItemList.get(bzPlanItemList.size()-1).getEndTime()){
+                    flag=3;
+                }
+                else if(i<bzPlanItemList.size()-1){
+                    if(bzPlanItem.getEndTime()<time&&bzPlanItemList.get(i+1).getStartTime()>time){
+                        flag=2;
+                        station=bzPlanItem.getStation();
+                    }
+                }
 
+            }
+            switch (flag){
+                case 1:
+                    layer.isVisible=true;
+                    layer.setProgress(timeper);
+                    layer.setLocation(station.getLocation());
+                    layer.setAngle(station.getAngle());
+                    break;
+                case 2:
+                    layer.isVisible=true;
+                    layer.setProgress(1);
+                    layer.setLocation(station.getLocation());
+                    layer.setAngle(station.getAngle());
+                    break;
+                case 3:
+                    layer.isVisible=false;
+                    break;
+            }
+
+        }
+    }
     private void initBL_BC(){
 
         spBCList= (Spinner) findViewById(R.id.spBCList);
