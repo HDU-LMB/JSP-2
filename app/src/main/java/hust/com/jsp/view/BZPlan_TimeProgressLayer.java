@@ -143,7 +143,13 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
                     left = 53 + widthUnit * bzItem.getStartTime();
                     right = left + widthUnit * bzItem.getSpendTime();
                     canvas.drawRect(left, top, right, bottom, paint);//画每个ZW上任务花费的时间
-                    canvas.drawText(bzItem.getStation().getDisplayName(), (left + right) / 2 - 10, (top + bottom) / 2 + 5, paint);//画ZW名称
+                    if(j%2==0){
+                        canvas.drawText(bzItem.getStation().getDisplayName(), (left + right) / 2 - 10, (top + bottom) / 2 + 5, paint);//画ZW名称
+                    }
+                    else{
+                        canvas.drawText("转运", (left + right) / 2 - 10, (top + bottom) / 2 + 5, paint);//画ZW名称
+
+                    }
 //                left=right;
                 }
                 if(time>0) {
