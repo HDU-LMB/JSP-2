@@ -110,7 +110,7 @@ public class BZPlanItemDAO {
             info.setSpendTime(cursor.getLong(cursor.getColumnIndex("spendtime")));
             info.setAddGas(cursor.getInt(cursor.getColumnIndex("gas"))==1);
             info.setAddAir(cursor.getInt(cursor.getColumnIndex("air"))==1);
-            info.setAddElectricity(cursor.getInt(cursor.getColumnIndex("ele"))==1);
+            info.setAddElectricity(cursor.getInt(cursor.getColumnIndex("elec"))==1);
             info.setAddFluid(cursor.getInt(cursor.getColumnIndex("fluid"))==1);
             info.setAddWeapon(cursor.getInt(cursor.getColumnIndex("weapon"))==1);
             info.setAddGuide(cursor.getInt(cursor.getColumnIndex("guide"))==1);
@@ -130,7 +130,7 @@ public class BZPlanItemDAO {
             info.setSpendTime(cursor.getLong(cursor.getColumnIndex("spendtime")));
             info.setAddGas(cursor.getInt(cursor.getColumnIndex("gas"))==1);
             info.setAddAir(cursor.getInt(cursor.getColumnIndex("air"))==1);
-            info.setAddElectricity(cursor.getInt(cursor.getColumnIndex("ele"))==1);
+            info.setAddElectricity(cursor.getInt(cursor.getColumnIndex("elec"))==1);
             info.setAddFluid(cursor.getInt(cursor.getColumnIndex("fluid"))==1);
             info.setAddWeapon(cursor.getInt(cursor.getColumnIndex("weapon"))==1);
             info.setAddGuide(cursor.getInt(cursor.getColumnIndex("guide"))==1);

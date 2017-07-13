@@ -434,18 +434,30 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    private List<BZPlan> copyList(List<BZPlan> listP){
+        List<BZPlan> list=new ArrayList<>();
+        for(int i=0;i<listP.size();i++){
+            BZPlan bzPlanP=listP.get(i);
+            BZPlan bzPlan=new BZPlan();
+            bzPlan.setBcid(bzPlanP.getBcid());
+            bzPlan.setJzj(bzPlanP.getJzj());
+            bzPlan.setStation(bzPlanP.getStation());
+            List<BZPlanItem> bzPlanItemListP=bzPlanP.getBzPlanItemList();
+            List<BZPlanItem> bzPlanItemList=new ArrayList<>();
+            bzPlanItemList.addAll(bzPlanItemListP);
+            bzPlan.setBzPlanItemList(bzPlanItemList);
+            list.add(bzPlan);
+        }
+        return list;
+    }
     /**
      *
      */
     private List<BZPlan> addTranNode(){
-        List<BZPlan> bzPlanList=new ArrayList<>();
-        bzPlanList.addAll(bzPlanTimeList);
+        List<BZPlan> bzPlanList=copyList(bzPlanTimeList);
         for(int i=0;i<bzPlanList.size();i++){
-            BZPlan bzPlanP=bzPlanList.get(i);
-            List<BZPlanItem> bzPlanItemListP=bzPlan.getBzPlanItemList();
-            List<BZPlanItem> bzPlanItemList=new ArrayList<>();
-            bzPlanItemList.addAll(bzPlanItemListP);
-            bzPlan.setBzPlanItemList(bzPlanItemList);
+            BZPlan bzPlan=bzPlanList.get(i);
+            List<BZPlanItem> bzPlanItemList=bzPlan.getBzPlanItemList();
             if(bzPlanItemList.size()==0){
                 continue;
             }
