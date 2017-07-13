@@ -33,6 +33,7 @@ import hust.com.jsp.dao.JZJDAO;
 import hust.com.jsp.dao.LocationDAO;
 import hust.com.jsp.presenter.ZW_BCItemAdapter;
 import hust.com.jsp.utils.ImageCollection;
+import hust.com.jsp.utils.LocationTools;
 import hust.com.jsp.utils.OnItemTouched;
 import hust.com.jsp.view.BLJZJLayer;
 import hust.com.jsp.view.BZPlan_TimeProgressLayer;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     private Map<BCInfo,Map<Integer,BZPlan>> bcList_ItemMap=new TreeMap<>();//存储所有的BC
     private List<BZPlan> bzPlanList;//某BC下所有所有的bzplan，用于绘画时间甘特图
     private List<BZPlan> bzPlanTimeList;//bz方案的时刻表
+    private List<BZPlan> bzPlanTranList;
     private Map<BCInfo,List<BZPlan>> bzListMap=new TreeMap<>();//存储所有BC的bzPlanList
     private Button calculateTimeProgress;
     private Button btnSave;
@@ -375,7 +377,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 Log.v("Timeprogress","T="+progress);
-                refreshMapRefTime(progress,bzPlanTimeList);
+                refreshMapRefTime(progress,bzPlanTranList);
                 timeProgressLayer.setTime(progress);
                 mapView.refresh();
             }
@@ -392,9 +394,9 @@ public class MainActivity extends AppCompatActivity {
                 BZPlan_TimeSchemaOrder timeSchemaOrder=new BZPlan_TimeSchemaOrder(bzPlanList);
                 timeSchemaOrder.initSchemaItem();
                 bzPlanTimeList=timeSchemaOrder.getSchemaTimeProgress();
-                timeProgressLayer.setBzPlanList(bzPlanTimeList);
+                bzPlanTranList=addTranNode();
+                timeProgressLayer.setBzPlanList(bzPlanTranList);
                 timeProgressLayer.setShowTimeProgress(true);
-
                 mapView.refresh();
             }
         });
@@ -425,6 +427,45 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     /**
+     *
+     */
+    private List<BZPlan> addTranNode(){
+        List<BZPlan> bzPlanList=new ArrayList<>();
+        bzPlanList.addAll(bzPlanTimeList);
+        for(int i=0;i<bzPlanList.size();i++){
+            BZPlan bzPlanP=bzPlanList.get(i);
+            List<BZPlanItem> bzPlanItemListP=bzPlan.getBzPlanItemList();
+            List<BZPlanItem> bzPlanItemList=new ArrayList<>();
+            bzPlanItemList.addAll(bzPlanItemListP);
+            bzPlan.setBzPlanItemList(bzPlanItemList);
+            if(bzPlanItemList.size()==0){
+                continue;
+            }
+            for(int j=0;j<bzPlanItemList.size();j+=2){
+                if(j==bzPlanItemList.size()-1){
+                    break;
+                }
+                BZPlanItem bzPlanItem1=bzPlanItemList.get(j);
+                BZPlanItem bzPlanItem2=bzPlanItemList.get(j+1);
+                BZPlanItem tranNode=new BZPlanItem();
+                tranNode.setIndex(j+1);
+                tranNode.setStartTime(bzPlanItem1.getEndTime());
+                double distance= LocationTools.getDistance(bzPlanItem1.getStation().getLocation(),bzPlanItem2.getStation().getLocation());
+                float tranTime= (float) (distance*0.15+2);
+                tranNode.setSpendTime(tranTime);
+                tranNode.setEndTime(bzPlanItem1.getEndTime()+tranTime);
+                for(int k=j+1;k<bzPlanItemList.size();k++){
+                    bzPlanItemList.get(k).setStartTime(bzPlanItemList.get(k).getStartTime()+tranTime);
+                    bzPlanItemList.get(k).setEndTime(bzPlanItemList.get(k).getEndTime()+tranTime);
+                }
+   /*             bzPlanItem2.setStartTime(bzPlanItem2.getStartTime()+tranTime);
+                bzPlanItem2.setEndTime(bzPlanItem2.getStartTime()+bzPlanItem2.getSpendTime());*/
+                bzPlanItemList.add(j+1,tranNode);
+            }
+        }
+        return bzPlanList;
+    }
+    /**
      * 根据拖动条更新Mapview
      * @param time 进度条时间
      * @param bzList 输入bz计划
@@ -443,23 +484,27 @@ public class MainActivity extends AppCompatActivity {
             float timeper=Float.MAX_VALUE;
             BLJZJLayer layer=layerMap.get(bzPlan.getJzj().getId());
             for(int i=0;i<bzPlanItemList.size();i++){
-                BZPlanItem bzPlanItem=bzPlanItemList.get(i);
-                if(bzPlanItem.getStartTime()<=time&&bzPlanItem.getEndTime()>time){
-                    flag=1;
-                    station=bzPlanItem.getStation();
-                    timeper=(time-bzPlanItem.getStartTime())/bzPlanItem.getSpendTime();
-                    break;
-                }
-                else if(time>bzPlanItemList.get(bzPlanItemList.size()-1).getEndTime()){
-                    flag=3;
-                }
-                else if(i<bzPlanItemList.size()-1){
-                    if(bzPlanItem.getEndTime()<time&&bzPlanItemList.get(i+1).getStartTime()>time){
-                        flag=2;
+                if(i%2==0){
+                    BZPlanItem bzPlanItem=bzPlanItemList.get(i);
+                    if(bzPlanItem.getStartTime()<=time&&bzPlanItem.getEndTime()>time){
+                        flag=1;
                         station=bzPlanItem.getStation();
+                        timeper=(time-bzPlanItem.getStartTime())/bzPlanItem.getSpendTime();
+                        break;
+                    }
+                    else if(time>bzPlanItemList.get(bzPlanItemList.size()-1).getEndTime()){
+                        flag=3;
+                    }
+                    else if(i<bzPlanItemList.size()-1){
+                        if(bzPlanItem.getEndTime()<time&&bzPlanItemList.get(i+1).getStartTime()>time){
+                            flag=2;
+                            station=bzPlanItem.getStation();
+                        }
                     }
                 }
-
+                else {
+                    flag=3;
+                }
             }
             switch (flag){
                 case 1:
