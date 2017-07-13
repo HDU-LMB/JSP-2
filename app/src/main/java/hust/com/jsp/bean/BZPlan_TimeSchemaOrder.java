@@ -417,7 +417,7 @@ public class BZPlan_TimeSchemaOrder {
                                             if(head.next!=null) head.next.actionStartTime=head.actionEndTime;
                                             node = node.next;
                                         }
-                                        while (node.next != null && node.next.station.getDisplayName().equals(head.station.getDisplayName()) && node.actionStartTime != 0 && node.actionEndTime != 0) {
+                                        while (node.next != null && node.next.station.getDisplayName().equals(head.station.getDisplayName()) && node.actionEndTime != 0) {
                                             if(head.actionStartTime>head.actionEndTime) {
                                                 head.actionEndTime = head.actionStartTime;
                                                 head.next.actionStartTime = head.actionEndTime;
@@ -464,6 +464,10 @@ public class BZPlan_TimeSchemaOrder {
                 if(!clock)
                     totalSpendTime=tickTock;
                 tickTock++;
+                if(tickTock>=1440) {   //死锁的情况，默认一个BCJH的开始到结束的持续时间为1天，可根据实际情况修改
+                    totalSpendTime=tickTock;
+                    clock=false;
+                }
             }
             Log.v("schema"+id+" totalSpendTime=",totalSpendTime+"");
             return totalSpendTime;

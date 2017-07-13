@@ -10,7 +10,7 @@ import android.graphics.PointF;
 public class Station {
     private int id;
     private String displayName;
-    private PointF location;
+     private PointF location;
 
     public float getAngle() {
         return angle;
@@ -47,5 +47,10 @@ public class Station {
         this.location = loc;
         return this;
     }
+
+    public PointF getLocation() {
+        return location;
+    }
+
 
 }
