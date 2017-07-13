@@ -487,7 +487,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void saveBZPlanItem(){
         Log.v("bzplan","save");
-        bcItemBZPlanMap.get(bcInfo.getId())
+
     }
     private void initBL_BC(){
 

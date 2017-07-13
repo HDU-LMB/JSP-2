@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import hust.com.jsp.bean.BZPlan;
 import hust.com.jsp.bean.BZPlanItem;
 import hust.com.jsp.bean.BZPlanItem;
 import hust.com.jsp.bean.JZJ;
@@ -64,10 +65,30 @@ public class BZPlanItemDAO {
                         String.valueOf((info.isAddOxygen()?1:0)),
                 });
     }
+
     public void addList(List<BZPlanItem> list){
-        for(int i=0;i<list.size();i++){
-            addInfo(i,list.get(i));
+            for(int i=0;i<list.size();i++){
+                addInfo(i,list.get(i));
+            }
+    }
+    public void addBZPlanList(List<BZPlan> list){
+        db.beginTransaction();
+        try{
+            deleteBZPlan(list.get(0).getBzPlanItemList().get(0).getBcid());
+            for(BZPlan info:list){
+                List<BZPlanItem> bzPlanItemList=info.getBzPlanItemList();
+                addList(bzPlanItemList);
+            }
+            db.setTransactionSuccessful();
+        }catch (Exception e){
+            e.printStackTrace();
         }
+        finally {
+            db.endTransaction();
+        }
+    }
+    public void deleteBZPlan(int bcid){
+        db.execSQL("delete from bzplanitem where bcid=?",new String[]{String.valueOf(bcid)});
     }
     private BZPlanItem toInfo(Cursor cursor){
         BZPlanItem info=new BZPlanItem();
