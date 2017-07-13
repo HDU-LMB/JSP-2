@@ -515,7 +515,8 @@ public class BZPlanPopupView extends PopupWindow {
                 }
                 if(flag==0){
                     Log.v("bzplanview","没有该站位，请重新选择！");
-                    tipLabel.setText("没有该ZW，请重新选择！");
+                    tipLabel.setText("没有该ZW，请重新选择！" +
+                            "");
                     return;
                 }
                 tipLabel.setText("");
