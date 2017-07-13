@@ -39,9 +39,11 @@ public class BLInfo {
         float y=point.y;
         this.point.x=x;
         this.point.y=y;
-        for(Location loc:locationList){
-            if(loc.getX()==point.x && loc.getY()==point.y){
-                this.station=new Station(loc.getId(),point,loc.getName());
+        if(locationList!=null) {
+            for (Location loc : locationList) {
+                if (loc.getX() == point.x && loc.getY() == point.y) {
+                    this.station = new Station(loc.getId(), point, loc.getName());
+                }
             }
         }
     }
@@ -54,9 +56,11 @@ public class BLInfo {
     public void setPoint(float x,float y){
         this.point.x=x;
         this.point.y=y;
-        for(Location loc:locationList){
-            if(loc.getX()==point.x && loc.getY()==point.y){
-                this.station=new Station(loc.getId(),point,loc.getName());
+        if(locationList!=null) {
+            for (Location loc : locationList) {
+                if (loc.getX() == point.x && loc.getY() == point.y) {
+                    this.station = new Station(loc.getId(), point, loc.getName());
+                }
             }
         }
     }
