@@ -7,7 +7,10 @@ import android.graphics.Color;
  */
 
 public class BZPlanItem {
-
+    private int jzjid;
+    private int bcid;
+    private int locationid;
+    private int index;
     private Station station; //ZW
     private float spendTime;
     private float startTime;
@@ -51,6 +54,38 @@ public class BZPlanItem {
             Color.parseColor("#FFBBFF"),
             Color.LTGRAY
     };
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public int getJzjid() {
+        return jzjid;
+    }
+
+    public void setJzjid(int jzjid) {
+        this.jzjid = jzjid;
+    }
+
+    public int getBcid() {
+        return bcid;
+    }
+
+    public void setBcid(int bcid) {
+        this.bcid = bcid;
+    }
+
+    public int getLocationid() {
+        return locationid;
+    }
+
+    public void setLocationid(int locationid) {
+        this.locationid = locationid;
+    }
 
     public boolean[] getActions() {
         return actions;

@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private List<BZPlan> bzPlanTimeList;//bz方案的时刻表
     private Map<BCInfo,List<BZPlan>> bzListMap=new TreeMap<>();//存储所有BC的bzPlanList
     private Button calculateTimeProgress;
+    private Button btnSave;
     private Button showProgressButton;//点击显示或隐藏时间甘特图
     private BZPlan_TimeProgressLayer timeProgressLayer;//mapView中底部的绘画时间甘特图的图层
     private Button scrollUpTimeProgressLayer;
@@ -342,7 +343,13 @@ public class MainActivity extends AppCompatActivity {
 
             layerMap.put(jzj.getId(),layer);
         }
-
+        btnSave= (Button) findViewById(R.id.button_save);
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveBZPlanItem();
+            }
+        });
     }
 
     private void showTimeProgress(){
@@ -473,6 +480,14 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+    /**
+     * 保存BZ计划
+     */
+    private void saveBZPlanItem(){
+        Log.v("bzplan","save");
+        bcItemBZPlanMap.get(bcInfo.getId())
     }
     private void initBL_BC(){
 
