@@ -381,7 +381,7 @@ public class BZPlan_TimeSchemaOrder {
 
         //计算该方案下的关键路径时间
         float getSchemaTime(){
-
+            float lockedTime=1440;
             float tickTock=0;
             boolean clock=true;
 
@@ -390,6 +390,12 @@ public class BZPlan_TimeSchemaOrder {
                 for(Map.Entry<JZJ,ZWNode> entry : jzjZWNodeMap.entrySet()){
                     ZWNode head=entry.getValue();
                     JZJ jzj=entry.getKey();
+                    if(!jzj.getCurrentStation().getDisplayName().equals(head.station.getDisplayName())){//初始站位的死锁，必须该jzj先做BZ任务
+                        if(!head.jzj.getDisplayName().equals(jzj.getDisplayName())){
+                            totalSpendTime=lockedTime;
+                            return totalSpendTime;
+                        }
+                    }
                     while (head.next != null && head.actionEndTime != 0)
                         head = head.next;
                     if(head.jzj.getDisplayName().equals(jzj.getDisplayName())){
@@ -464,7 +470,7 @@ public class BZPlan_TimeSchemaOrder {
                 if(!clock)
                     totalSpendTime=tickTock;
                 tickTock++;
-                if(tickTock>=1440) {   //死锁的情况，默认一个BCJH的开始到结束的持续时间为1天，可根据实际情况修改
+                if(tickTock>=lockedTime) {   //死锁的情况，默认一个BCJH的开始到结束的持续时间为1天，可根据实际情况修改
                     totalSpendTime=tickTock;
                     clock=false;
                 }

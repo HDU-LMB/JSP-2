@@ -16,6 +16,16 @@ import java.util.List;
 public class BCInfoItem {
     private int id;
 
+    public Station getStation() {
+        return station;
+    }
+
+    public void setStation(Station station) {
+        this.station = station;
+    }
+
+    private Station station;
+
     public JZJ getJzj() {
         return jzj;
     }

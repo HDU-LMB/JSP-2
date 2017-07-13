@@ -1,5 +1,7 @@
 package hust.com.jsp.bean;
 
+import android.graphics.PointF;
+
 import java.util.List;
 
 /**
@@ -9,12 +11,27 @@ import java.util.List;
 public class BZPlan {
     private JZJ jzj;
     private List<BZPlanItem> bzPlanItemList;
+    private Station station;//BL的FJ初始ZW
+    private long flightTime;//QF时间
 
-    public void setQfTime(long qfTime) {
-        this.qfTime = qfTime;
+
+    public Station getStation() {
+        return station;
     }
 
-    private long qfTime;
+    public void setStation(Station station) {
+        this.station = station;
+    }
+
+    public long getFlightTime() {
+        return flightTime;
+    }
+
+    public void setFlightTime(long flightTime) {
+        this.flightTime = flightTime;
+    }
+
+
 
     public JZJ getJzj() {
         return jzj;

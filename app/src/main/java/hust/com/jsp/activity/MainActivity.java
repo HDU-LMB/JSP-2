@@ -82,10 +82,10 @@ public class MainActivity extends AppCompatActivity {
     private BZPlan_TimeProgressLayer timeProgressLayer;//mapView中底部的绘画时间甘特图的图层
     private Button scrollUpTimeProgressLayer;
     private Button scrollDownTimeProgressLayer;
-    private SeekBar seekBarTimeProgress;
+    private SeekBar seekBarTimeProgress;//进度条
 
     private Map<Integer,List<BLInfo>> blMap=new TreeMap<>();
-    private List<Location> locationList;
+    private static List<Location> locationList;
     private List<JZJ> bcjzjList;
     private List<JZJ> jzjList;
     private JZJDAO jzjDAO;
@@ -102,6 +102,10 @@ public class MainActivity extends AppCompatActivity {
 
     public MainActivity(){
         instance=this;
+    }
+
+    public static List<Location> getLocationList() {
+        return locationList;
     }
 
     public void refreshData(){
@@ -136,7 +140,9 @@ public class MainActivity extends AppCompatActivity {
             for(BLInfo blInfo:blInfoList){
 
                 JZJ jzj=jzjDAO.getJZJ(blInfo.getJzjid());
+                jzj.setCurrentStation(blInfo.getStation());
                 BCInfoItem bcInfoItem=new BCInfoItem(jzj);
+                bcInfoItem.setStation(blInfo.getStation());
                 switch (blInfo.getType()){
                     case 1:
                         jzj.setJzjBeiyong("非备用");
@@ -165,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
                 bcItem.setID(idx);
                 JZJ jzj = bcItem.getJzj();
                 bzPlan.setJzj(jzj);
+                bzPlan.setStation(bcItem.getStation());
 
                 bcItemBZPlanMap.put(bcItem.getID(), bzPlan);
                 bzPlanList.add(bzPlan);
@@ -289,7 +296,9 @@ public class MainActivity extends AppCompatActivity {
             for(BLInfo blInfo:blInfoList){
 
                 JZJ jzj=jzjDAO.getJZJ(blInfo.getJzjid());
+                jzj.setCurrentStation(blInfo.getStation());
                 BCInfoItem bcInfoItem=new BCInfoItem(jzj);
+                bcInfoItem.setStation(blInfo.getStation());
                 switch (blInfo.getType()){
                     case 1:
                         jzj.setJzjBeiyong("非备用");
@@ -318,6 +327,7 @@ public class MainActivity extends AppCompatActivity {
                 bcItem.setID(idx);
                 JZJ jzj = bcItem.getJzj();
                 bzPlan.setJzj(jzj);
+                bzPlan.setStation(bcItem.getStation());
 
                 bcItemBZPlanMap.put(bcItem.getID(), bzPlan);
                 bzPlanList.add(bzPlan);

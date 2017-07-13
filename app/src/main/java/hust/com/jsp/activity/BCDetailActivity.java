@@ -38,6 +38,7 @@ import hust.com.jsp.bean.BCInfo;
 import hust.com.jsp.bean.BLInfo;
 import hust.com.jsp.bean.JZJ;
 import hust.com.jsp.bean.Location;
+import hust.com.jsp.bean.Station;
 import hust.com.jsp.dao.BCDAO;
 import hust.com.jsp.dao.BLDAO;
 import hust.com.jsp.dao.JZJDAO;
@@ -225,6 +226,8 @@ public class BCDetailActivity extends AppCompatActivity {
                     info.setBcid(bcID);
                     info.setJzjid(jzjID);
                     Location location= LocationTools.getNearLoaction(mapView.getTouchPoint(),locationList);
+//                    Station station=new Station(location.getId(),location.getPoint(),location.getName());
+//                    info.setStation(station);
                     info.setPoint(location.getPoint());
                     blInfoList.add(info);
                     blMap.put(bcID,blInfoList);

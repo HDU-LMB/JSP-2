@@ -2,6 +2,11 @@ package hust.com.jsp.bean;
 
 import android.graphics.PointF;
 
+import java.util.List;
+
+import hust.com.jsp.activity.MainActivity;
+import hust.com.jsp.dao.LocationDAO;
+
 /**
  * Created by GEAR on 2017/6/28.
  */
@@ -12,6 +17,18 @@ public class BLInfo {
     int jzjid;
     int type;
     JZJ jzj;
+    Station station;
+    private List<Location> locationList;
+
+    public BLInfo(){
+        this.locationList=MainActivity.getLocationList();
+    }
+
+
+    public Station getStation() {
+        return station;
+    }
+
 
     public PointF getPoint() {
         return point;
@@ -22,6 +39,11 @@ public class BLInfo {
         float y=point.y;
         this.point.x=x;
         this.point.y=y;
+        for(Location loc:locationList){
+            if(loc.getX()==point.x && loc.getY()==point.y){
+                this.station=new Station(loc.getId(),point,loc.getName());
+            }
+        }
     }
     public float getX(){
         return this.point.x;
@@ -32,6 +54,11 @@ public class BLInfo {
     public void setPoint(float x,float y){
         this.point.x=x;
         this.point.y=y;
+        for(Location loc:locationList){
+            if(loc.getX()==point.x && loc.getY()==point.y){
+                this.station=new Station(loc.getId(),point,loc.getName());
+            }
+        }
     }
     public int getType() {
         return type;
