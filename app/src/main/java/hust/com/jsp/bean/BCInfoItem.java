@@ -15,6 +15,7 @@ import java.util.List;
 
 public class BCInfoItem {
     private int id;
+    private JZJ jzj;
 
     public Station getStation() {
         return station;
@@ -30,7 +31,6 @@ public class BCInfoItem {
         return jzj;
     }
 
-    private JZJ jzj;
 
     public List<JZJAction> getJzjActionList() {
         return jzjActionList;

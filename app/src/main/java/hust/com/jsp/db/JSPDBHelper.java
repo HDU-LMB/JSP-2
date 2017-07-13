@@ -53,8 +53,8 @@ public class JSPDBHelper extends SQLiteOpenHelper {
         String CREATE_BZPLANITEM="create table bzplanitem(" +
                 "bcid integer," +
                 "jzjid integer," +
-                "loactionid integer," +
-                "index integer," +
+                "locationid integer," +
+                "indexno integer," +
                 "spendtime real," +
                 "gas integer," +
                 "air integer," +

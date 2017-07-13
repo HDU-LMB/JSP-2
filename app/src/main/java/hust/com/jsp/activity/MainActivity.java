@@ -29,6 +29,7 @@ import hust.com.jsp.bean.Location;
 import hust.com.jsp.bean.Station;
 import hust.com.jsp.dao.BCDAO;
 import hust.com.jsp.dao.BLDAO;
+import hust.com.jsp.dao.BZPlanItemDAO;
 import hust.com.jsp.dao.JZJDAO;
 import hust.com.jsp.dao.LocationDAO;
 import hust.com.jsp.presenter.ZW_BCItemAdapter;
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
     private JZJDAO jzjDAO;
     private BLDAO blDAO;
     private BCDAO bcDAO;
+    private BZPlanItemDAO bzPlanDAO;
     private LocationDAO locationDAO;
     private Map<Integer,BLJZJLayer> layerMap;//key-jzj.ID，value-jzjLayer
 
@@ -117,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         jzjDAO=new JZJDAO(this);
         blDAO=new BLDAO(this);
         bcDAO=new BCDAO(this);
+        bzPlanDAO=new BZPlanItemDAO(this);
         locationDAO=new LocationDAO(this);
         bcjzjList=new ArrayList<JZJ>();
         bcInfoList=new ArrayList<BCInfo>();
@@ -167,14 +170,16 @@ public class MainActivity extends AppCompatActivity {
             bcItemBZPlanMap=new TreeMap<>();
             bzPlanList=new ArrayList<>();
             for(int idx=0;idx<bcInfo.Count();idx++) {//从数据库表中初始化数据，即读取波次1的所有bcitemplan
-                BZPlan bzPlan = new BZPlan();
-                List<BZPlanItem> bzPlanItemList = new ArrayList<>();
-                bzPlan.setBzPlanItemList(bzPlanItemList);
                 BCInfoItem bcItem = bcInfo.get(idx);
                 bcItem.setID(idx);
                 JZJ jzj = bcItem.getJzj();
+
+                BZPlan bzPlan = new BZPlan();
+                List<BZPlanItem> bzPlanItemList =bzPlanDAO.getListByBCAndJZJ(bcInfo.getId(),jzj.getId());
+                bzPlan.setBzPlanItemList(bzPlanItemList);
                 bzPlan.setJzj(jzj);
                 bzPlan.setStation(bcItem.getStation());
+                bzPlan.setBcid(bcInfo.getId());
 
                 bcItemBZPlanMap.put(bcItem.getID(), bzPlan);
                 bzPlanList.add(bzPlan);
@@ -209,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
         this.jzjItem = new JZJItem(JZJItem.testID1);
         locationDAO=new LocationDAO(this);
         jzjDAO=new JZJDAO(this);
+        bzPlanDAO=new BZPlanItemDAO(this);
         blDAO=new BLDAO(this);
         bcDAO=new BCDAO(this);
         bcjzjList=new ArrayList<JZJ>();
@@ -323,14 +329,16 @@ public class MainActivity extends AppCompatActivity {
             bcItemBZPlanMap=new TreeMap<>();
             bzPlanList=new ArrayList<>();
             for(int idx=0;idx<bcInfo.Count();idx++) {//从数据库表中初始化数据，即读取波次1的所有bcitemplan
-                BZPlan bzPlan = new BZPlan();
-                List<BZPlanItem> bzPlanItemList = new ArrayList<>();
-                bzPlan.setBzPlanItemList(bzPlanItemList);
                 BCInfoItem bcItem = bcInfo.get(idx);
                 bcItem.setID(idx);
                 JZJ jzj = bcItem.getJzj();
+
+                BZPlan bzPlan = new BZPlan();
+                List<BZPlanItem> bzPlanItemList =bzPlanDAO.getListByBCAndJZJ(bcInfo.getId(),jzj.getId());
+                bzPlan.setBzPlanItemList(bzPlanItemList);
                 bzPlan.setJzj(jzj);
                 bzPlan.setStation(bcItem.getStation());
+                bzPlan.setBcid(bcInfo.getId());
 
                 bcItemBZPlanMap.put(bcItem.getID(), bzPlan);
                 bzPlanList.add(bzPlan);
@@ -532,8 +540,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private void saveBZPlanItem(){
         Log.v("bzplan","save");
-
+        bzPlanDAO.addBZPlanList(bzPlanList);
     }
+
+
     private void initBL_BC(){
 
         spBCList= (Spinner) findViewById(R.id.spBCList);
