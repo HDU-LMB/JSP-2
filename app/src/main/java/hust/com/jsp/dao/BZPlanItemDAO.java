@@ -68,18 +68,18 @@ public class BZPlanItemDAO {
     }
 
     public void addList(List<BZPlanItem> list){
-//            for(int i=0;i<list.size();i++){
-//                addInfo(i,list.get(i));
-//            }
-            BZPlanItem item=new BZPlanItem();
-        item.setAddOxygen(true);
-        item.setBcid(1);
-        item.setAddGuide(false);
-        item.setLocationid(1);
-        item.setJzjid(2);
-        item.setSpendTime(10);
-        item.setIndex(1);
-        addInfo(1,item);
+            for(int i=0;i<list.size();i++){
+                addInfo(i,list.get(i));
+            }
+//            BZPlanItem item=new BZPlanItem();
+//        item.setAddOxygen(true);
+//        item.setBcid(1);
+//        item.setAddGuide(false);
+//        item.setLocationid(1);
+//        item.setJzjid(2);
+//        item.setSpendTime(10);
+//        item.setIndex(1);
+//        addInfo(1,item);
     }
     public void addBZPlanList(List<BZPlan> list){
         db.beginTransaction();
