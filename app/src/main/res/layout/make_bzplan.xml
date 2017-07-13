@@ -518,6 +518,18 @@
                     android:text="×"/>
 
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/tipLabel"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textColor="#EE0000"
+                    android:textAlignment="center"
+                    android:layout_height="20dp" />
+            </LinearLayout>
 
         </LinearLayout>
 

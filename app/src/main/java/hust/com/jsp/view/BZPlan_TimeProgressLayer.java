@@ -1,13 +1,11 @@
 package hust.com.jsp.view;
 
-import android.app.Notification;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import com.onlylemi.mapview.library.MapView;
@@ -16,7 +14,6 @@ import com.onlylemi.mapview.library.layer.MapBaseLayer;
 
 import java.util.List;
 
-import hust.com.jsp.bean.BCInfo;
 import hust.com.jsp.bean.BZPlan;
 import hust.com.jsp.bean.BZPlanItem;
 import hust.com.jsp.bean.JZJ;
@@ -39,6 +36,7 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
     private float widthUnit;//方框单位时间下的长度
     private float heightLabel;//方框的高
     private float marginTop;//上下方框之间间隙
+    private int time;
 
     public BZPlan_TimeProgressLayer(MapView mapView,List<BZPlan> bzPlanList){
         super(mapView);
@@ -73,6 +71,15 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
         this.location = loc;
         this.baseLayer.setLocation(location);
     }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
     @Override
     public void onTouch(MotionEvent event) {
         this.baseLayer.onTouch(event);
@@ -117,6 +124,7 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
             left=53;
             bottom=top+heightLabel;
             float textLeng = paint.measureText(jzj.getDisplayName());
+            paint.setColor(Color.BLACK);
             canvas.drawText(jzj.getDisplayName(),(left-textLeng)-6,(top+bottom)/2+5,paint);//画JZJ名称
 
             if(!isShowTimeProgress) {
@@ -137,6 +145,10 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
                     canvas.drawRect(left, top, right, bottom, paint);//画每个ZW上任务花费的时间
                     canvas.drawText(bzItem.getStation().getDisplayName(), (left + right) / 2 - 10, (top + bottom) / 2 + 5, paint);//画ZW名称
 //                left=right;
+                }
+                if(time>0) {
+                    paint.setColor(Color.GREEN);
+                    canvas.drawLine(53 + widthUnit * time, top0-8, 53 + widthUnit * time, top0 + height, paint);
                 }
             }
         }

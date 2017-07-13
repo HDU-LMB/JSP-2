@@ -40,7 +40,7 @@ public class BZPlanPopupView extends PopupWindow {
     View popView;
     private TextView gasLabel,fluidLabel,coolLabel,airLabel,weaponLabel,oxygenLabel,electricityLabel,guidLabel;
     private Button deleteButton,saveBZItem;
-    private TextView jzjName,spendTime,zwName, deleteZWName;
+    private TextView jzjName,spendTime,zwName, deleteZWName,tipLabel;
     private TextView addBZItem,aLabel,bLabel,cLabel,dLabel,eLabel,fLabel,gLabel,hLabel, zLabel;
     private TextView number1Label,number2Label,number3Label,number4Label,number5Label,number6Label,number7Label,number8Label,number9Label,number0Label;
     private Drawable gasDrawable,fluidDrawable,coolDrawable,airDrawable,weaponDrawable,oxygenDrawable,electricDrawable,guidDrawable,grayDrawable;
@@ -132,6 +132,7 @@ public class BZPlanPopupView extends PopupWindow {
         number8Label=(TextView)popView.findViewById(R.id.number8Label);
         number9Label=(TextView)popView.findViewById(R.id.number9Label);
         deleteZWName =(TextView)popView.findViewById(R.id.numberdeleteLabel);
+        tipLabel=(TextView)popView.findViewById(R.id.tipLabel);
         clearBZItemState();
 //        spinner= (Spinner)popView.findViewById(R.id.zwStationSpinner);
         //从数据库表读取ZW信息，这里为测试数据
@@ -441,7 +442,7 @@ public class BZPlanPopupView extends PopupWindow {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-
+                tipLabel.setText("");
                 Station station= (Station) zwListView.getItemAtPosition(position);
                 bzPlanItem=bzPlan.getBzPlanItemList().get(position);
                 refreshBZItemInfo(position);
@@ -491,6 +492,7 @@ public class BZPlanPopupView extends PopupWindow {
                     refreshBZItemInfo(zwStationAdapter.getCount()-1);
                 }else refreshBZItemInfo(-1);
                 mapView.refresh();
+                tipLabel.setText("");
             }
         });
 
@@ -502,6 +504,7 @@ public class BZPlanPopupView extends PopupWindow {
 
                 if("".equals(zwName.getText())){
                     Toast.makeText(context,"请选择ZW！",Toast.LENGTH_LONG);
+                    tipLabel.setText("请选择ZW！");
                     return;
                 }
                 int flag=0;
@@ -512,8 +515,10 @@ public class BZPlanPopupView extends PopupWindow {
                 }
                 if(flag==0){
                     Log.v("bzplanview","没有该站位，请重新选择！");
+                    tipLabel.setText("没有该ZW，请重新选择！");
                     return;
                 }
+                tipLabel.setText("");
                 station.setDisplayName(zwName.getText().toString());
                 for(Location info:locationList){
                     if(info.getName().equals(zwName.getText().toString())){
@@ -595,6 +600,7 @@ public class BZPlanPopupView extends PopupWindow {
 
     private void  clearBZItemState(){
         jzjName.setText("");
+        tipLabel.setText("");
         gasLabel.setBackground(grayDrawable);
         airLabel.setBackground(grayDrawable);
         electricityLabel.setBackground(grayDrawable);

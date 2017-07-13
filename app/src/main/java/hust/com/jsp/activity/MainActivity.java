@@ -363,12 +363,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         seekBarTimeProgress=(SeekBar) findViewById(R.id.timeSeekBar);
-        seekBarTimeProgress.setMax(370);
+        seekBarTimeProgress.setMax(375);
         seekBarTimeProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 Log.v("Timeprogress","T="+progress);
                 refreshMapRefTime(progress,bzPlanTimeList);
+                timeProgressLayer.setTime(progress);
                 mapView.refresh();
             }
             @Override
