@@ -31,14 +31,15 @@ public class BZPlanItemDAO {
 
     }*/
     public List<BZPlanItem> getListByBCAndJZJ(int bcid,int jzjid){
-        return  toList(db.rawQuery("select * from bzplanitem where bcid=? and jzjid=? order by index",new String[]{String.valueOf(bcid),String.valueOf(jzjid)}));
+        return  toList(db.rawQuery("select * from bzplanitem where bcid=? and jzjid=? order by indexno",new String[]{String.valueOf(bcid),String.valueOf(jzjid)}));
     }
+
     public void addInfo(int index,BZPlanItem info){
         db.execSQL("insert into bzplanitem(" +
                         "bcid," +
                         "jzjid," +
                         "locationid," +
-                        "index," +
+                        "indexno," +
                         "spendtime," +
                         "gas," +
                         "air," +
@@ -67,9 +68,18 @@ public class BZPlanItemDAO {
     }
 
     public void addList(List<BZPlanItem> list){
-            for(int i=0;i<list.size();i++){
-                addInfo(i,list.get(i));
-            }
+//            for(int i=0;i<list.size();i++){
+//                addInfo(i,list.get(i));
+//            }
+            BZPlanItem item=new BZPlanItem();
+        item.setAddOxygen(true);
+        item.setBcid(1);
+        item.setAddGuide(false);
+        item.setLocationid(1);
+        item.setJzjid(2);
+        item.setSpendTime(10);
+        item.setIndex(1);
+        addInfo(1,item);
     }
     public void addBZPlanList(List<BZPlan> list){
         db.beginTransaction();
@@ -96,7 +106,7 @@ public class BZPlanItemDAO {
             info.setBcid(cursor.getInt(cursor.getColumnIndex("bcid")));
             info.setJzjid(cursor.getInt(cursor.getColumnIndex("jzjid")));
             info.setLocationid(cursor.getInt(cursor.getColumnIndex("locationid")));
-            info.setIndex(cursor.getInt(cursor.getColumnIndex("index")));
+            info.setIndex(cursor.getInt(cursor.getColumnIndex("indexno")));
             info.setSpendTime(cursor.getLong(cursor.getColumnIndex("spendtime")));
             info.setAddGas(cursor.getInt(cursor.getColumnIndex("gas"))==1);
             info.setAddAir(cursor.getInt(cursor.getColumnIndex("air"))==1);
@@ -116,7 +126,7 @@ public class BZPlanItemDAO {
             info.setBcid(cursor.getInt(cursor.getColumnIndex("bcid")));
             info.setJzjid(cursor.getInt(cursor.getColumnIndex("jzjid")));
             info.setLocationid(cursor.getInt(cursor.getColumnIndex("locationid")));
-            info.setIndex(cursor.getInt(cursor.getColumnIndex("index")));
+            info.setIndex(cursor.getInt(cursor.getColumnIndex("indexno")));
             info.setSpendTime(cursor.getLong(cursor.getColumnIndex("spendtime")));
             info.setAddGas(cursor.getInt(cursor.getColumnIndex("gas"))==1);
             info.setAddAir(cursor.getInt(cursor.getColumnIndex("air"))==1);

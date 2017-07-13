@@ -9,11 +9,20 @@ import java.util.List;
  */
 
 public class BZPlan {
+
+    private int bcid;
     private JZJ jzj;
     private List<BZPlanItem> bzPlanItemList;
     private Station station;//BL的FJ初始ZW
     private long flightTime;//QF时间
 
+    public int getBcid() {
+        return bcid;
+    }
+
+    public void setBcid(int bcid) {
+        this.bcid = bcid;
+    }
 
     public Station getStation() {
         return station;
@@ -50,6 +59,7 @@ public class BZPlan {
     }
 
     public void addBZPlanItem(BZPlanItem item){
+        item.setBcid(bcid);
         this.bzPlanItemList.add(item);
     }
 

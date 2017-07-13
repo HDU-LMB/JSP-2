@@ -507,10 +507,12 @@ public class BZPlanPopupView extends PopupWindow {
                     tipLabel.setText("请选择ZW！");
                     return;
                 }
+                int locationID=0;
                 int flag=0;
                 for(Location info:locationList){
                     if(info.getName().equals(zwName.getText().toString())){
                         flag=1;
+                        locationID=info.getId();
                     }
                 }
                 if(flag==0){
@@ -527,6 +529,7 @@ public class BZPlanPopupView extends PopupWindow {
                         station.setAngle(info.getAngle());
                     }
                 }
+                bzPlanItem.setLocationid(locationID);
                 bzPlanItem.setSpendTime(calculateSpendTime());
                 bzPlanItem.setStation(station);
                 bzPlanItem.setAddGas(actions[0]);
