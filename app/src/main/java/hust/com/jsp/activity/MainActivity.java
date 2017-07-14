@@ -482,7 +482,11 @@ public class MainActivity extends AppCompatActivity {
                 tranNode.setSpendTime(tranTime);
                 tranNode.setEndTime(bzPlanItem1.getEndTime()+tranTime);
                 float waitTime=bzPlanItem2.getStartTime()-bzPlanItem1.getEndTime();
-                if(waitTime==0){
+                for(int k=j+1;k<bzPlanItemList.size();k++){
+                    bzPlanItemList.get(k).setStartTime(bzPlanItemList.get(k).getStartTime()+tranTime);
+                    bzPlanItemList.get(k).setEndTime(bzPlanItemList.get(k).getEndTime()+tranTime);
+                }
+  /*              if(waitTime==0){
                     for(int k=j+1;k<bzPlanItemList.size();k++){
                         bzPlanItemList.get(k).setStartTime(bzPlanItemList.get(k).getStartTime()+tranTime);
                         bzPlanItemList.get(k).setEndTime(bzPlanItemList.get(k).getEndTime()+tranTime);
@@ -496,11 +500,31 @@ public class MainActivity extends AppCompatActivity {
                         bzPlanItemList.get(k).setStartTime(bzPlanItemList.get(k).getStartTime()+tranTime-waitTime);
                         bzPlanItemList.get(k).setEndTime(bzPlanItemList.get(k).getEndTime()+tranTime-waitTime);
                     }
-                }
+                }*/
    /*             bzPlanItem2.setStartTime(bzPlanItem2.getStartTime()+tranTime);
                 bzPlanItem2.setEndTime(bzPlanItem2.getStartTime()+bzPlanItem2.getSpendTime());*/
                 bzPlanItemList.add(j+1,tranNode);
             }
+            BZPlanItem tranNode=new BZPlanItem();
+            BZPlanItem firstNode=bzPlan.getBzPlanItemList().get(0);
+            tranNode.setIndex(0);
+            tranNode.setStation(bzPlan.getStation());
+            tranNode.setStartTime(0);
+            if(bzPlan.getStation().getDisplayName().equals(firstNode.getStation().getDisplayName())){
+                tranNode.setSpendTime(0);
+                tranNode.setEndTime(0);
+            }
+            else {
+                double distance= LocationTools.getDistance(bzPlan.getStation().getLocation(),firstNode.getStation().getLocation());
+                float tranTime= (float) (distance*0.03+2);
+                tranNode.setSpendTime(tranTime);
+                tranNode.setEndTime(tranTime);
+            }
+            for(int k=0;k<bzPlanItemList.size();k++){
+                bzPlanItemList.get(k).setStartTime(bzPlanItemList.get(k).getStartTime()+tranNode.getSpendTime());
+                bzPlanItemList.get(k).setEndTime(bzPlanItemList.get(k).getEndTime()+tranNode.getSpendTime());
+            }
+            bzPlanItemList.add(0,tranNode);
         }
         return bzPlanList;
     }
@@ -525,7 +549,7 @@ public class MainActivity extends AppCompatActivity {
             for(int i=0;i<bzPlanItemList.size();i++){
                 BZPlanItem bzPlanItem=bzPlanItemList.get(i);
                 if(bzPlanItem.getStartTime()<=time&&bzPlanItem.getEndTime()>time){
-                    if(i%2==0){
+                    if(i%2!=0){
                         flag=1;
                         station=bzPlanItem.getStation();
                         timeper=(time-bzPlanItem.getStartTime())/bzPlanItem.getSpendTime();
@@ -537,18 +561,26 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 }
+                else if(time<bzPlanItemList.get(0).getStartTime()){
+                    flag=5;
+                    station=bzPlan.getStation();
+                }
                 else if(time>bzPlanItemList.get(bzPlanItemList.size()-1).getEndTime()){
                     flag=3;
                 }
                 else if(i<bzPlanItemList.size()-1){
                     if(bzPlanItem.getEndTime()<time&&bzPlanItemList.get(i+1).getStartTime()>time){
-                        if(i%2==0){
-                            flag=2;
+                        flag=2;
+                        if(i%2!=0){
                             station=bzPlanItem.getStation();
                         }
                         else {
-                            flag=2;
-                            station=bzPlanItemList.get(i-1).getStation();
+                            if(i==0){
+                                station=bzPlan.getStation();
+                            }
+                            else {
+                                station=bzPlanItemList.get(i-1).getStation();
+                            }
                         }
 
                     }
@@ -574,6 +606,12 @@ public class MainActivity extends AppCompatActivity {
                 case 4:     //转运
                     layer.isVisible=true;
                     layer.setProgress(4);
+                    layer.setLocation(station.getLocation());
+                    layer.setAngle(station.getAngle());
+                    break;
+                case 5:     //初始站位
+                    layer.isVisible=true;
+                    layer.setProgress(5);
                     layer.setLocation(station.getLocation());
                     layer.setAngle(station.getAngle());
                     break;

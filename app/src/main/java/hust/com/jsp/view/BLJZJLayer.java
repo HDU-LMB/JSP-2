@@ -91,6 +91,9 @@ public class BLJZJLayer extends MapBaseLayer {
         else if(progress==4){
             drawTextWithRect(canvas,"转运中",location.x,location.y+10);
         }
+        else if(progress==5){
+            drawTextWithRect(canvas,"初始",location.x,location.y+10);
+        }
         canvas.restore();
     }
     private void drawTextWithRect(Canvas canvas,String str,float x,float y){
