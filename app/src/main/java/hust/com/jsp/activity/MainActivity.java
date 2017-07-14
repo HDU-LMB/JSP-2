@@ -434,6 +434,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * 复制List<BZPlan> ，用于添加转运节点
+     * @param listP 原始list
+     * @return
+     */
     private List<BZPlan> copyList(List<BZPlan> listP){
         List<BZPlan> list=new ArrayList<>();
         for(int i=0;i<listP.size();i++){
@@ -451,7 +457,7 @@ public class MainActivity extends AppCompatActivity {
         return list;
     }
     /**
-     *
+     * 添加转运节点
      */
     private List<BZPlan> addTranNode(){
         List<BZPlan> bzPlanList=copyList(bzPlanTimeList);
@@ -468,10 +474,11 @@ public class MainActivity extends AppCompatActivity {
                 BZPlanItem bzPlanItem1=bzPlanItemList.get(j);
                 BZPlanItem bzPlanItem2=bzPlanItemList.get(j+1);
                 BZPlanItem tranNode=new BZPlanItem();
+                tranNode.setStation(bzPlanItem1.getStation());
                 tranNode.setIndex(j+1);
                 tranNode.setStartTime(bzPlanItem1.getEndTime());
                 double distance= LocationTools.getDistance(bzPlanItem1.getStation().getLocation(),bzPlanItem2.getStation().getLocation());
-                float tranTime= (float) (distance*0.15+2);
+                float tranTime= (float) (distance*0.03+2);
                 tranNode.setSpendTime(tranTime);
                 tranNode.setEndTime(bzPlanItem1.getEndTime()+tranTime);
                 for(int k=j+1;k<bzPlanItemList.size();k++){
@@ -504,43 +511,59 @@ public class MainActivity extends AppCompatActivity {
             float timeper=Float.MAX_VALUE;
             BLJZJLayer layer=layerMap.get(bzPlan.getJzj().getId());
             for(int i=0;i<bzPlanItemList.size();i++){
-                if(i%2==0){
-                    BZPlanItem bzPlanItem=bzPlanItemList.get(i);
-                    if(bzPlanItem.getStartTime()<=time&&bzPlanItem.getEndTime()>time){
+                BZPlanItem bzPlanItem=bzPlanItemList.get(i);
+                if(bzPlanItem.getStartTime()<=time&&bzPlanItem.getEndTime()>time){
+                    if(i%2==0){
                         flag=1;
                         station=bzPlanItem.getStation();
                         timeper=(time-bzPlanItem.getStartTime())/bzPlanItem.getSpendTime();
-                        break;
+
                     }
-                    else if(time>bzPlanItemList.get(bzPlanItemList.size()-1).getEndTime()){
-                        flag=3;
+                    else {
+                        flag=4;
+                        station=bzPlanItem.getStation();
                     }
-                    else if(i<bzPlanItemList.size()-1){
-                        if(bzPlanItem.getEndTime()<time&&bzPlanItemList.get(i+1).getStartTime()>time){
+                    break;
+                }
+                else if(time>bzPlanItemList.get(bzPlanItemList.size()-1).getEndTime()){
+                    flag=3;
+                }
+                else if(i<bzPlanItemList.size()-1){
+                    if(bzPlanItem.getEndTime()<time&&bzPlanItemList.get(i+1).getStartTime()>time){
+                        if(i%2==0){
                             flag=2;
                             station=bzPlanItem.getStation();
                         }
+                        else {
+                            flag=2;
+                            station=bzPlanItemList.get(i-1).getStation();
+                        }
+
                     }
                 }
-                else {
-                    flag=3;
-                }
+
             }
             switch (flag){
-                case 1:
+                case 1:     //进行保障
                     layer.isVisible=true;
                     layer.setProgress(timeper);
                     layer.setLocation(station.getLocation());
                     layer.setAngle(station.getAngle());
                     break;
-                case 2:
+                case 2:     //等待
                     layer.isVisible=true;
-                    layer.setProgress(1);
+                    layer.setProgress(2);
                     layer.setLocation(station.getLocation());
                     layer.setAngle(station.getAngle());
                     break;
-                case 3:
+                case 3:     //起飞
                     layer.isVisible=false;
+                    break;
+                case 4:     //转运
+                    layer.isVisible=true;
+                    layer.setProgress(4);
+                    layer.setLocation(station.getLocation());
+                    layer.setAngle(station.getAngle());
                     break;
             }
 
