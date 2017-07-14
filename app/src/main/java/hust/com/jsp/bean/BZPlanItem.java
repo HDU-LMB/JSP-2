@@ -58,6 +58,7 @@ public class BZPlanItem {
             Color.parseColor("#00FF00"),
             Color.parseColor("#FFBBFF"),
             Color.LTGRAY
+
     };
 
     public int getIndex() {
