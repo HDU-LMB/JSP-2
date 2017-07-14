@@ -15,12 +15,22 @@ import java.util.List;
 
 public class BCInfoItem {
     private int id;
+    private JZJ jzj;
+
+    public Station getStation() {
+        return station;
+    }
+
+    public void setStation(Station station) {
+        this.station = station;
+    }
+
+    private Station station;
 
     public JZJ getJzj() {
         return jzj;
     }
 
-    private JZJ jzj;
 
     public List<JZJAction> getJzjActionList() {
         return jzjActionList;

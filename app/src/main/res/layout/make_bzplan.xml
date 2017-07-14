@@ -497,7 +497,7 @@
                     android:textAlignment="center"
                     android:text="0"/>
                 <TextView
-                    android:id="@+id/numberaddLabel"
+                    android:id="@+id/dotLabel"
                     android:layout_width="40dp"
                     android:layout_height="20dp"
                     android:padding="0dp"
@@ -505,7 +505,7 @@
                     android:layout_marginTop="5dp"
                     android:background="@drawable/label_boderstyle"
                     android:textAlignment="center"
-                    android:text="add"/>
+                    android:text="·"/>
                 <TextView
                     android:id="@+id/numberdeleteLabel"
                     android:layout_width="40dp"
@@ -517,6 +517,18 @@
                     android:textAlignment="center"
                     android:text="×"/>
 
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/tipLabel"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textColor="#EE0000"
+                    android:textAlignment="center"
+                    android:layout_height="20dp" />
             </LinearLayout>
 
         </LinearLayout>

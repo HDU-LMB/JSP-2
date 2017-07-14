@@ -50,10 +50,25 @@ public class JSPDBHelper extends SQLiteOpenHelper {
                 "name text," +
                 "starttime real," +
                 "endtime real)";
+        String CREATE_BZPLANITEM="create table bzplanitem(" +
+                "bcid integer," +
+                "jzjid integer," +
+                "locationid integer," +
+                "indexno integer," +
+                "spendtime real," +
+                "gas integer," +
+                "air integer," +
+                "elec integer," +
+                "fluid integer," +
+                "weapon integer," +
+                "guide integer," +
+                "cool integer," +
+                "oxygen integer)";
         db.execSQL(CREATE_LOCATION);
         db.execSQL(CREATE_JZJ);
         db.execSQL(CREATE_BLINFO);
         db.execSQL(CREATE_BCINFO);
+        db.execSQL(CREATE_BZPLANITEM);
     }
     private void addData(){
         //添加站位
@@ -80,6 +95,7 @@ public class JSPDBHelper extends SQLiteOpenHelper {
         db.execSQL("insert into bcinfo(id,name,starttime,endtime) values(?,?,?,?)",new String[]{"1","BC-1","1336226501635","1336226501635"});
         //添加bl
         db.execSQL("insert into blinfo(bcid,jzjid,x,y,type) values(?,?,?,?,?)",new String[]{"1","1","160","60","1"});
+        db.execSQL("insert into blinfo(bcid,jzjid,x,y,type) values(?,?,?,?,?)",new String[]{"1","2","160","220","1"});
 
     }
 }

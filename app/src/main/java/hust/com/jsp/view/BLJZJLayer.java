@@ -4,7 +4,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.PointF;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -30,10 +32,11 @@ public class BLJZJLayer extends MapBaseLayer {
     private final double radius = 30.0;
     private MapView mapView;
     private BitmapLayer.OnBitmapClickListener onBitmapClickListener;
-
+    private float progress=Float.MAX_VALUE;
     public BLJZJLayer(MapView mapView, Resources res, final JZJ jzj){
         super(mapView);
         this.mapView=mapView;
+        this.jzj=jzj;
         switch (jzj.getJzjType()){
             case 1:
                 this.bitmap = BitmapFactory.decodeResource(res, R.drawable.jzj);
@@ -48,14 +51,22 @@ public class BLJZJLayer extends MapBaseLayer {
         Bitmap dstbmp = Bitmap.createBitmap(this.bitmap, 0, 0, this.bitmap.getWidth(), this.bitmap.getHeight(),
                 matrix, true);
         this.baseLayer = new BitmapLayer(mapView,dstbmp);
-      //  baseLayer.setAutoScale(true);
+        //  baseLayer.setAutoScale(true);
     }
-
+    public void setAngle(float angle){
+        Matrix matrix = new Matrix();
+        matrix.setRotate(angle, this.bitmap.getWidth() / 2, this.bitmap.getHeight() / 2);
+        matrix.postScale(0.1f, 0.1f);
+        Bitmap dstbmp = Bitmap.createBitmap(this.bitmap, 0, 0, this.bitmap.getWidth(), this.bitmap.getHeight(),
+                matrix, true);
+        this.baseLayer.setBitmap(dstbmp);
+    }
     public void setLocation(PointF loc)
     {
 /*        float[] point= mapView.convertScreenXY2MapXY(loc.x,loc.y);
         PointF pointF=new PointF(point[0],point[1]);
         this.location = pointF;*/
+        this.location=loc;
         this.baseLayer.setLocation(loc);
     }
 
@@ -68,8 +79,26 @@ public class BLJZJLayer extends MapBaseLayer {
     public void draw(Canvas canvas, Matrix currentMatrix, float currentZoom, float currentRotateDegrees) {
 
         baseLayer.draw(canvas,currentMatrix,currentZoom,currentRotateDegrees);
+        canvas.save();
+        canvas.setMatrix(currentMatrix);
+        drawTextWithRect(canvas,jzj.getDisplayName(),location.x,location.y-5);
+        if(progress<=1){
+            drawTextWithRect(canvas,String.format("%.2f",progress),location.x,location.y+10);
+        }
+        canvas.restore();
     }
-
+    private void drawTextWithRect(Canvas canvas,String str,float x,float y){
+        Paint paint=new Paint();
+        paint.setColor(Color.WHITE);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawRect(x-25,y-10,x+15,y+2,paint);
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.STROKE);
+        canvas.drawRect(x-25,y-10,x+15,y+2,paint);
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawText(str,x-20,y,paint);
+    }
 
     public void setOnBitmapClickListener(BitmapLayer.OnBitmapClickListener onBitmapClickListener) {
         this.baseLayer.setOnBitmapClickListener(onBitmapClickListener);
@@ -89,5 +118,13 @@ public class BLJZJLayer extends MapBaseLayer {
 
     public void setJzjID(int jzjID) {
         this.jzjID = jzjID;
+    }
+
+    public float getProgress() {
+        return progress;
+    }
+
+    public void setProgress(float progress) {
+        this.progress = progress;
     }
 }

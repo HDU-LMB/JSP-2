@@ -1,7 +1,6 @@
 package hust.com.jsp.presenter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,8 +62,8 @@ public class ZW_BCItemAdapter extends BaseAdapter {
             convertView =  LayoutInflater.from(mContext).inflate(R.layout.zw_bc_item_listview,null);
             vh.mView = convertView;
             vh.tv_bc_jzjname = (TextView) convertView.findViewById(R.id.jzjName);
-            vh.tv_bc_usageCondition = (TextView) convertView.findViewById(R.id.usageCondition);
-            vh.tv_bc_actionlist = (TextView) convertView.findViewById(R.id.actionList);
+            vh.tv_bc_useType = (TextView) convertView.findViewById(R.id.useTypeBC);
+//            vh.tv_bc_jzjLable = (TextView) convertView.findViewById(R.id.jzjBCLable);
            //vh.backGround = convertView.findViewById(R.id.bc_list_background);
             convertView.setTag(vh);
         }else{
@@ -73,8 +72,8 @@ public class ZW_BCItemAdapter extends BaseAdapter {
 
         BCInfoItem bcInfoItem= (BCInfoItem) this.getItem(position);
         vh.tv_bc_jzjname.setText(bcInfoItem.getJzj().getDisplayName());
-        vh.tv_bc_usageCondition.setText(bcInfoItem.getTypeName());
-        vh.tv_bc_actionlist.setText(bcInfoItem.getActionListDisplay());
+        vh.tv_bc_useType.setText(bcInfoItem.getTypeName());
+//        vh.tv_bc_jzjLable.setText(bcInfoItem.getActionListDisplay());
 //        if(focus == position) vh.backGround.setBackgroundColor(Color.LTGRAY);
 //        else vh.backGround.setBackgroundColor(Color.TRANSPARENT);
 
@@ -83,8 +82,8 @@ public class ZW_BCItemAdapter extends BaseAdapter {
     private class ViewHolder{
         public View mView;
         public TextView tv_bc_jzjname;
-        public TextView tv_bc_usageCondition;
-        public TextView tv_bc_actionlist;
+        public TextView tv_bc_useType;
+//        public TextView tv_bc_jzjLable;
         public View backGround;
     }
 }

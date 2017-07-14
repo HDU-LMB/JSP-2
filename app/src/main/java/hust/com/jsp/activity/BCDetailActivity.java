@@ -27,6 +27,7 @@ import com.onlylemi.mapview.library.layer.BitmapLayer;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -37,6 +38,7 @@ import hust.com.jsp.bean.BCInfo;
 import hust.com.jsp.bean.BLInfo;
 import hust.com.jsp.bean.JZJ;
 import hust.com.jsp.bean.Location;
+import hust.com.jsp.bean.Station;
 import hust.com.jsp.dao.BCDAO;
 import hust.com.jsp.dao.BLDAO;
 import hust.com.jsp.dao.JZJDAO;
@@ -121,21 +123,39 @@ public class BCDetailActivity extends AppCompatActivity {
                 public void onBitmapClick(BitmapLayer layer) {
                     layer.isVisible=true;
                     List<BLInfo> blInfoList=blMap.get(bcID);
-                    for(BLInfo info:blInfoList){
+                    Iterator<BLInfo> iterator = blInfoList.iterator();
+                    while(iterator.hasNext()){
+                        BLInfo info = iterator.next();
                         if(info.getJzjid()==jzj.getId()) {
                             clickCir();
-                            Log.v("jzjlayer",jzj.getId()+"    type:"+clickType);
+                            Log.v("bc layer", jzj.getId() + "    type:" + clickType);
+                            info.setType(clickType);
+                            if (info.getType() == 3) {
+                                iterator.remove();
+                                //  mapView.removeLayer(layer);
+                                // Log.v("bc layer",mapView.getLayers().size()+"");
+                                layer.isVisible = false;
+                                mapView.refresh();
+                            }
+                        }
+
+                    }
+                    refreshBCJZJList(bcID);
+/*                    for(BLInfo info:blInfoList){
+                        if(info.getJzjid()==jzj.getId()) {
+                            clickCir();
+                            Log.v("bc layer",jzj.getId()+"    type:"+clickType);
                             info.setType(clickType);
                             if(info.getType()==3){
                                 blInfoList.remove(info);
                               //  mapView.removeLayer(layer);
-                                Log.v("bc layer",mapView.getLayers().size()+"");
+                               // Log.v("bc layer",mapView.getLayers().size()+"");
                                 layer.isVisible=false;
                                 mapView.refresh();
                             }
                         }
                     }
-                    refreshBCJZJList(bcID);
+                    refreshBCJZJList(bcID);*/
                 }
             });
             layerMap.put(jzj.getId(),layer);
@@ -170,7 +190,7 @@ public class BCDetailActivity extends AppCompatActivity {
                     ((View)((HorizontalListView)parent).getTag()).setBackgroundDrawable(null);
                 }
                 ((HorizontalListView)parent).setTag(view);
-                view.setBackgroundColor(Color.GRAY);
+                view.setBackgroundColor(Color.LTGRAY);
             }
         });
         jzjHListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -184,7 +204,7 @@ public class BCDetailActivity extends AppCompatActivity {
                     ((View)((HorizontalListView)parent).getTag()).setBackgroundDrawable(null);
                 }
                 ((HorizontalListView)parent).setTag(view);
-                view.setBackgroundColor(Color.GRAY);
+                view.setBackgroundColor(Color.LTGRAY);
 
             }
         });
@@ -206,6 +226,8 @@ public class BCDetailActivity extends AppCompatActivity {
                     info.setBcid(bcID);
                     info.setJzjid(jzjID);
                     Location location= LocationTools.getNearLoaction(mapView.getTouchPoint(),locationList);
+//                    Station station=new Station(location.getId(),location.getPoint(),location.getName());
+//                    info.setStation(station);
                     info.setPoint(location.getPoint());
                     blInfoList.add(info);
                     blMap.put(bcID,blInfoList);
@@ -272,6 +294,8 @@ public class BCDetailActivity extends AppCompatActivity {
             BLJZJLayer layer=layerMap.get(info.getJzjid());
             Log.v("bc",info.getPoint().toString()+" id  "+info.getJzjid());
             layer.setLocation(info.getPoint());
+            Location location=locationDAO.getInfoByPonit(info.getX(),info.getY());
+            layer.setAngle(location.getAngle());
             mapView.addLayer(layer);
         }
 

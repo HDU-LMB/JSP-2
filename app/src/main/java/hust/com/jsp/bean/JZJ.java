@@ -1,5 +1,7 @@
 package hust.com.jsp.bean;
 
+import android.graphics.PointF;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,15 +14,26 @@ public class JZJ {
     private String displayName;
     private int jzjType;
     private String jzjBeiyong;
-    private Station nearstStation;
+    private Station currentStation;//JZJ的当前所在站位
+
+
     public JZJ(){
 
-    };
+    }
     public JZJ(int id,String name,String by,int jzjType){
         this.id=id;
         this.displayName=name;
         this.jzjBeiyong=by;
         this.jzjType=jzjType;
+    }
+
+
+    public Station getCurrentStation() {
+        return currentStation;
+    }
+
+    public void setCurrentStation(Station currentStation) {
+        this.currentStation = currentStation;
     }
 
     public int getJzjType() {

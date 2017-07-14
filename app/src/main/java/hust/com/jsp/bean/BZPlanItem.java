@@ -7,9 +7,14 @@ import android.graphics.Color;
  */
 
 public class BZPlanItem {
-
+    private int jzjid;
+    private int bcid;
+    private int locationid;
+    private int index;
     private Station station; //ZW
     private float spendTime;
+    private float startTime;
+    private float endTime;
 
     private boolean addGas;//油
     private  boolean addAir;//气
@@ -50,6 +55,38 @@ public class BZPlanItem {
             Color.LTGRAY
     };
 
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public int getJzjid() {
+        return jzjid;
+    }
+
+    public void setJzjid(int jzjid) {
+        this.jzjid = jzjid;
+    }
+
+    public int getBcid() {
+        return bcid;
+    }
+
+    public void setBcid(int bcid) {
+        this.bcid = bcid;
+    }
+
+    public int getLocationid() {
+        return locationid;
+    }
+
+    public void setLocationid(int locationid) {
+        this.locationid = locationid;
+    }
+
     public boolean[] getActions() {
         return actions;
     }
@@ -72,6 +109,23 @@ public class BZPlanItem {
     public void setSpendTime(float spendTime) {
         this.spendTime = spendTime;
     }
+
+    public float getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(float startTime) {
+        this.startTime = startTime;
+    }
+
+    public float getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(float endTime) {
+        this.endTime = endTime;
+    }
+
 
     public boolean isAddGas() {
         return addGas;
