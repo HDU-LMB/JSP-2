@@ -187,6 +187,7 @@ public class BZPlan_TimeSchemaOrder {
             cloneHead.actionEndTime=pNode.actionEndTime;
             cloneHead.spendTime=pNode.spendTime;
             cloneHead.station=pNode.station;
+            cloneHead.initialStation=pNode.initialStation;
             cloneHead.next=null;
             cloneNode=cloneHead;
             pNode=pNode.next;
@@ -198,6 +199,7 @@ public class BZPlan_TimeSchemaOrder {
             temp.actionEndTime=pNode.actionEndTime;
             temp.spendTime=pNode.spendTime;
             temp.station=pNode.station;
+            temp.initialStation=pNode.initialStation;
             temp.next=null;
             cloneNode.next=temp;
             cloneNode=cloneNode.next;
@@ -220,10 +222,12 @@ public class BZPlan_TimeSchemaOrder {
                     String zwName = station.getDisplayName();
                     if (i == 0) {
                         head.station = station;
+                        head.initialStation=bzPlanItems.get(0).getStation();//第一个任务的zw
                         head.spendTime = bzItem.getSpendTime();
                     } else {
                         ZWNode node = new ZWNode(jzj, station);
                         node.spendTime = bzItem.getSpendTime();
+                        node.initialStation=h.initialStation;
                         h.next = node;
                         h = h.next;
                     }
@@ -238,6 +242,7 @@ public class BZPlan_TimeSchemaOrder {
 
         for(int j=0;j<jzjList.size();j++) {//对占用该zw的所有JZJ
             ZWNode oldHead = jzjZWNodeMap.get(jzjList.get(j));
+            insertHead.initialStation=oldHead.initialStation;
             ZWNode pre = oldHead;
             String zwNameSchema = "";//指向zw为zwName的节点
             if (oldHead != null) {
@@ -390,7 +395,8 @@ public class BZPlan_TimeSchemaOrder {
                 for(Map.Entry<JZJ,ZWNode> entry : jzjZWNodeMap.entrySet()){
                     ZWNode head=entry.getValue();
                     JZJ jzj=entry.getKey();
-                    if(!jzj.getCurrentStation().getDisplayName().equals(head.station.getDisplayName())){//初始站位的死锁，必须该jzj先做BZ任务
+
+                    if(jzj.getCurrentStation().getDisplayName().equals(head.initialStation.getDisplayName())){//初始站位的死锁，必须该jzj先做BZ任务
                         if(!head.jzj.getDisplayName().equals(jzj.getDisplayName())){
                             totalSpendTime=lockedTime;
                             return totalSpendTime;
@@ -483,6 +489,7 @@ public class BZPlan_TimeSchemaOrder {
     class ZWNode{
         private JZJ jzj;
         private Station station;
+        private Station initialStation;
         private ZWNode next;
         private float spendTime;//完成所任务花费时间
         private float actionStartTime;//开始任务的时间节点

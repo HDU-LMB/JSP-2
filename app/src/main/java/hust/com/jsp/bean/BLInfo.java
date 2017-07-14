@@ -5,7 +5,6 @@ import android.graphics.PointF;
 import java.util.List;
 
 import hust.com.jsp.activity.MainActivity;
-import hust.com.jsp.dao.LocationDAO;
 
 /**
  * Created by GEAR on 2017/6/28.
@@ -21,7 +20,7 @@ public class BLInfo {
     private List<Location> locationList;
 
     public BLInfo(){
-        this.locationList=MainActivity.getLocationList();
+        this.locationList= MainActivity.getLocationList();
     }
 
 
