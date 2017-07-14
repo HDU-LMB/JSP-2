@@ -481,9 +481,21 @@ public class MainActivity extends AppCompatActivity {
                 float tranTime= (float) (distance*0.03+2);
                 tranNode.setSpendTime(tranTime);
                 tranNode.setEndTime(bzPlanItem1.getEndTime()+tranTime);
-                for(int k=j+1;k<bzPlanItemList.size();k++){
-                    bzPlanItemList.get(k).setStartTime(bzPlanItemList.get(k).getStartTime()+tranTime);
-                    bzPlanItemList.get(k).setEndTime(bzPlanItemList.get(k).getEndTime()+tranTime);
+                float waitTime=bzPlanItem2.getStartTime()-bzPlanItem1.getEndTime();
+                if(waitTime==0){
+                    for(int k=j+1;k<bzPlanItemList.size();k++){
+                        bzPlanItemList.get(k).setStartTime(bzPlanItemList.get(k).getStartTime()+tranTime);
+                        bzPlanItemList.get(k).setEndTime(bzPlanItemList.get(k).getEndTime()+tranTime);
+                    }
+                }
+                else if(waitTime>tranTime){
+
+                }
+                else if(waitTime<tranTime){
+                    for(int k=j+1;k<bzPlanItemList.size();k++){
+                        bzPlanItemList.get(k).setStartTime(bzPlanItemList.get(k).getStartTime()+tranTime-waitTime);
+                        bzPlanItemList.get(k).setEndTime(bzPlanItemList.get(k).getEndTime()+tranTime-waitTime);
+                    }
                 }
    /*             bzPlanItem2.setStartTime(bzPlanItem2.getStartTime()+tranTime);
                 bzPlanItem2.setEndTime(bzPlanItem2.getStartTime()+bzPlanItem2.getSpendTime());*/
@@ -576,6 +588,10 @@ public class MainActivity extends AppCompatActivity {
     private void saveBZPlanItem(){
         Log.v("bzplan","save");
         bzPlanDAO.addBZPlanList(bzPlanList);
+        List<BZPlanItem> list=bzPlanDAO.getListByBCAndJZJ(1,0);
+        for(BZPlanItem item :list){
+            Log.v("bzplan",item.getSpendTime()+"");
+        }
     }
 
 
