@@ -2,6 +2,10 @@ package hust.com.jsp.bean;
 
 import android.graphics.Color;
 
+import java.util.List;
+
+import hust.com.jsp.activity.MainActivity;
+
 /**
  * Created by hust on 2017/1/13.
  */
@@ -24,6 +28,7 @@ public class BZPlanItem {
     private boolean addGuide;//导
     private  boolean addCool;//冷
     private boolean addOxygen;//氧
+    private List<Location> locationList;
 
     public String[] getLabels() {
         return labels;
@@ -99,6 +104,12 @@ public class BZPlanItem {
     }
 
     public Station getStation() {
+        this.locationList= MainActivity.getLocationList();
+        for (Location loc : locationList) {
+            if (loc.getId()==locationid) {
+                this.station = new Station(loc.getId(), loc.getPoint(), loc.getName());
+            }
+        }
         return station;
     }
 

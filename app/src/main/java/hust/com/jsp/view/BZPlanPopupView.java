@@ -529,6 +529,8 @@ public class BZPlanPopupView extends PopupWindow {
                         station.setAngle(info.getAngle());
                     }
                 }
+                bzPlanItem.setJzjid(jzj.getId());
+                bzPlanItem.setBcid(bzPlan.getBcid());
                 bzPlanItem.setLocationid(locationID);
                 bzPlanItem.setSpendTime(calculateSpendTime());
                 bzPlanItem.setStation(station);
