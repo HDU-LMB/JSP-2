@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.widget.Toast;
 
 import com.onlylemi.mapview.library.MapView;
 import com.onlylemi.mapview.library.layer.BitmapLayer;
@@ -17,9 +16,7 @@ import com.onlylemi.mapview.library.layer.MapBaseLayer;
 import java.util.ArrayList;
 import java.util.List;
 
-import hust.com.jsp.activity.MainActivity;
 import hust.com.jsp.bean.BZPlan;
-import hust.com.jsp.utils.ImageCollection;
 
 /**
  * Created by Michael-Lee on 2017/6/27.
