@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hust.com.jsp.R;
+import hust.com.jsp.activity.MainActivity;
 import hust.com.jsp.bean.BZPlan;
 import hust.com.jsp.bean.BZPlanItem;
 import hust.com.jsp.bean.JZJ;
@@ -57,7 +58,6 @@ public class BZPlanPopupView extends PopupWindow {
     private MapView mapView;
     stationValue putValue;
     List<Station> stationList;//当前JZJ（bcplanitem）所添加的zw
-    private List<Station> stationTotalList;//HM上所有的ZW列表
     private ZW_StationAdapter zwStationAdapter;
     private ZW_StationAdapter zwStationTotalAdapter;
     private int position=0;
@@ -72,15 +72,212 @@ public class BZPlanPopupView extends PopupWindow {
         this.jzj=bzPlan.getJzj();
         this.mapView=mapView;
         this.stationList=new ArrayList<>();
-        this.stationTotalList=new ArrayList<>();
         this.selectedStaion=new Station();
-        locationDAO=new LocationDAO(context);
-        locationList=locationDAO.getAllLocation();
+        locationList= MainActivity.getLocationList();
         for(BZPlanItem item: bzPlan.getBzPlanItemList()){
             stationList.add(item.getStation());
         }
         this.zwStationAdapter=new ZW_StationAdapter(context,stationList);
 //        this.zwStationTotalAdapter=new ZW_StationAdapter(context,stationTotalList);
+        //初始化界面与数据
+        initView();
+
+        zwListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.v("ZWListView","item selected");
+                if (((ListView)parent).getTag() != null){
+                    ((View)((ListView)parent).getTag()).setBackgroundDrawable(null);
+                }
+                ((ListView)parent).setTag(view);
+                view.setBackgroundColor(Color.LTGRAY);
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        zwListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                tipLabel.setText("");
+                station= (Station) zwListView.getItemAtPosition(position);
+                bzPlanItem=bzPlan.getBzPlanItemList().get(position);
+                refreshBZItemInfo(position);
+            }
+        });
+
+        addBZItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               addNewBZItem();
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(zwStationAdapter.getCount()==0) return;
+
+                if(bzPlan.getBzPlanItemList().contains(bzPlanItem))
+                    bzPlan.removeBZPlanItem(bzPlanItem);
+
+                stationList.clear();
+                for(BZPlanItem item: bzPlan.getBzPlanItemList()){
+                    stationList.add(item.getStation());
+                }
+                zwStationAdapter.notifyDataSetChanged();
+
+                if(bzPlan.getBzPlanItemList().size()>0) {
+                    refreshBZItemInfo(bzPlan.getBzPlanItemList().size()-1);
+                }else
+                    refreshBZItemInfo(-1);
+                mapView.refresh();
+                tipLabel.setText("");
+            }
+        });
+
+
+        //保存信息
+        saveBZItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if("".equals(zwName.getText())){
+                    tipLabel.setText("请选择ZW！");
+                    return;
+                }
+                int locationID=0;
+                int flag=0;
+                for(Location info:locationList){
+                    if(info.getName().equals(zwName.getText().toString())){
+                        flag=1;
+                        locationID=info.getId();
+                    }
+                }
+                if(flag==0){
+                    tipLabel.setText("没有该ZW，请重新选择！" +
+                            "");
+                    return;
+                }
+
+
+
+                tipLabel.setText("");
+                station.setDisplayName(zwName.getText().toString());
+                for(Location info:locationList){
+                    if(info.getName().equals(zwName.getText().toString())){
+                        station.setLocation(info.getPoint());
+                        station.setAngle(info.getAngle());
+                    }
+                }
+                bzPlanItem.setJzjid(jzj.getId());
+                bzPlanItem.setBcid(bzPlan.getBcid());
+                bzPlanItem.setLocationid(locationID);
+                bzPlanItem.setSpendTime(calculateSpendTime());
+                bzPlanItem.setStation(station);
+                bzPlanItem.setAddGas(actions[0]);
+                bzPlanItem.setAddAir(actions[1]);
+                bzPlanItem.setAddElectricity(actions[2]);
+                bzPlanItem.setAddFluid(actions[3]);
+                bzPlanItem.setAddWeapon(actions[4]);
+                bzPlanItem.setAddGuide(actions[5]);
+                bzPlanItem.setAddCool(actions[6]);
+                bzPlanItem.setAddOxygen(actions[7]);
+
+                if(isAdd) {
+                    zwStationAdapter.add(station);
+                    bzPlan.addBZPlanItem(bzPlanItem);
+                    refreshBZItemInfo(bzPlan.getBzPlanItemList().size()-1);
+//                    zwStationAdapter.notifyDataSetChanged();
+//                    position=stationList.size()-1;
+//                    zwListView.setSelection(zwStationAdapter.getCount()-1);
+                }else {//修改ZW
+                    stationList.clear();
+                    for(BZPlanItem item: bzPlan.getBzPlanItemList()){
+                        stationList.add(item.getStation());
+                    }
+                    zwStationAdapter.notifyDataSetChanged();
+//                    zwStationAdapter=new ZW_StationAdapter(context,stationList);
+//                    zwListView.setAdapter(zwStationAdapter);
+                }
+                isAdd=false;
+
+                mapView.refresh();
+            }
+        });
+
+        this.setContentView(popView);
+        this.setWidth(400);
+        this.setHeight(400);
+        this.setFocusable(false);
+        this.setAnimationStyle(R.style.Widget_AppCompat_Toolbar);
+    }
+
+
+    private void refreshBZItemInfo(int pos){
+        clearBZItemState();
+        if(pos<0){
+            addNewBZItem();
+            return;
+        }
+
+        bzPlanItem=bzPlan.getBzPlanItemList().get(pos);
+        station=bzPlanItem.getStation();
+        actions=bzPlanItem.getActions();
+        jzjName.setText(jzj.getDisplayName());
+        zwName.setText(bzPlanItem.getStation().getDisplayName());
+        spendTime.setText(calculateSpendTime()+"");
+        if(actions[0])
+            gasLabel.setBackground(gasDrawable);
+        if(actions[1])
+            airLabel.setBackground(airDrawable);
+        if(actions[2])
+            electricityLabel.setBackground(electricDrawable);
+        if(actions[3])
+            fluidLabel.setBackground(fluidDrawable);
+        if(actions[4])
+            weaponLabel.setBackground(weaponDrawable);
+        if(actions[5])
+            guidLabel.setBackground(guidDrawable);
+        if(actions[6])
+            coolLabel.setBackground(coolDrawable);
+        if(actions[7])
+            oxygenLabel.setBackground(oxygenDrawable);
+    }
+
+    private void addNewBZItem(){
+        isAdd=true;
+        zwName.setText("");
+        station=new Station();
+        bzPlanItem=new BZPlanItem();
+        actions=new boolean[]{false,false,false,false,false,false,false,false,false};
+        clearBZItemState();
+        putValue=new stationValue();
+        putValue.prefix="";
+        putValue.sequence="";
+    }
+
+    private void  clearBZItemState(){
+        jzjName.setText("");
+        tipLabel.setText("");
+        gasLabel.setBackground(grayDrawable);
+        airLabel.setBackground(grayDrawable);
+        electricityLabel.setBackground(grayDrawable);
+        fluidLabel.setBackground(grayDrawable);
+        weaponLabel.setBackground(grayDrawable);
+        guidLabel.setBackground(grayDrawable);
+        coolLabel.setBackground(grayDrawable);
+        oxygenLabel.setBackground(grayDrawable);
+    }
+
+    //初始化数据
+    private void initView(){
+
         LayoutInflater inflater= (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         popView=inflater.inflate(R.layout.make_bzplan,null);
         jzjName=(TextView)popView.findViewById(R.id.currentJZJName);
@@ -134,25 +331,16 @@ public class BZPlanPopupView extends PopupWindow {
         deleteZWName =(TextView)popView.findViewById(R.id.numberdeleteLabel);
         tipLabel=(TextView)popView.findViewById(R.id.tipLabel);
         clearBZItemState();
-//        spinner= (Spinner)popView.findViewById(R.id.zwStationSpinner);
-        //从数据库表读取ZW信息，这里为测试数据
-//        stationTotalList.add(new Station(1,new Point(100,100),"A1"));
-//        stationTotalList.add(new Station(2,new Point(200,100),"A2"));
-//        stationTotalList.add(new Station(3,new Point(300,100),"A3"));
-//        stationTotalList.add(new Station(4,new Point(500,200),"B1"));
-//        stationTotalList.add(new Station(1,new Point(600,150),"B2"));
-//        stationTotalList.add(new Station(1,new Point(400,300),"C1"));
-//        ZW_StationAdapter adapter=new ZW_StationAdapter(context,stationTotalList);
-//        spinner.setAdapter(adapter);
+
         if(bzPlan.getBzPlanItemList().size()==0) {
-            this.isAdd=true;
-            station = new Station();
-            bzPlanItem = new BZPlanItem();
-            actions = new boolean[]{false, false, false, false, false, false, false, false, false};
+            addNewBZItem();
+//            this.isAdd=true;
+//            station = new Station();
+//            bzPlanItem = new BZPlanItem();
+//            actions = new boolean[]{false, false, false, false, false, false, false, false, false};
         }else {
             refreshBZItemInfo(0);
         }
-
 
         putValue=new stationValue();
         putValue.prefix="";
@@ -419,202 +607,6 @@ public class BZPlanPopupView extends PopupWindow {
                 zwName.setText("");
             }
         });
-
-        zwListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.v("ZWListView","item selected");
-                if (((ListView)parent).getTag() != null){
-                    ((View)((ListView)parent).getTag()).setBackgroundDrawable(null);
-                }
-                ((ListView)parent).setTag(view);
-                view.setBackgroundColor(Color.LTGRAY);
-
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        zwListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                tipLabel.setText("");
-                Station station= (Station) zwListView.getItemAtPosition(position);
-                bzPlanItem=bzPlan.getBzPlanItemList().get(position);
-                refreshBZItemInfo(position);
-            }
-        });
-//        zwStationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                selectedStaion=(Station) zwStationListView.getItemAtPosition(position);
-//            }
-//        });
-//        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                selectedStaion=(Station)spinner.getSelectedItem();
-//
-//            }
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {}
-//        });
-
-        //添加新ZWItem
-        addBZItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isAdd=true;
-                zwName.setText("");
-                station=new Station();
-                bzPlanItem=new BZPlanItem();
-                actions=new boolean[]{false,false,false,false,false,false,false,false,false};
-                clearBZItemState();
-                putValue=new stationValue();
-                putValue.prefix="";
-                putValue.sequence="";
-            }
-        });
-
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(bzPlan.getBzPlanItemList().contains(bzPlanItem))
-                    bzPlan.removeBZPlanItem(bzPlanItem);
-                if(stationList.contains(station))
-                    zwStationAdapter.remove(station);
-
-                if(zwStationAdapter.getCount()!=0) {
-                    refreshBZItemInfo(zwStationAdapter.getCount()-1);
-                }else refreshBZItemInfo(-1);
-                mapView.refresh();
-                tipLabel.setText("");
-            }
-        });
-
-
-        //保存信息
-        saveBZItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if("".equals(zwName.getText())){
-                    Toast.makeText(context,"请选择ZW！",Toast.LENGTH_LONG);
-                    tipLabel.setText("请选择ZW！");
-                    return;
-                }
-                int locationID=0;
-                int flag=0;
-                for(Location info:locationList){
-                    if(info.getName().equals(zwName.getText().toString())){
-                        flag=1;
-                        locationID=info.getId();
-                    }
-                }
-                if(flag==0){
-                    Log.v("bzplanview","没有该站位，请重新选择！");
-                    tipLabel.setText("没有该ZW，请重新选择！" +
-                            "");
-                    return;
-                }
-                tipLabel.setText("");
-                station.setDisplayName(zwName.getText().toString());
-                for(Location info:locationList){
-                    if(info.getName().equals(zwName.getText().toString())){
-                        station.setLocation(info.getPoint());
-                        station.setAngle(info.getAngle());
-                    }
-                }
-                bzPlanItem.setJzjid(jzj.getId());
-                bzPlanItem.setBcid(bzPlan.getBcid());
-                bzPlanItem.setLocationid(locationID);
-                bzPlanItem.setSpendTime(calculateSpendTime());
-                bzPlanItem.setStation(station);
-                bzPlanItem.setAddGas(actions[0]);
-                bzPlanItem.setAddAir(actions[1]);
-                bzPlanItem.setAddElectricity(actions[2]);
-                bzPlanItem.setAddFluid(actions[3]);
-                bzPlanItem.setAddWeapon(actions[4]);
-                bzPlanItem.setAddGuide(actions[5]);
-                bzPlanItem.setAddCool(actions[6]);
-                bzPlanItem.setAddOxygen(actions[7]);
-
-                if(isAdd) {
-                    zwStationAdapter.add(station);
-                    bzPlan.addBZPlanItem(bzPlanItem);
-//                    zwStationAdapter.notifyDataSetChanged();
-//                    position=stationList.size()-1;
-//                    zwListView.setSelection(zwStationAdapter.getCount()-1);
-                }else {//修改ZW
-                    stationList.clear();
-                    for(BZPlanItem item: bzPlan.getBzPlanItemList()){
-                        stationList.add(item.getStation());
-                    }
-                    zwStationAdapter.notifyDataSetChanged();
-//                    zwStationAdapter=new ZW_StationAdapter(context,stationList);
-//                    zwListView.setAdapter(zwStationAdapter);
-                }
-                isAdd=false;
-                refreshBZItemInfo(stationList.size()-1);
-                mapView.refresh();
-            }
-        });
-
-        this.setContentView(popView);
-        this.setWidth(400);
-        this.setHeight(400);
-        this.setFocusable(false);
-        this.setAnimationStyle(R.style.Widget_AppCompat_Toolbar);
-    }
-
-
-    private void refreshBZItemInfo(int pos){
-        if(pos<0){
-            clearBZItemState();
-            return;
-        }
-
-        bzPlanItem=bzPlan.getBzPlanItemList().get(pos);
-        station=bzPlanItem.getStation();
-        actions=bzPlanItem.getActions();
-        jzjName.setText(jzj.getDisplayName());
-//        putValue.prefix=station.getDisplayName().split("[A-Z]")[0];
-//        putValue.sequence=station.getDisplayName().split("^[0-9]")[0];
-        zwName.setText(station.getDisplayName());
-        spendTime.setText(calculateSpendTime()+"");
-        if(actions[0])
-            gasLabel.setBackground(gasDrawable);
-        if(actions[1])
-            airLabel.setBackground(airDrawable);
-        if(actions[2])
-            electricityLabel.setBackground(electricDrawable);
-        if(actions[3])
-            fluidLabel.setBackground(fluidDrawable);
-        if(actions[4])
-            weaponLabel.setBackground(weaponDrawable);
-        if(actions[5])
-            guidLabel.setBackground(guidDrawable);
-        if(actions[6])
-            coolLabel.setBackground(coolDrawable);
-        if(actions[7])
-            oxygenLabel.setBackground(oxygenDrawable);
-    }
-
-    private void  clearBZItemState(){
-        jzjName.setText("");
-        tipLabel.setText("");
-        gasLabel.setBackground(grayDrawable);
-        airLabel.setBackground(grayDrawable);
-        electricityLabel.setBackground(grayDrawable);
-        fluidLabel.setBackground(grayDrawable);
-        weaponLabel.setBackground(grayDrawable);
-        guidLabel.setBackground(grayDrawable);
-        coolLabel.setBackground(grayDrawable);
-        oxygenLabel.setBackground(grayDrawable);
     }
 
     //计算完成ZW上的任务所花费的时间，这里暂假设每个任务之间为串联关系
