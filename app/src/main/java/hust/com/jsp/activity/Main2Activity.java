@@ -336,21 +336,31 @@ public class Main2Activity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 //检查数据
                 if("".equals(renwuNO.getText().toString()) || "".equals(jzjNOEditText.getText().toString())|| "".equals(fxyNOEditText.getText().toString())|| "".equals(gasEditText.getText().toString())){
-                    Toast.makeText(Main2Activity.this, "添加失败，请补充完整数据!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Main2Activity.this, "添加失败，请补充完整数据!", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(flightCheckBox.isChecked()== false && landCheckBox.isChecked()== false) {
-                    Toast.makeText(Main2Activity.this, "添加失败，请勾选复选框!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Main2Activity.this, "添加失败，请勾选复选框!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+                try {
+                    Float.parseFloat(gasEditText.getText().toString());
+                }catch (NumberFormatException ne){
+                    Toast.makeText(Main2Activity.this,"格式不正确，请输入数字!",Toast.LENGTH_SHORT).show();
+                    return;
+                }catch (Exception e){
+                    Toast.makeText(Main2Activity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(flightDate.getYear()==landDate.getYear() && flightDate.getMonth()==landDate.getMonth() && flightDate.getDayOfMonth()==landDate.getDayOfMonth() && flightTime.getHour()==landTime.getHour() && flightTime.getMinute()==landTime.getMinute())
+                    Toast.makeText(Main2Activity.this, "FJ起降时间不能相同，请重设时间!", Toast.LENGTH_SHORT).show();
                 //新增FXJH信息
                 FXPlanItem item=new FXPlanItem();
                 Station station = new Station();
                 String jzjNo=jzjNOEditText.getText().toString();
                 String stationFXY=fxyNOEditText.getText().toString();
-                station.setDisplayName(stationFXY).setID(1001);  //注意：这里id需要赋值
-                JZJ jzj = new JZJ(2001);  //注意：这里参数需要赋值
+                station.setDisplayName(stationFXY).setID(1001);  //注意：这里id需要自增长赋值，且保证唯一
+                JZJ jzj = new JZJ(2001);  //注意：这里参数需要自增长赋值，且保证唯一
                 jzj.setDisplayName(jzjNo);
                 item.setPlanName(renwuNO.getText().toString());
                 try {

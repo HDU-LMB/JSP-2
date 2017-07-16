@@ -27,6 +27,7 @@ import hust.com.jsp.bean.BZPlan_TimeSchemaOrder;
 import hust.com.jsp.bean.JZJ;
 import hust.com.jsp.bean.Location;
 import hust.com.jsp.bean.Station;
+import hust.com.jsp.bean.ZWNode;
 import hust.com.jsp.dao.BCDAO;
 import hust.com.jsp.dao.BLDAO;
 import hust.com.jsp.dao.BZPlanItemDAO;
@@ -385,7 +386,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 Log.v("Timeprogress","T="+progress);
-                refreshMapRefTime(progress,bzPlanTranList);
+//                refreshMapRefTime(progress,bzPlanTranList);
                 timeProgressLayer.setTime(progress);
                 mapView.refresh();
             }
@@ -402,8 +403,11 @@ public class MainActivity extends AppCompatActivity {
                 BZPlan_TimeSchemaOrder timeSchemaOrder=new BZPlan_TimeSchemaOrder(bzPlanList);
                 timeSchemaOrder.initSchemaItem();
                 bzPlanTimeList=timeSchemaOrder.getSchemaTimeProgress();
-                bzPlanTranList=addTranNode();
-                timeProgressLayer.setBzPlanList(bzPlanTranList);
+//                bzPlanTranList=addTranNode();
+//                timeProgressLayer.setBzPlanList(bzPlanTranList);//显示转运时间
+                Map<String,ZWNode> headSchema=timeSchemaOrder.getHeadSchema();
+                timeMoveBack(bzPlanTimeList,headSchema);
+                timeProgressLayer.setBzPlanList(bzPlanTimeList);//只显示排序时间
                 timeProgressLayer.setShowTimeProgress(true);
                 mapView.refresh();
             }
@@ -433,6 +437,182 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    /**
+     * 添加转运时间
+     */
+    private void addTransTime(List<BZPlan> bzPlanList){
+        for(int i=0;i<bzPlanList.size();i++) {
+            BZPlan bzPlan = bzPlanList.get(i);
+            List<BZPlanItem> bzPlanItemList = bzPlan.getBzPlanItemList();
+            if (bzPlanItemList.size() == 0) {
+                continue;
+            }
+            BZPlanItem nextItem=bzPlanItemList.get(0);
+            if(!bzPlan.getStation().getDisplayName().equals(nextItem.getStation().getDisplayName())){//起始ZW不同
+                double distance= LocationTools.getDistance(bzPlan.getStation().getLocation(),nextItem.getStation().getLocation());
+                float tranTime= (float) (distance*0.03+2);
+                nextItem.setTransTime(tranTime);
+            }
+            for(int j=0;j<bzPlanItemList.size()-1;j++){
+                BZPlanItem preItem=bzPlanItemList.get(j);
+                nextItem=bzPlanItemList.get(j+1);
+                double distance= LocationTools.getDistance(preItem.getStation().getLocation(),nextItem.getStation().getLocation());
+                float tranTime= (float) (distance*0.03+2);
+                nextItem.setTransTime(tranTime);
+            }
+        }
+    }
+    /**
+     * 时间后移
+     */
+    private void timeMoveBack(List<BZPlan> bzPlanList,Map<String,ZWNode> headSchema){
+        addTransTime(bzPlanList);
+        for(int i=0;i<bzPlanList.size();i++) {
+            BZPlan bzPlan=bzPlanList.get(i);
+            for(int j=0;j<bzPlan.getBzPlanItemList().size();j++){
+                BZPlanItem bzItem=bzPlan.getBzPlanItemList().get(j);
+                String zwName=bzItem.getStation().getDisplayName();
+                if(j==0) {
+                    if (headSchema.containsKey(zwName)) {//有资源冲突的ZW
+                        ZWNode h=headSchema.get(zwName);
+                        if(h.jzj.getDisplayName().equals(bzPlan.getJzj().getDisplayName())){
+                            bzItem.setStartTime(bzItem.getStartTime()+bzItem.getTransTime());
+                            bzItem.setEndTime(bzItem.getEndTime()+bzItem.getTransTime());
+                            updateConflictZWNext(headSchema,h,bzItem,zwName);
+                        }else {
+                            moveCurrentBZPlanitemsBackTime(headSchema, bzPlan, bzPlan.getBzPlanItemList(), -1);
+                            while (h!=null && !h.jzj.getDisplayName().equals(bzPlan.getJzj().getDisplayName()))
+                                h=h.next;
+                            updateConflictZWNext(headSchema,h,bzItem,zwName);
+                        }
+
+                    } else {
+                        bzItem.setStartTime(bzItem.getStartTime()+bzItem.getTransTime());
+                        bzItem.setEndTime(bzItem.getEndTime()+bzItem.getTransTime());
+                    }
+
+                }else {
+                    if (headSchema.containsKey(zwName)) {//有资源冲突的ZW
+                        BZPlanItem preItem = bzPlan.getBzPlanItemList().get(j - 1);
+                        if (bzItem.getStartTime() - bzItem.getTransTime() < preItem.getEndTime()) {
+                            bzItem.setStartTime(preItem.getEndTime() + bzItem.getTransTime());
+                            bzItem.setEndTime(bzItem.getStartTime()+bzItem.getSpendTime());
+                        }
+                        ZWNode h=headSchema.get(zwName);
+                        while (h!=null && !h.jzj.getDisplayName().equals(bzPlan.getJzj().getDisplayName())){
+                            h=h.next;
+                        }
+                        if(h.jzj.getDisplayName().equals(bzPlan.getJzj().getDisplayName())){
+                            updateConflictZWNext(headSchema,h,bzItem,zwName);
+                        }
+                    }else {
+                            BZPlanItem preItem = bzPlan.getBzPlanItemList().get(j - 1);
+                            if (bzItem.getStartTime() - bzItem.getTransTime() < preItem.getEndTime()) {
+                                bzItem.setStartTime(preItem.getEndTime() + bzItem.getTransTime());
+                                bzItem.setEndTime(bzItem.getStartTime()+bzItem.getSpendTime());
+                            }
+                    }
+                }
+                moveCurrentBZPlanitemsBackTime(headSchema,bzPlan,bzPlan.getBzPlanItemList(),j);
+            }
+        }
+    }
+
+    private void updateConflictZWNext(Map<String,ZWNode> headSchema,ZWNode h,BZPlanItem bzItem,String zwName){
+        if(h.next!=null)
+            h=h.next;
+        else return;
+
+        for(int k=0;k<bzPlanList.size();k++){
+            BZPlan bzPlanOther=bzPlanList.get(k);
+            JZJ jzj=bzPlanOther.getJzj();
+            if(jzj.getDisplayName().equals(h.jzj.getDisplayName())){
+                for(int m=0;m<bzPlanOther.getBzPlanItemList().size();m++) {
+                    BZPlanItem bzItemOther = bzPlanOther.getBzPlanItemList().get(m);
+                        if (bzItemOther.getStation().getDisplayName().equals(zwName)) {
+                            if (m == 0) {//起始站位
+                                if(bzItemOther.getStartTime()-bzItemOther.getTransTime()<0){
+                                    bzItemOther.setStartTime(bzItemOther.getTransTime());
+                                    bzItemOther.setEndTime(bzItemOther.getStartTime()+bzItemOther.getSpendTime());
+                                }
+                            }else {
+                                BZPlanItem preOther=bzPlanOther.getBzPlanItemList().get(m-1);
+                                if(bzItemOther.getStartTime()-bzItemOther.getTransTime()<preOther.getEndTime()) {
+                                    bzItemOther.setStartTime(preOther.getEndTime() + bzItemOther.getTransTime());
+                                    bzItemOther.setEndTime(bzItemOther.getStartTime() + bzItemOther.getSpendTime());
+                                }//else {
+                                if(bzItemOther.getStartTime()<bzItem.getEndTime()){
+                                    bzItemOther.setStartTime(bzItem.getEndTime());
+                                    bzItemOther.setEndTime(bzItemOther.getStartTime() + bzItemOther.getSpendTime());
+                                }
+                            }
+
+                            moveBZPlanitemsBackTime(bzPlanOther.getBzPlanItemList(),m);
+                        }
+                }
+            }
+        }
+    }
+
+    private void moveByPreviosConflicItem(ZWNode p,String zwName,BZPlanItem bzItem){
+        for(int k=0;k<bzPlanList.size();k++) {
+            BZPlan bzPlanOther = bzPlanList.get(k);
+            JZJ jzj = bzPlanOther.getJzj();
+            if (jzj.getDisplayName().equals(p.jzj.getDisplayName())) {
+                for (int m = 0; m < bzPlanOther.getBzPlanItemList().size(); m++) {
+                    BZPlanItem bzItemOther = bzPlanOther.getBzPlanItemList().get(m);
+                    if (bzItemOther.getStation().getDisplayName().equals(zwName)) {
+                        if(bzItem.getStartTime()<bzItemOther.getEndTime()){
+                            bzItem.setStartTime(bzItemOther.getEndTime());
+                            bzItem.setEndTime(bzItem.getStartTime()+bzItem.getSpendTime());
+                        }
+//                        if(m!=0 && bzItem.getStartTime()-bzItem.)
+                    }
+                }
+            }
+        }
+    }
+
+    private void moveBZPlanitemsBackTime(List<BZPlanItem> bzPlanItemList,int pos){
+        for(int i=pos+1;i<bzPlanItemList.size();i++){
+            BZPlanItem preItem=bzPlanItemList.get(i-1);
+            BZPlanItem item=bzPlanItemList.get(i);
+            if(item.getStartTime()-item.getTransTime()<preItem.getEndTime()){
+                item.setStartTime(preItem.getEndTime()+item.getTransTime());
+                item.setEndTime(item.getStartTime()+item.getSpendTime());
+            }
+        }
+    }
+
+    private void moveCurrentBZPlanitemsBackTime(Map<String,ZWNode> headSchema,BZPlan bzPlan,List<BZPlanItem> bzPlanItemList,int pos){
+        for(int i=pos+1;i<bzPlanItemList.size();i++) {
+            BZPlanItem preItem;
+            if(pos==-1){
+                preItem=new BZPlanItem();
+            }
+            else   preItem = bzPlanItemList.get(i - 1);
+            BZPlanItem item = bzPlanItemList.get(i);
+            if (item.getStartTime() - item.getTransTime() < preItem.getEndTime()) {
+                item.setStartTime(preItem.getEndTime() + item.getTransTime());
+                item.setEndTime(item.getStartTime() + item.getSpendTime());
+            }
+            String zwName=item.getStation().getDisplayName();
+
+            if (headSchema.containsKey(zwName)) {//有资源冲突的ZW
+                ZWNode h = headSchema.get(zwName);
+                ZWNode p=h;
+                if (!h.jzj.getDisplayName().equals(bzPlan.getJzj().getDisplayName())) {
+                    while (h != null && !h.jzj.getDisplayName().equals(bzPlan.getJzj().getDisplayName())) {
+                        p=h;
+                        h = h.next;
+                    }
+                    if (p != null)
+                        moveByPreviosConflicItem(p, zwName, item);
+                }
+            }
+        }
     }
 
     /**

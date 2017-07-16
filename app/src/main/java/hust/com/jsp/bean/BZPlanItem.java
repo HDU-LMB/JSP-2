@@ -19,6 +19,7 @@ public class BZPlanItem {
     private float spendTime;
     private float startTime;
     private float endTime;
+    private float transTime;
 
     private boolean addGas;//油
     private  boolean addAir;//气
@@ -138,6 +139,13 @@ public class BZPlanItem {
         this.endTime = endTime;
     }
 
+    public float getTransTime() {
+        return transTime;
+    }
+
+    public void setTransTime(float transTime) {
+        this.transTime = transTime;
+    }
 
     public boolean isAddGas() {
         return addGas;

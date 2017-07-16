@@ -142,20 +142,26 @@ public class BZPlan_TimeProgressLayer extends MapBaseLayer {
 
                     left = 53 + widthUnit * bzItem.getStartTime();
                     right = left + widthUnit * bzItem.getSpendTime();
-                    if(j%2!=0){
-                        canvas.drawRect(left, top, right, bottom, paint);//画每个ZW上任务花费的时间
-                        canvas.drawText(bzItem.getStation().getDisplayName(), (left + right) / 2 - 10, (top + bottom) / 2 + 5, paint);//画ZW名称
-                    }
-                    else{
-                        paint.setColor(Color.GRAY);
-                        paint.setStyle(Paint.Style.FILL);
-                        canvas.drawRect(left, top, right, bottom, paint);//画每个ZW上任务花费的时间
-                 //       paint.setColor(Color.BLACK);
-                 //       canvas.drawText("转运", (left + right) / 2 - 10, (top + bottom) / 2 + 5, paint);//画ZW名称
-                        paint.setColor(Color.BLACK);
-                        paint.setStyle(Paint.Style.STROKE);
-
-                    }
+                    Paint p2=new Paint();
+                    p2.setColor(Color.LTGRAY);
+                    p2.setStyle(Paint.Style.FILL);
+                    canvas.drawRect(left-widthUnit *bzItem.getTransTime(),top,left,bottom,p2);
+                    canvas.drawRect(left, top, right, bottom, paint);//画每个ZW上任务花费的时间
+                    canvas.drawText(bzItem.getStation().getDisplayName(), (left + right) / 2 - 10, (top + bottom) / 2 + 5, paint);//画ZW名称
+//                    if(j%2!=0){
+//                        canvas.drawRect(left, top, right, bottom, paint);//画每个ZW上任务花费的时间
+//                        canvas.drawText(bzItem.getStation().getDisplayName(), (left + right) / 2 - 10, (top + bottom) / 2 + 5, paint);//画ZW名称
+//                    }
+//                    else{
+//                        paint.setColor(Color.GRAY);
+//                        paint.setStyle(Paint.Style.FILL);
+//                        canvas.drawRect(left, top, right, bottom, paint);//画每个ZW上任务花费的时间
+//                 //       paint.setColor(Color.BLACK);
+//                 //       canvas.drawText("转运", (left + right) / 2 - 10, (top + bottom) / 2 + 5, paint);//画ZW名称
+//                        paint.setColor(Color.BLACK);
+//                        paint.setStyle(Paint.Style.STROKE);
+//
+//                    }
 //                left=right;
                 }
                 if(time>0) {

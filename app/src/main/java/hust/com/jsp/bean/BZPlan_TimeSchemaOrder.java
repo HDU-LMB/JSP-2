@@ -1,7 +1,6 @@
 package hust.com.jsp.bean;
 
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,13 +11,16 @@ import java.util.Map;
  */
 
 public class BZPlan_TimeSchemaOrder {
-
     private BZPlan bzPlan;
     private List<BZPlan> bzPlanList;
     Map<JZJ,ZWNode> jzjZWNodeListNoConflictMap;
     Map<String,List<JZJ>> zwFJListMap;//zwName--该zw下冲突的所有JZJ列表
     Map<String,List<ZWNode>> zwNodeListMap;//zwName--该zw下冲突的所有JZJ的全排列链表
     List<BZPlanSchemaItem> schemaList;//存储所有的方案，从而找出最优解
+    private Map<String,ZWNode> headSchema;
+    public Map<String, ZWNode> getHeadSchema() {
+        return headSchema;
+    }
 
     public BZPlan_TimeSchemaOrder(List<BZPlan> bzPlanList){
         this.bzPlanList=bzPlanList;
@@ -298,6 +300,7 @@ public class BZPlan_TimeSchemaOrder {
                 String zwName=insertHead.station.getDisplayName();
                 List<JZJ> jzjList=zwFJListMap.get(zwName);
                 getSchemaItemOrder(jzjZWNodeMap,zwName,jzjList,insertHead,insertJzj);
+                schemaItem.headSchema.put(zwName,insertHead);
             }
         }
 
@@ -333,6 +336,7 @@ public class BZPlan_TimeSchemaOrder {
         Log.v("schema","id="+id);//TSET CODE
         BZPlanSchemaItem schemaItem=schemaList.get(id);
         Map<JZJ,ZWNode> jzjZWNodeMap=schemaItem.jzjZWNodeMap;
+        headSchema=schemaItem.headSchema;
 
         //TSET CODE-BEGIN
         for(Map.Entry<JZJ,ZWNode> entry:jzjZWNodeMap.entrySet()){
@@ -377,11 +381,13 @@ public class BZPlan_TimeSchemaOrder {
         int id;//一个时间排序方案id，先找出该方案的关键路径，即MAX_time,需要在所有的排序方案中找到最小的MAX_time
         Map<JZJ, ZWNode> jzjZWNodeMap;//对每个jzj，它有多个zw进行任务动作，因此在
         float totalSpendTime;//改方案的MAX_time
+        Map<String,ZWNode> headSchema;
 
         public BZPlanSchemaItem(int id) {
             this.id = id;
             this.totalSpendTime = 0;
             this.jzjZWNodeMap = new HashMap<>();
+            this.headSchema=new HashMap<>();
         }
 
         //计算该方案下的关键路径时间
@@ -486,30 +492,5 @@ public class BZPlan_TimeSchemaOrder {
         }
     }
 
-    class ZWNode{
-        private JZJ jzj;
-        private Station station;
-        private Station initialStation;
-        private ZWNode next;
-        private float spendTime;//完成所任务花费时间
-        private float actionStartTime;//开始任务的时间节点
-        private float actionEndTime;//完成任务的时间节点
 
-
-        public ZWNode(JZJ jzj){
-            this.jzj=jzj;
-            this.actionStartTime=0;
-            this.actionEndTime=0;
-
-        }
-        public ZWNode(JZJ jzj,Station station){
-            this.jzj=jzj;
-            this.station=station;
-            this.actionStartTime=0;
-            this.actionEndTime=0;
-
-        }
-
-
-    }
 }
