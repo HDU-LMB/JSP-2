@@ -160,11 +160,13 @@ public class BZPlanPopupView extends PopupWindow {
                     }
                 }
                 if(flag==0){
-                    tipLabel.setText("没有该ZW，请重新选择！" +
-                            "");
+                    tipLabel.setText("没有该ZW，请重新选择！");
                     return;
                 }
-
+                if(actions[0]==false && actions[1]==false && actions[2]==false && actions[3]==false && actions[4]==false && actions[5]==false && actions[6]==false && actions[7]==false){
+                    tipLabel.setText("BZ任务不能为空！");
+                    return;
+                }
 
 
                 tipLabel.setText("");

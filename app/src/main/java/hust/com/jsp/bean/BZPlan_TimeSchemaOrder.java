@@ -318,7 +318,7 @@ public class BZPlan_TimeSchemaOrder {
                 }
                 Log.v("",str);
             }
-        }
+        }//TEST CODE-END
     }
 
     //得到最优的方案，并返回数据

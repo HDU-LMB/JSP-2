@@ -440,7 +440,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * 添加转运时间
+     * 给所有的bzplanitem转运时间赋值，即加上转运时间
      */
     private void addTransTime(List<BZPlan> bzPlanList){
         for(int i=0;i<bzPlanList.size();i++) {
@@ -465,7 +465,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     /**
-     * 时间后移
+     * 考虑转运时间后，zbplanitem根据实际情况作时间后移
      */
     private void timeMoveBack(List<BZPlan> bzPlanList,Map<String,ZWNode> headSchema){
         addTransTime(bzPlanList);
@@ -520,6 +520,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //对于有资源冲突的ZW：A1，如F1->F2，F1的时间更新了，则它的下节点即F2A1的bzplanitem的时间作更新，以保证F2的开始时间在F的结束时间之后
     private void updateConflictZWNext(Map<String,ZWNode> headSchema,ZWNode h,BZPlanItem bzItem,String zwName){
         if(h.next!=null)
             h=h.next;
@@ -555,7 +556,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
+    //对于资源冲突的A1，如F1->F2，当前是F2A1点，则需要对F2作更新，以保证F2的开始时间在F1的结束时间之后，考虑转运时间，时间可能会更后移
     private void moveByPreviosConflicItem(ZWNode p,String zwName,BZPlanItem bzItem){
         for(int k=0;k<bzPlanList.size();k++) {
             BZPlan bzPlanOther = bzPlanList.get(k);
@@ -575,6 +576,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //对于当前的bzplan，bzplanitem的时间更新了，则其后面的item也要根据实际作更新
     private void moveBZPlanitemsBackTime(List<BZPlanItem> bzPlanItemList,int pos){
         for(int i=pos+1;i<bzPlanItemList.size();i++){
             BZPlanItem preItem=bzPlanItemList.get(i-1);
@@ -585,7 +587,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
+   //对于当前的F2,bzplan，bzplanitem,对其后面的bzpalnitem作更新，如果后面的bzplanitem作有资源冲突的ZW：A1，如F1->F2,F2需要根据F1的时间作更新，以保证F2在F1后
     private void moveCurrentBZPlanitemsBackTime(Map<String,ZWNode> headSchema,BZPlan bzPlan,List<BZPlanItem> bzPlanItemList,int pos){
         for(int i=pos+1;i<bzPlanItemList.size();i++) {
             BZPlanItem preItem;
@@ -829,6 +831,7 @@ public class MainActivity extends AppCompatActivity {
                 bcItemBZPlanMap=bcList_ItemMap.get(bcInfo);
                 zw_bcItemAdapter=new ZW_BCItemAdapter(MainActivity.this,bcInfo);
                 zwBCItemlistView.setAdapter(zw_bcItemAdapter);
+                zwListLayer.setBzPlan(null);
                 refreshMap(bcInfo.getId());
             }
 
