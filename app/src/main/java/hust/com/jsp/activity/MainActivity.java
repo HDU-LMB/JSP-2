@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 bcInfoItem.setStation(blInfo.getStation());
                 switch (blInfo.getType()){
                     case 1:
-                        jzj.setJzjBeiyong("非备用");
+                        jzj.setJzjBeiyong("主用");
                         bcjzjList.add(jzj);
                         break;
                     case 2:
@@ -311,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
                 bcInfoItem.setStation(blInfo.getStation());
                 switch (blInfo.getType()){
                     case 1:
-                        jzj.setJzjBeiyong("非备用");
+                        jzj.setJzjBeiyong("主用");
                         bcjzjList.add(jzj);
                         break;
                     case 2:
@@ -386,7 +386,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 Log.v("Timeprogress","T="+progress);
-//                refreshMapRefTime(progress,bzPlanTranList);
+                refreshMapRefTime(progress,bzPlanTimeList);
                 timeProgressLayer.setTime(progress);
                 mapView.refresh();
             }
@@ -729,42 +729,34 @@ public class MainActivity extends AppCompatActivity {
             for(int i=0;i<bzPlanItemList.size();i++){
                 BZPlanItem bzPlanItem=bzPlanItemList.get(i);
                 if(bzPlanItem.getStartTime()<=time&&bzPlanItem.getEndTime()>time){
-                    if(i%2!=0){
                         flag=1;
                         station=bzPlanItem.getStation();
                         timeper=(time-bzPlanItem.getStartTime())/bzPlanItem.getSpendTime();
-
-                    }
-                    else {
-                        flag=4;
-                        station=bzPlanItem.getStation();
-                    }
                     break;
                 }
-                else if(time<bzPlanItemList.get(0).getStartTime()){
+                else if(time<bzPlanItemList.get(0).getStartTime()-bzPlanItemList.get(0).getTransTime()){
                     flag=5;
                     station=bzPlan.getStation();
                 }
                 else if(time>bzPlanItemList.get(bzPlanItemList.size()-1).getEndTime()){
                     flag=3;
                 }
+                else if(time<bzPlanItem.getStartTime()&&time>bzPlanItem.getStartTime()-bzPlanItem.getTransTime()){
+                    flag=4;
+                    if(i==0){
+                        station=bzPlan.getStation();
+                    }
+                    else {
+                        station=bzPlanItemList.get(i-1).getStation();
+                    }
+                }
                 else if(i<bzPlanItemList.size()-1){
                     if(bzPlanItem.getEndTime()<time&&bzPlanItemList.get(i+1).getStartTime()>time){
                         flag=2;
-                        if(i%2!=0){
-                            station=bzPlanItem.getStation();
-                        }
-                        else {
-                            if(i==0){
-                                station=bzPlan.getStation();
-                            }
-                            else {
-                                station=bzPlanItemList.get(i-1).getStation();
-                            }
-                        }
-
+                        station=bzPlanItem.getStation();
                     }
                 }
+
 
             }
             switch (flag){

@@ -79,32 +79,35 @@ public class BLJZJLayer extends MapBaseLayer {
     public void draw(Canvas canvas, Matrix currentMatrix, float currentZoom, float currentRotateDegrees) {
 
         baseLayer.draw(canvas,currentMatrix,currentZoom,currentRotateDegrees);
-        canvas.save();
-        canvas.setMatrix(currentMatrix);
-        drawTextWithRect(canvas,jzj.getDisplayName(),location.x,location.y-5);
-        if(progress<=1){
-            drawTextWithRect(canvas,String.format("%.2f",progress),location.x,location.y+10);
+        if(isVisible){
+            canvas.save();
+            canvas.setMatrix(currentMatrix);
+            drawTextWithRect(canvas,jzj.getDisplayName(),location.x,location.y-5);
+            if(progress<=1){
+                drawTextWithRect(canvas,String.format("%.2f",progress),location.x,location.y+10);
+            }
+            else if(progress==2){
+                drawTextWithRect(canvas,"等待中",location.x,location.y+10);
+            }
+            else if(progress==4){
+                drawTextWithRect(canvas,"转运中",location.x,location.y+10);
+            }
+            else if(progress==5){
+                drawTextWithRect(canvas,"初始",location.x,location.y+10);
+            }
+            canvas.restore();
         }
-        else if(progress==2){
-            drawTextWithRect(canvas,"等待中",location.x,location.y+10);
-        }
-        else if(progress==4){
-            drawTextWithRect(canvas,"转运中",location.x,location.y+10);
-        }
-        else if(progress==5){
-            drawTextWithRect(canvas,"初始",location.x,location.y+10);
-        }
-        canvas.restore();
     }
     private void drawTextWithRect(Canvas canvas,String str,float x,float y){
         Paint paint=new Paint();
-        paint.setColor(Color.WHITE);
+/*        paint.setColor(Color.WHITE);
         paint.setStyle(Paint.Style.FILL);
         canvas.drawRect(x-25,y-10,x+15,y+2,paint);
         paint.setColor(Color.BLACK);
         paint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(x-25,y-10,x+15,y+2,paint);
-        paint.setColor(Color.BLACK);
+        canvas.drawRect(x-25,y-10,x+15,y+2,paint);*/
+        paint.setTextSize(10);
+        paint.setColor(Color.BLUE);
         paint.setStyle(Paint.Style.FILL);
         canvas.drawText(str,x-20,y,paint);
     }

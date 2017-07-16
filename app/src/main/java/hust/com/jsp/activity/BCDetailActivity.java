@@ -117,10 +117,10 @@ public class BCDetailActivity extends AppCompatActivity {
 
         }
         for(final JZJ jzj:jzjList){
-            BLJZJLayer layer=new BLJZJLayer(mapView,getResources(),jzj);
+            final BLJZJLayer layer=new BLJZJLayer(mapView,getResources(),jzj);
             layer.setOnBitmapClickListener(new BitmapLayer.OnBitmapClickListener() {
                 @Override
-                public void onBitmapClick(BitmapLayer layer) {
+                public void onBitmapClick(BitmapLayer layer1) {
                     layer.isVisible=true;
                     List<BLInfo> blInfoList=blMap.get(bcID);
                     Iterator<BLInfo> iterator = blInfoList.iterator();
@@ -129,7 +129,8 @@ public class BCDetailActivity extends AppCompatActivity {
                         if(info.getJzjid()==jzj.getId()) {
                             clickCir();
                             Log.v("bc layer", jzj.getId() + "    type:" + clickType);
-                            info.setType(clickType);
+                            info.setType(info.getType()+1);
+                       //     info.setType(clickType);
                             if (info.getType() == 3) {
                                 iterator.remove();
                                 //  mapView.removeLayer(layer);
@@ -137,6 +138,7 @@ public class BCDetailActivity extends AppCompatActivity {
                                 layer.isVisible = false;
                                 mapView.refresh();
                             }
+                            Log.v("clickJZJ",info.getJzjid()+":"+layer.isVisible+"  ");
                         }
 
                     }
@@ -221,21 +223,32 @@ public class BCDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(isseleted){
-                    List<BLInfo> blInfoList=blMap.get(bcID);
+                    boolean containInfo=false;
                     BLInfo info=new BLInfo();
-                    info.setBcid(bcID);
-                    info.setJzjid(jzjID);
+                    List<BLInfo> blInfoList=blMap.get(bcID);
+                    for(BLInfo infoFromList:blInfoList){
+                        if(infoFromList.getJzjid()==jzjID){
+                            info=infoFromList;
+                            containInfo=true;
+                        }
+                    }
                     Location location= LocationTools.getNearLoaction(mapView.getTouchPoint(),locationList);
-//                    Station station=new Station(location.getId(),location.getPoint(),location.getName());
-//                    info.setStation(station);
                     info.setPoint(location.getPoint());
-                    blInfoList.add(info);
+                    info.setType(0);
+                    if(containInfo){
+
+                    }
+                    else{
+                        info.setBcid(bcID);
+                        info.setJzjid(jzjID);
+                        blInfoList.add(info);
+                    }
                     blMap.put(bcID,blInfoList);
                     refreshBCJZJList(bcID);
                     refreshMap(bcID);
-                    Log.v("bcdetail","add");
                     isseleted=false;
                     clickType=0;
+
                 }
 
             }
@@ -292,11 +305,12 @@ public class BCDetailActivity extends AppCompatActivity {
         List<BLInfo> blInfoList=blMap.get(bcID);
         for(final BLInfo info:blInfoList){
             BLJZJLayer layer=layerMap.get(info.getJzjid());
-            Log.v("bc",info.getPoint().toString()+" id  "+info.getJzjid());
+            layer.isVisible=true;
             layer.setLocation(info.getPoint());
             Location location=locationDAO.getInfoByPonit(info.getX(),info.getY());
             layer.setAngle(location.getAngle());
             mapView.addLayer(layer);
+            Log.v("refreshMap",info.getJzjid()+":"+layer.isVisible);
         }
 
         for(Location info:locationList){
@@ -314,7 +328,7 @@ public class BCDetailActivity extends AppCompatActivity {
             JZJ jzj=jzjDAO.getJZJ(info.getJzjid());
             switch (info.getType()){
                 case 1:
-                    jzj.setJzjBeiyong("非备用");
+                    jzj.setJzjBeiyong("主用");
                     bcjzjList.add(jzj);
                     break;
                 case 2:
