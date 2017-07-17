@@ -195,6 +195,24 @@ public class BCDetailActivity extends AppCompatActivity {
                 view.setBackgroundColor(Color.LTGRAY);
             }
         });
+        bcHListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(BCDetailActivity.this);
+                builder.setTitle("删除BC");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //// TODO: 2017/7/17
+                        deleteBC(0);
+                        deleteBL(0);
+                    }
+                });
+                builder.setNegativeButton("Cancel", null);
+                builder.create().show();
+                return true;
+            }
+        });
         jzjHListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -272,6 +290,12 @@ public class BCDetailActivity extends AppCompatActivity {
         });
 
 
+    }
+    private void deleteBL(int bcID){
+        Log.v("bl","delete");
+    }
+    private void deleteBC(int bcID){
+        Log.v("bc","delete");
     }
     private void saveBCInfo(){
         // TODO: 2017/6/29
