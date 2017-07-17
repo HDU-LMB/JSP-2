@@ -275,7 +275,7 @@ public class BCDetailActivity extends AppCompatActivity {
     }
     private void saveBCInfo(){
         // TODO: 2017/6/29
-        Log.v("bc","save");
+        bcDAO.deleteBC(bcID);
         for(BCInfo info:bcInfoList){
             if(info.getId()==bcID){
                 bcDAO.addInfo(info);
@@ -283,6 +283,7 @@ public class BCDetailActivity extends AppCompatActivity {
         }
     }
     private void saveBLInfo(){
+        blDAO.deleteByBCID(bcID);
         List<BLInfo> blInfoList=blMap.get(bcID);
         for(BLInfo info:blInfoList){
             blDAO.addInfo(info);

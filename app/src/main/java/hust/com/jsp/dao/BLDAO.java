@@ -44,6 +44,9 @@ public class BLDAO {
                         String.valueOf(info.getType())
         });
     }
+    public void deleteByBCID(int bcid){
+        db.execSQL("delete from blinfo where bcid=?",new String[]{String.valueOf(bcid)});
+    }
     private BLInfo toInfo(Cursor cursor){
         BLInfo info=new BLInfo();
         while(cursor.moveToNext()) {

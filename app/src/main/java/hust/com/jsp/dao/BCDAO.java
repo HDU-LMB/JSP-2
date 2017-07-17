@@ -40,6 +40,9 @@ public class BCDAO {
                         String.valueOf(info.getLongEndTime())
                 });
     }
+    public void deleteBC(int bcid){
+        db.execSQL("delete from bcinfo where id=?",new String[]{String.valueOf(bcid)});
+    }
     private BCInfo toInfo(Cursor cursor){
         BCInfo info=new BCInfo();
         while(cursor.moveToNext()) {
