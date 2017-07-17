@@ -197,15 +197,20 @@ public class BCDetailActivity extends AppCompatActivity {
         });
         bcHListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(BCDetailActivity.this);
                 builder.setTitle("删除BC");
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //// TODO: 2017/7/17
-                        deleteBC(0);
-                        deleteBL(0);
+                        BCInfo info=bcInfoList.get(position);
+                        int id=info.getId();
+                        deleteBC(id);
+                        deleteBL(id);
+                        blMap.remove(id);
+                        bcInfoList.remove(info);
+                        bchListAdapter.notifyDataSetChanged();
                     }
                 });
                 builder.setNegativeButton("Cancel", null);
@@ -292,10 +297,10 @@ public class BCDetailActivity extends AppCompatActivity {
 
     }
     private void deleteBL(int bcID){
-        Log.v("bl","delete");
+        blDAO.deleteByBCID(bcID);
     }
     private void deleteBC(int bcID){
-        Log.v("bc","delete");
+        bcDAO.deleteBC(bcID);
     }
     private void saveBCInfo(){
         // TODO: 2017/6/29
