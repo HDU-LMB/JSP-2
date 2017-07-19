@@ -41,7 +41,7 @@ import hust.com.jsp.R;
 public class Main2Activity extends AppCompatActivity {
 
     FXPlanView fxPlanView;
-
+    private  Spinner sp;
     List<String> listDateItems=new ArrayList<>();//spinner数据源，存储日期(年-月-日)
 //    @Override
 //    protected void onResume(){
@@ -72,7 +72,7 @@ public class Main2Activity extends AppCompatActivity {
 
         Calendar timer = Calendar.getInstance();
 
-        final Spinner sp = (Spinner)findViewById(R.id.spinner2);
+        sp = (Spinner)findViewById(R.id.spinner2);
         final ArrayAdapter adapter=new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,listDateItems);
 
         Station testStation1 = new Station();
@@ -390,7 +390,14 @@ public class Main2Activity extends AppCompatActivity {
 
                // fxPlanView.updateListDateItems();
                 //sp.setSelection(fxPlanView.getListDateItems().size());
+/*                calendar.setTimeInMillis(item.getStartTime());
+                String dateItem=calendar.get(Calendar.YEAR)+"-"+(calendar.get(Calendar.MONTH)+1)+"-"+calendar.get(Calendar.DAY_OF_MONTH);
+                String dateTime=dateItem+"-"+calendar.get(Calendar.HOUR_OF_DAY)+"-"+calendar.get(Calendar.MINUTE);
+
+                fxPlanView.setSelectedDate(dateTime);
+                fxPlanView.updateDateTime();*/
                 fxPlanView.refresh();
+
             }
         });
         builder.setNegativeButton("Cancel", null);
@@ -426,6 +433,9 @@ public class Main2Activity extends AppCompatActivity {
             if(!fxPlanView.getDateMap().get(dateItem).contains(dateTime))
                 fxPlanView.getDateMap().get(dateItem).add(dateTime);
         }
+        sp.setSelection(adapter.getPosition(dateItem));
+        fxPlanView.setSelectedDate(dateItem);
+        fxPlanView.updateDateTime();
     }
 
     private void removeDateItems(Spinner sp,final ArrayAdapter adapter) {

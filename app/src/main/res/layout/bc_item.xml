@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="6"
-            android:text="START TIME" />
+            android:text="开始时间" />
 
         <TextView
             android:id="@+id/editText2"
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="6"
-            android:text="END TIME" />
+            android:text="结束时间" />
 
         <TextView
             android:id="@+id/editText3"
