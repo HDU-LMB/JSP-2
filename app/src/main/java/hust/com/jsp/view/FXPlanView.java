@@ -316,12 +316,16 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
                 Log.v("fx",getContext().getClass().getName());
                 break;
             case MotionEvent.ACTION_MOVE:
-                motionEvent=MotionEvent.ACTION_MOVE;
-                move=(event.getY()-pointY)<0?(move-1):(move+1);
-                if(event.getY()-pointY<0){
-                    refresh();
-                    Log.v("fx","Down"+String.valueOf(move));
-                }else{
+                int num=numOfFXItem(itemList,selectedDate);
+                if(num>4){
+                    motionEvent=MotionEvent.ACTION_MOVE;
+                    move=(event.getY()-pointY)<0?(move-1):(move+1);
+                    if(move+num<4){
+                        move=4-num;
+                    }
+                    else if(move>0){
+                        move=0;
+                    }
                     refresh();
                     Log.v("fx","up"+String.valueOf(move));
                 }
@@ -349,5 +353,13 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
             result=false;
         return  result;
     }
-
+    private int numOfFXItem(List<FXPlanItem> fxPlanList,String date){
+        int num=0;
+        for (FXPlanItem item : fxPlanList) {
+            if(selectedDate(item,selectedDate)) {
+                num++;
+            }
+        }
+        return num;
+    }
 }
