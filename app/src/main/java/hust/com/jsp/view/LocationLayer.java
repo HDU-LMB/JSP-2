@@ -41,6 +41,7 @@ public class LocationLayer extends MapBaseLayer {
         PointF pointF=new PointF(point[0],point[1]);
         Log.v("loca","p"+pointF);*/
         this.baseLayer.setLocation(location.getPoint());
+        baseLayer.setAutoScale(true);
     }
 
     @Override

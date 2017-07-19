@@ -51,7 +51,7 @@ public class BLJZJLayer extends MapBaseLayer {
         Bitmap dstbmp = Bitmap.createBitmap(this.bitmap, 0, 0, this.bitmap.getWidth(), this.bitmap.getHeight(),
                 matrix, true);
         this.baseLayer = new BitmapLayer(mapView,dstbmp);
-        //  baseLayer.setAutoScale(true);
+        baseLayer.setAutoScale(true);
     }
     public void setAngle(float angle){
         Matrix matrix = new Matrix();

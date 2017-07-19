@@ -333,6 +333,11 @@ public class BCDetailActivity extends AppCompatActivity {
     private void refreshMap(final int bcID){
         mapView.clearLayer();
         List<BLInfo> blInfoList=blMap.get(bcID);
+        for(Location info:locationList){
+            LocationLayer layer=new LocationLayer(mapView,getResources(),info);
+            Log.v("bc","location:"+info.getPoint().toString());
+            mapView.addLayer(layer);
+        }
         for(final BLInfo info:blInfoList){
             BLJZJLayer layer=layerMap.get(info.getJzjid());
             layer.isVisible=true;
@@ -342,13 +347,6 @@ public class BCDetailActivity extends AppCompatActivity {
             mapView.addLayer(layer);
             Log.v("refreshMap",info.getJzjid()+":"+layer.isVisible);
         }
-
-        for(Location info:locationList){
-            LocationLayer layer=new LocationLayer(mapView,getResources(),info);
-            Log.v("bc","location:"+info.getPoint().toString());
-            mapView.addLayer(layer);
-        }
-        Log.v("bc",String.valueOf(mapView.getLayers().size()));
         mapView.refresh();
     }
     private void refreshBCJZJList(int bcID){
