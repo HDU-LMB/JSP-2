@@ -109,7 +109,7 @@ public class BCDetailActivity extends AppCompatActivity {
                 return;
             }
             mapView.loadMap(bitmap);
-       }
+        }
         for(Location info:locationList){
             LocationLayer layer=new LocationLayer(mapView,getResources(),info);
             Log.v("bc","location:"+info.getPoint().toString());
@@ -130,7 +130,7 @@ public class BCDetailActivity extends AppCompatActivity {
                             clickCir();
                             Log.v("bc layer", jzj.getId() + "    type:" + clickType);
                             info.setType(info.getType()+1);
-                       //     info.setType(clickType);
+                            //     info.setType(clickType);
                             if (info.getType() == 3) {
                                 iterator.remove();
                                 //  mapView.removeLayer(layer);
@@ -382,6 +382,7 @@ public class BCDetailActivity extends AppCompatActivity {
             List<BLInfo> blInfoList=blDAO.getById(info.getId());
             blMap.put(info.getId(),blInfoList);
         }
+        bcID=bcInfoList.get(0).getId();
 
     }
     private void addBCInfo()

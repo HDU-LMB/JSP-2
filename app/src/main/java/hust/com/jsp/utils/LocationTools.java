@@ -15,6 +15,10 @@ public class LocationTools {
         float[] floats={pointF.x,pointF.y};
         return  getNearLoaction(floats,list);
     }
+    public static Location getNearLoaction(float x,float y,List<Location> list) {
+        float[] floats={x,y};
+        return  getNearLoaction(floats,list);
+    }
 
     public static Location getNearLoaction(float[] floats,List<Location> list){
         Location location;

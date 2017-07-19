@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/linelayout1"
     android:background="@drawable/label_boderstyle">
 
     <LinearLayout
@@ -32,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:orientation="horizontal"
-        android:layout_weight="5">
+        android:layout_weight="7">
 
         <LinearLayout
             android:layout_width="0dip"
@@ -55,21 +56,42 @@
 
         </LinearLayout>
 
-        <com.onlylemi.mapview.library.MapView
-            android:id="@+id/MapView1"
+        <RelativeLayout
+            android:id="@+id/relativeLayout1"
             android:layout_width="0dip"
             android:layout_height="match_parent"
-            android:layout_weight="4"
-            android:visibility="visible"
-            android:background="@drawable/label_boderstyle"/>
+            android:layout_weight="10">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <com.onlylemi.mapview.library.MapView
+                    android:id="@+id/MapView1"
+                    android:layout_width="match_parent"
+                    android:layout_height="350dp"
+                    android:layout_weight="4"
+                    android:background="@drawable/label_boderstyle"
+                    android:visibility="visible" />
+
+                <hust.com.jsp.view.HorizontalListView
+                    android:id="@+id/jzj_hlistview"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dip"
+                    android:layout_weight="1"></hust.com.jsp.view.HorizontalListView>
+            </LinearLayout>
+        </RelativeLayout>
+
     </LinearLayout>
 
-    <hust.com.jsp.view.HorizontalListView
-        android:id="@+id/jzj_hlistview"
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        >
-
-    </hust.com.jsp.view.HorizontalListView>
+    <!--    <hust.com.jsp.view.MoveImage
+        android:id="@+id/iv_phone_bar"
+        android:layout_width="30dip"
+        android:layout_height="30dip"
+        android:clickable="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="70dp"
+        android:src="@drawable/jzj" />-->
 </LinearLayout>
