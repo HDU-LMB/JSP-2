@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:weightSum="1">
 
-    <LinearLayout
+    <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,9 +13,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+
 
             <include
                 layout="@layout/fx_plan_view"
@@ -23,11 +21,30 @@
                 android:layout_height="match_parent"
                 android:visibility="visible" />
 
-        </FrameLayout>
 
-    </LinearLayout>
 
-    <LinearLayout
+        <Spinner
+            android:id="@+id/spinner2"
+            android:layout_width="135dp"
+            android:layout_height="50dp"
+            android:textAlignment="center" />
+        <Button
+            android:text="◀"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/button3"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true" />
+        <Button
+            android:text="▶"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/button4"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+<!--    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true">
@@ -38,12 +55,7 @@
             android:layout_height="match_parent"
             android:background="#FFFFFF">
 
-            <Button
-                android:text="◀"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/button3"
-                android:layout_weight="1" />
+
 
             <FrameLayout
                 android:layout_width="1151dp"
@@ -60,11 +72,7 @@
 
                     </FrameLayout>
 
-                    <Spinner
-                        android:id="@+id/spinner2"
-                        android:layout_width="459dp"
-                        android:layout_height="match_parent"
-                        android:textAlignment="center" />
+
 
                     <FrameLayout
                         android:layout_width="match_parent"
@@ -74,13 +82,8 @@
                 </LinearLayout>
             </FrameLayout>
 
-            <Button
-                android:text="▶"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/button4"
-                android:layout_weight="1" />
+
         </LinearLayout>
-    </LinearLayout>
+    </LinearLayout>-->
 
 </RelativeLayout>

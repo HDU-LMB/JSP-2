@@ -40,7 +40,8 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
 
     private SurfaceHolder holder;
     private Canvas canvas;
-
+    private int numOfDisHour;
+    private int numOfDisRow;
     private long startViewTime;
     private long endViewTime;
     private int motionEvent=0;
@@ -99,14 +100,16 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void reMapSize(Canvas canvas){
+        this.numOfDisHour=10;
+        this.numOfDisRow=13;
         this.width = canvas.getWidth();
         this.height = canvas.getHeight();
-        this.sepLeftTitle = width/11.0f;//第一列宽
-        this.sepColNorm = sepLeftTitle*2.0f;//列宽：小时刻度
-        this.sepColDivide = sepColNorm /6.0f;//列中分钟刻度
-        this.sepTopTitle = height/7.0f;//行高
+        this.sepLeftTitle = width/10.0f;//第一列宽
+        this.sepColNorm = (width-sepLeftTitle)/numOfDisHour;//列宽：小时刻度
+        this.sepColDivide = sepColNorm /4.0f;//列中分钟刻度
+        this.sepTopTitle = height/numOfDisRow;//行高
         this.sepRowNorm = this.sepTopTitle;
-        this.sepPerTime = sepColNorm*5.0f/(endViewTime-startViewTime);//单位时间下的长度分辨率
+        this.sepPerTime = sepColNorm*numOfDisHour/(endViewTime-startViewTime);//单位时间下的长度分辨率
     }
 
     @Override
@@ -127,7 +130,7 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
         int hour=Integer.parseInt(d[3]);
         timer.set(year,month-1,day,hour,0,0);
         this.startViewTime = timer.getTimeInMillis();
-        timer.roll(Calendar.HOUR_OF_DAY,5);
+        timer.add(Calendar.HOUR_OF_DAY,numOfDisHour-1);
         this.endViewTime = timer.getTimeInMillis();
         refresh();
     }
@@ -181,9 +184,10 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
         calendar.setTimeInMillis(this.startViewTime);
         calendar.roll(Calendar.HOUR_OF_DAY,hours);
         this.startViewTime = calendar.getTimeInMillis();
-
-        calendar.roll(Calendar.HOUR_OF_DAY,5);
+        Log.v("start hour",calendar.get(Calendar.HOUR_OF_DAY)+"");
+        calendar.add(Calendar.HOUR_OF_DAY,numOfDisHour-1);
         this.endViewTime = calendar.getTimeInMillis();
+        Log.v("end hour",calendar.get(Calendar.HOUR_OF_DAY)+"");
         refresh();
         return this;
     }
@@ -228,7 +232,7 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
                     o = ""+min;
                 }
                 canvas.drawText(o,sepDr-this.sepColDivide/2.0f,this.sepTopTitle*0.85f,paint);
-                min+=10;
+                min+=15;
             }
             o = ""+min;
             canvas.drawText(o,sepDr-this.sepColDivide/2.0f,this.sepTopTitle*0.85f,paint);
@@ -263,8 +267,10 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
         float leng3 = paint.measureText(fxPlanItem.getJzj().getDisplayName());//画JZJ编号
         canvas.drawText(fxPlanItem.getJzj().getDisplayName(),(this.sepLeftTitle-leng3)/2.0f,relativeY+this.sepRowNorm*0.5f+sepRowNorm/8.0f,paint);
 
-        if(fxPlanItem.getEndTime()<(this.startViewTime)) return;
-        if(fxPlanItem.getStartTime()>(this.endViewTime)) return;
+        if(fxPlanItem.getEndTime()<(this.startViewTime))
+            return;
+        if(fxPlanItem.getStartTime()>(this.endViewTime))
+                return;
 
 
         // fxPlanItem.getStartTime();
