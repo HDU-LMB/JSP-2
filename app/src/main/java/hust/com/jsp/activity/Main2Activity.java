@@ -153,7 +153,7 @@ public class Main2Activity extends AppCompatActivity {
                 }
             }
         });
-        fxPlanView.setOnLongClickListener(new View.OnLongClickListener() {
+/*        fxPlanView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 Log.v("fxplanview","long click");
@@ -166,7 +166,7 @@ public class Main2Activity extends AppCompatActivity {
                 }
                 return true;
             }
-        });
+        });*/
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddFXJH);
 
@@ -294,7 +294,16 @@ public class Main2Activity extends AppCompatActivity {
                 fxPlanView.refresh();
             }
         });
-        builder.setNegativeButton("Cancel", null);
+        builder.setNegativeButton("delete", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(fxPlanView.getItemMap().size()==1){
+                    removeDateItems(sp,adapter);
+                }
+                fxPlanView.removeItem(item);
+                fxPlanView.refresh();
+            }
+        });
         builder.create().show();
 //        Toast.makeText(Main2Activity.this, "添加成功!", Toast.LENGTH_LONG).show();
     }
@@ -383,7 +392,10 @@ public class Main2Activity extends AppCompatActivity {
                 item.setStartTime(calendar.getTimeInMillis());
                 calendar.set(landDate.getYear(),landDate.getMonth(),landDate.getDayOfMonth(),landTime.getHour(),landTime.getMinute());
                 item.setEndTime(calendar.getTimeInMillis());
-                if(item.getStartTime()==item.getEndTime()) Toast.makeText(Main2Activity.this, "FJ起降时间不能相同，请重设时间!", Toast.LENGTH_LONG).show();
+                if(item.getStartTime()==item.getEndTime()) {
+                    Toast.makeText(Main2Activity.this, "FJ起降时间不能相同，请重设时间!", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 item.setStation(station).setJzj(jzj);
                 fxPlanView.addItem(item);
                 addDateItems(item,adapter);

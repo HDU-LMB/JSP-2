@@ -130,7 +130,7 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
         int hour=Integer.parseInt(d[3]);
         timer.set(year,month-1,day,hour,0,0);
         this.startViewTime = timer.getTimeInMillis();
-        timer.add(Calendar.HOUR_OF_DAY,numOfDisHour-1);
+        timer.add(Calendar.HOUR_OF_DAY,numOfDisHour);
         this.endViewTime = timer.getTimeInMillis();
         refresh();
     }
@@ -185,7 +185,7 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
         calendar.roll(Calendar.HOUR_OF_DAY,hours);
         this.startViewTime = calendar.getTimeInMillis();
         Log.v("start hour",calendar.get(Calendar.HOUR_OF_DAY)+"");
-        calendar.add(Calendar.HOUR_OF_DAY,numOfDisHour-1);
+        calendar.add(Calendar.HOUR_OF_DAY,numOfDisHour);
         this.endViewTime = calendar.getTimeInMillis();
         Log.v("end hour",calendar.get(Calendar.HOUR_OF_DAY)+"");
         refresh();
@@ -310,7 +310,7 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
 
 
     }
-
+    private int mScrolling=0;
     @Override
     public boolean onTouchEvent(MotionEvent event){
 
@@ -319,26 +319,37 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
                 pointY=event.getY();
                 motionEvent=MotionEvent.ACTION_DOWN;
                 Log.v("fx","press");
-                Log.v("fx",getContext().getClass().getName());
+                mScrolling=0;
                 break;
             case MotionEvent.ACTION_MOVE:
                 int num=numOfFXItem(itemList,selectedDate);
-                if(num>4){
+                if(num>numOfDisRow-1){
                     motionEvent=MotionEvent.ACTION_MOVE;
                     move=(event.getY()-pointY)<0?(move-1):(move+1);
-                    if(move+num<4){
-                        move=4-num;
+                    if(move+num<numOfDisRow-1){
+                        move=numOfDisRow-1-num;
                     }
                     else if(move>0){
                         move=0;
                     }
                     refresh();
-                    Log.v("fx","up"+String.valueOf(move));
-                }
-                break;
 
+                }
+                mScrolling=1;
+                Log.v("fx","up"+String.valueOf(move));
+                break;
+            case MotionEvent.ACTION_UP:
+
+                mScrolling=(mScrolling==0)?3:4;
         }
-        return super.onTouchEvent(event);
+        Log.v("scroll",mScrolling+"");
+        if(mScrolling!=4){
+
+            return super.onTouchEvent(event);
+        }
+        else{
+            return true;
+        }
     }
 
     //根据筛选的日期显示相应计划
