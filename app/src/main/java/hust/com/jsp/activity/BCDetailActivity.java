@@ -20,6 +20,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.onlylemi.mapview.library.MapView;
 import com.onlylemi.mapview.library.MapViewListener;
@@ -245,6 +246,10 @@ public class BCDetailActivity extends AppCompatActivity {
         mapView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+                if(bcID==0){
+                    Toast.makeText(BCDetailActivity.this,"请先选择BC",Toast.LENGTH_SHORT);
+                    return;
+                }
                 if(isseleted){
                     boolean containInfo=false;
                     BLInfo info=new BLInfo();
@@ -303,19 +308,17 @@ public class BCDetailActivity extends AppCompatActivity {
         bcDAO.deleteBC(bcID);
     }
     private void saveBCInfo(){
-        // TODO: 2017/6/29
-        bcDAO.deleteBC(bcID);
         for(BCInfo info:bcInfoList){
-            if(info.getId()==bcID){
-                bcDAO.addInfo(info);
-            }
+            bcDAO.deleteBC(info.getId());
+            bcDAO.addInfo(info);
         }
     }
     private void saveBLInfo(){
-        blDAO.deleteByBCID(bcID);
-        List<BLInfo> blInfoList=blMap.get(bcID);
-        for(BLInfo info:blInfoList){
-            blDAO.addInfo(info);
+        for (Map.Entry<Integer, List<BLInfo>> entry : blMap.entrySet()) {
+            blDAO.deleteByBCID(entry.getKey());
+            for(BLInfo info:entry.getValue()){
+                blDAO.addInfo(info);
+            }
         }
     }
     private void removeJZJfromBC(JZJ jzj){
@@ -380,8 +383,6 @@ public class BCDetailActivity extends AppCompatActivity {
             List<BLInfo> blInfoList=blDAO.getById(info.getId());
             blMap.put(info.getId(),blInfoList);
         }
-        bcID=bcInfoList.get(0).getId();
-
     }
     private void addBCInfo()
     {

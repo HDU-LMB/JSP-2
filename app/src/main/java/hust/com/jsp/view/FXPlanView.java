@@ -40,8 +40,8 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
 
     private SurfaceHolder holder;
     private Canvas canvas;
-    private int numOfDisHour;
-    private int numOfDisRow;
+    private int numOfDisHour=10;
+    private int numOfDisRow=13;
     private long startViewTime;
     private long endViewTime;
     private int motionEvent=0;
@@ -55,6 +55,7 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
     private float sepPerTime;
     private int move=0;
     private float pointY;
+    private float[] oldPoint={0,0};
     public float getPointY() {
         return pointY;
     }
@@ -100,8 +101,6 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void reMapSize(Canvas canvas){
-        this.numOfDisHour=10;
-        this.numOfDisRow=13;
         this.width = canvas.getWidth();
         this.height = canvas.getHeight();
         this.sepLeftTitle = width/10.0f;//第一列宽
@@ -109,7 +108,7 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
         this.sepColDivide = sepColNorm /4.0f;//列中分钟刻度
         this.sepTopTitle = height/numOfDisRow;//行高
         this.sepRowNorm = this.sepTopTitle;
-        this.sepPerTime = sepColNorm*numOfDisHour/(endViewTime-startViewTime);//单位时间下的长度分辨率
+        this.sepPerTime = sepColNorm/(3600000);//单位时间下的长度分辨率
     }
 
     @Override
@@ -178,6 +177,11 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
     }
     public void removeItem(FXPlanItem item){
         itemList.remove(item);
+    }
+    public void scaleView(int mutli){
+        numOfDisRow+=mutli;
+        numOfDisHour+=mutli;
+        refresh();
     }
     public FXPlanView rollTime(int hours){
         Calendar calendar = Calendar.getInstance();
@@ -316,6 +320,8 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
 
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
+                oldPoint[0]=event.getX();
+                oldPoint[1]=event.getY();
                 pointY=event.getY();
                 motionEvent=MotionEvent.ACTION_DOWN;
                 Log.v("fx","press");
@@ -325,7 +331,14 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
                 int num=numOfFXItem(itemList,selectedDate);
                 if(num>numOfDisRow-1){
                     motionEvent=MotionEvent.ACTION_MOVE;
-                    move=(event.getY()-pointY)<0?(move-1):(move+1);
+                    if(event.getY()-oldPoint[1]>sepRowNorm){
+                        move++;
+                        oldPoint[1]=event.getY();
+                    }
+                    else if(event.getY()-oldPoint[1]<-sepRowNorm){
+                        move--;
+                        oldPoint[1]=event.getY();
+                    }
                     if(move+num<numOfDisRow-1){
                         move=numOfDisRow-1-num;
                     }
@@ -333,7 +346,14 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
                         move=0;
                     }
                     refresh();
-
+                }
+                if(event.getX()-oldPoint[0]>sepColNorm){
+                    rollTime(-1);
+                    oldPoint[0]=event.getX();
+                }
+                else if(event.getX()-oldPoint[0]<-sepColNorm){
+                    rollTime(1);
+                    oldPoint[0]=event.getX();
                 }
                 mScrolling=1;
                 Log.v("fx","up"+String.valueOf(move));

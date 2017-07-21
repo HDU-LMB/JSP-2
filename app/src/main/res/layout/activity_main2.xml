@@ -28,20 +28,22 @@
             android:layout_width="135dp"
             android:layout_height="50dp"
             android:textAlignment="center" />
+
         <Button
-            android:text="◀"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
             android:id="@+id/button3"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true" />
-        <Button
-            android:text="▶"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:id="@+id/button4"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_toEndOf="@+id/button4"
+            android:text="-" />
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:text="+" />
     </RelativeLayout>
 
 <!--    <LinearLayout

@@ -4,7 +4,8 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="200dp"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="match_parent"
         android:background="@drawable/toolbox_boder"
         android:orientation="vertical">
@@ -24,22 +25,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp">
 
-                    <TextView
-                        android:id="@+id/bcListTipText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        android:text="BC选择："
-                        android:textAlignment="center" />
-
                     <Spinner
                         android:id="@+id/spBCList"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_weight="2"
-                        android:textAlignment="center"></Spinner>
+                        android:textAlignment="center">
+
+                    </Spinner>
 
                 </LinearLayout>
 
@@ -111,6 +105,14 @@
                     android:layout_gravity="top"
                     android:padding="0dp"
                     android:text="Cal" />
+                <Button
+                    android:id="@+id/button_play"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_gravity="top"
+                    android:padding="0dp"
+                    android:text="Play"
+                    />
             </LinearLayout>
 
         </LinearLayout>
@@ -120,8 +122,9 @@
 
     <RelativeLayout
         android:orientation="vertical"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_weight="9"
         android:padding="0dp"
         android:layout_margin="0dp"
         android:weightSum="1">
@@ -133,6 +136,9 @@
             android:layout_alignParentBottom="true"
             android:padding="0dp"
             android:background="@drawable/rect_fill_graystyle">
+
+
+
             <SeekBar
                 android:id="@+id/timeSeekBar"
                 android:layout_width="match_parent"

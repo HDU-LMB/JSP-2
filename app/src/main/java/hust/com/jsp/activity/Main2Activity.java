@@ -129,14 +129,14 @@ public class Main2Activity extends AppCompatActivity {
         buttonLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fxPlanView.rollTime(1);
+                fxPlanView.scaleView(1);
             }
         });
 
         buttonRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fxPlanView.rollTime(-1);
+                fxPlanView.scaleView(-1);
             }
         });
 

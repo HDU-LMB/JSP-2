@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
     private BZPlanItemDAO bzPlanDAO;
     private LocationDAO locationDAO;
     private Map<Integer,BLJZJLayer> layerMap;//key-jzj.ID，value-jzjLayer
+    private  Button btnPlay;
 
     public static MainActivity getInstance() {
         return instance;
@@ -361,8 +362,25 @@ public class MainActivity extends AppCompatActivity {
                 saveBZPlanItem();
             }
         });
+        btnPlay= (Button) findViewById(R.id.button_play);
+        btnPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playTimeProgress();
+            }
+        });
     }
-
+    private void playTimeProgress(){
+        if(bzPlanTimeList.size()==0){
+            return;
+        }
+        for(int i=0;i<seekBarTimeProgress.getMax();i++){
+          //  seekBarTimeProgress.setProgress(i);
+            refreshMapRefTime(i,bzPlanTimeList);
+            timeProgressLayer.setTime(i);
+            mapView.refresh();
+        }
+    }
     private void showTimeProgress(){
         showProgressButton= (Button) findViewById(R.id.button_TimeProgress);
         showProgressButton.setOnClickListener(new View.OnClickListener() {
@@ -381,7 +399,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         seekBarTimeProgress=(SeekBar) findViewById(R.id.timeSeekBar);
-        seekBarTimeProgress.setMax(375);
+        seekBarTimeProgress.setMax(400);
         seekBarTimeProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
