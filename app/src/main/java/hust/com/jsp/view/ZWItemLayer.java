@@ -81,7 +81,8 @@ public class ZWItemLayer extends MapBaseLayer{
 
         paint.setTextAlign(Paint.Align.LEFT);
         canvas.drawText(jzj.getDisplayName(), offsetPoint.x,labelWidth/2+6+offsetPoint.y,paint);//画FJ名称
-
+        paint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText(bzPlanItem.getSpendTime()+"", offsetPoint.x+width/2+10,labelWidth/2+6+offsetPoint.y,paint);
         paint.setTextAlign(Paint.Align.RIGHT);
 
         if(bzPlanItem.getStation()==null) return;

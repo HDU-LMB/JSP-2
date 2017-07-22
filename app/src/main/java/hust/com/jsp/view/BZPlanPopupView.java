@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -41,7 +42,8 @@ public class BZPlanPopupView extends PopupWindow {
     View popView;
     private TextView gasLabel,fluidLabel,coolLabel,airLabel,weaponLabel,oxygenLabel,electricityLabel,guidLabel;
     private Button deleteButton,saveBZItem;
-    private TextView jzjName,spendTime,zwName, deleteZWName,tipLabel;
+    private EditText spendTime;
+    private TextView jzjName,zwName, deleteZWName,tipLabel;
     private TextView addBZItem,aLabel,bLabel,cLabel,dLabel,eLabel,fLabel,gLabel,hLabel, zLabel;
     private TextView number1Label,number2Label,number3Label,number4Label,number5Label,number6Label,number7Label,number8Label,number9Label,number0Label;
     private Drawable gasDrawable,fluidDrawable,coolDrawable,airDrawable,weaponDrawable,oxygenDrawable,electricDrawable,guidDrawable,grayDrawable;
@@ -180,7 +182,7 @@ public class BZPlanPopupView extends PopupWindow {
                 bzPlanItem.setJzjid(jzj.getId());
                 bzPlanItem.setBcid(bzPlan.getBcid());
                 bzPlanItem.setLocationid(locationID);
-                bzPlanItem.setSpendTime(calculateSpendTime());
+                bzPlanItem.setSpendTime(Float.parseFloat(spendTime.getText().toString()));
                 bzPlanItem.setStation(station);
                 bzPlanItem.setAddGas(actions[0]);
                 bzPlanItem.setAddAir(actions[1]);
@@ -198,6 +200,8 @@ public class BZPlanPopupView extends PopupWindow {
 //                    zwStationAdapter.notifyDataSetChanged();
 //                    position=stationList.size()-1;
 //                    zwListView.setSelection(zwStationAdapter.getCount()-1);
+                 /*   addNewBZItem();
+                    Log.v("tag","add"+isAdd);*/
                 }else {//修改ZW
                     stationList.clear();
                     for(BZPlanItem item: bzPlan.getBzPlanItemList()){
@@ -208,7 +212,6 @@ public class BZPlanPopupView extends PopupWindow {
 //                    zwListView.setAdapter(zwStationAdapter);
                 }
                 isAdd=false;
-
                 mapView.refresh();
             }
         });
@@ -283,7 +286,7 @@ public class BZPlanPopupView extends PopupWindow {
         LayoutInflater inflater= (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         popView=inflater.inflate(R.layout.make_bzplan,null);
         jzjName=(TextView)popView.findViewById(R.id.currentJZJName);
-        spendTime=(TextView)popView.findViewById(R.id.spendTime);
+        spendTime= (EditText) popView.findViewById(R.id.spendTime);
 //        selectZWName=(TextView)popView.findViewById(R.id.selectStationName);
         zwName=(TextView)popView.findViewById(R.id.currentZWName);
         gasLabel= (TextView) popView.findViewById(R.id.gasLabel);

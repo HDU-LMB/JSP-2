@@ -888,7 +888,7 @@ public class MainActivity extends AppCompatActivity {
                 bzPlanPopupView.setBackgroundDrawable(null);
                 bzPlanPopupView.setFocusable(true);//这两个属性设置用于点击弹出框外部，窗体消失
                 bzPlanPopupView.setOutsideTouchable(true);
-                bzPlanPopupView.showAtLocation(MainActivity.this.findViewById(R.id.zw_BCItemListView), Gravity.LEFT|Gravity.TOP,312,246);
+                bzPlanPopupView.showAtLocation(MainActivity.this.findViewById(R.id.zw_BCItemListView), Gravity.LEFT|Gravity.TOP,212,246);
             }
         });
     }
