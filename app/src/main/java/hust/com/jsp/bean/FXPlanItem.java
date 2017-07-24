@@ -5,6 +5,7 @@ package hust.com.jsp.bean;
  */
 
 public class FXPlanItem {
+    private int fx_id;
     private String planName;
     private JZJ jzj;
     private Station station;
@@ -12,7 +13,31 @@ public class FXPlanItem {
     private long endTime;
     private FXPlanType type;
     private float gas;
+    private long chTime;
+    private long fhTime;
+    public int getFx_id() {
+        return fx_id;
+    }
 
+    public long getChTime() {
+        return chTime;
+    }
+
+    public void setChTime(long chTime) {
+        this.chTime = chTime;
+    }
+
+    public long getFhTime() {
+        return fhTime;
+    }
+
+    public void setFhTime(long fhTime) {
+        this.fhTime = fhTime;
+    }
+
+    public void setFx_id(int fx_id) {
+        this.fx_id = fx_id;
+    }
 
     public long getEndTime() {
         return this.endTime;

@@ -26,7 +26,7 @@ import android.widget.Toast;
 
 import hust.com.jsp.bean.FXPlanItem;
 import hust.com.jsp.bean.Location;
-import hust.com.jsp.dao.LocationDAO;
+import hust.com.jsp.dao.JZJDAO;
 import hust.com.jsp.view.FXPlanView;
 import hust.com.jsp.bean.JZJ;
 import hust.com.jsp.bean.Station;
@@ -35,15 +35,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import hust.com.jsp.R;
 public class Main2Activity extends AppCompatActivity {
-    private LocationDAO locationDAO;
+    private JZJDAO jzjDAO;
     FXPlanView fxPlanView;
     private  Spinner sp;
+    private Button btnExchange;
+    private int displayType=0;
     List<String> listDateItems=new ArrayList<>();//spinner数据源，存储日期(年-月-日)
 //    @Override
 //    protected void onResume(){
@@ -71,12 +74,12 @@ public class Main2Activity extends AppCompatActivity {
         fxPlanView = (FXPlanView)findViewById(R.id.FXPlanView);
         //SurfaceView surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
         //SurfaceHolder surfaceHolder
-        locationDAO=new LocationDAO(this);
+        jzjDAO=new JZJDAO(this);
         Calendar timer = Calendar.getInstance();
 
         sp = (Spinner)findViewById(R.id.spinner2);
         final ArrayAdapter adapter=new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,listDateItems);
-
+        btnExchange= (Button) findViewById(R.id.btn_exchange);
         Station testStation1 = new Station();
         testStation1.setDisplayName("CR1").setID(123);
 
@@ -92,14 +95,22 @@ public class Main2Activity extends AppCompatActivity {
         FXPlanItem testItem1 = new FXPlanItem().setType(FXPlanItem.FXPlanType.both);
         timer.set(2016, 12, 28, 10, 10, 0);
         testItem1.setStartTime(timer.getTimeInMillis());
-        timer.set(2016, 12, 28, 12, 45, 0);
+        timer.set(2016, 12, 28, 11, 10, 0);
+        testItem1.setChTime(timer.getTimeInMillis());
+        timer.set(2016, 12, 28, 12, 10, 0);
+        testItem1.setFhTime(timer.getTimeInMillis());
+        timer.set(2016, 12, 28, 14, 45, 0);
         testItem1.setEndTime(timer.getTimeInMillis());
         testItem1.setGas(7).setStation(testStation1).setJzj(testjzj1).setPlanName("1101");
 
         FXPlanItem testItem2 = new FXPlanItem().setType(FXPlanItem.FXPlanType.land);
         timer.set(2016, 12, 28, 10, 40, 0);
         testItem2.setStartTime(timer.getTimeInMillis());
-        timer.set(2016, 12, 28, 11, 45, 0);
+        timer.set(2016, 12, 28, 11, 40, 0);
+        testItem2.setChTime(timer.getTimeInMillis());
+        timer.set(2016, 12, 28, 12, 0, 0);
+        testItem2.setFhTime(timer.getTimeInMillis());
+        timer.set(2016, 12, 28, 13, 45, 0);
         testItem2.setEndTime(timer.getTimeInMillis());
         testItem2.setGas(5.0f).setStation(testStation2).setJzj(testjzj2).setPlanName("1102");
 
@@ -153,6 +164,13 @@ public class Main2Activity extends AppCompatActivity {
                 {
                     editFXJHinfo(fxPlanView.getItemMap().get(rowNO),adapter);
                 }
+            }
+        });
+        btnExchange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayType=displayType==0?1:0;
+                fxPlanView.setDisplayType(displayType);
             }
         });
 /*        fxPlanView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -222,6 +240,10 @@ public class Main2Activity extends AppCompatActivity {
         final DatePicker landDate=(DatePicker)fxjhDialog.findViewById(R.id.landDate);
         final TimePicker flightTime=(TimePicker)fxjhDialog.findViewById(R.id.flightTime);
         final TimePicker landTime=(TimePicker)fxjhDialog.findViewById(R.id.landTime);
+        final DatePicker chDate=(DatePicker)fxjhDialog.findViewById(R.id.chDate);
+        final DatePicker fhDate=(DatePicker)fxjhDialog.findViewById(R.id.fhDate);
+        final TimePicker chTime=(TimePicker)fxjhDialog.findViewById(R.id.chTime);
+        final TimePicker fhTime=(TimePicker)fxjhDialog.findViewById(R.id.fhTime);
         //获取FXJH信息
         renwuNO.setText(item.getPlanName());
         jzjNOEditText.setText(item.getJzj().getDisplayName());
@@ -250,7 +272,20 @@ public class Main2Activity extends AppCompatActivity {
         landTime.setIs24HourView(true);
         landTime.setHour(calendar.get(Calendar.HOUR_OF_DAY));
         landTime.setMinute(calendar.get(Calendar.MINUTE));
-
+        chTime.setIs24HourView(true);
+        chTime.setHour(calendar.get(Calendar.HOUR_OF_DAY)+8);
+        chTime.setMinute(calendar.get(Calendar.MINUTE));
+        fhTime.setIs24HourView(true);
+        fhTime.setHour(calendar.get(Calendar.HOUR_OF_DAY)+8);
+        fhTime.setMinute(calendar.get(Calendar.MINUTE));
+        calendar.setTimeInMillis(item.getChTime());
+        chDate.updateDate(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH));
+        chTime.setHour(calendar.get(Calendar.HOUR_OF_DAY));
+        chTime.setMinute(calendar.get(Calendar.MINUTE));
+        calendar.setTimeInMillis(item.getFhTime());
+        fhDate.updateDate(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH));
+        fhTime.setHour(calendar.get(Calendar.HOUR_OF_DAY));
+        fhTime.setMinute(calendar.get(Calendar.MINUTE));
         builder.setView(fxjhDialog);
         builder.setTitle("Modify FXJH");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -290,6 +325,14 @@ public class Main2Activity extends AppCompatActivity {
                 calendar.set(landDate.getYear(),landDate.getMonth(),landDate.getDayOfMonth(),landTime.getHour(),landTime.getMinute());
                 item.setEndTime(calendar.getTimeInMillis());
                 if(item.getStartTime()==item.getEndTime()) Toast.makeText(Main2Activity.this, "FJ起降时间不能相同，请重设时间!", Toast.LENGTH_LONG).show();
+                calendar.set(chDate.getYear(),chDate.getMonth(),chDate.getDayOfMonth(),chTime.getHour(),chTime.getMinute());
+                item.setChTime(calendar.getTimeInMillis());
+                calendar.set(fhDate.getYear(),fhDate.getMonth(),fhDate.getDayOfMonth(),fhTime.getHour(),fhTime.getMinute());
+                item.setFhTime(calendar.getTimeInMillis());
+/*                if(item.getChTime()==item.getFhTime()) {
+                    Toast.makeText(Main2Activity.this, "FJ出航返航时间不能相同，请重设时间!", Toast.LENGTH_LONG).show();
+                    return;
+                } */
                 addDateItems(item,adapter);
 
                // fxPlanView.updateListDateItems();
@@ -330,6 +373,10 @@ public class Main2Activity extends AppCompatActivity {
         final DatePicker landDate=(DatePicker)fxjhDialog.findViewById(R.id.landDate);
         final TimePicker flightTime=(TimePicker)fxjhDialog.findViewById(R.id.flightTime);
         final TimePicker landTime=(TimePicker)fxjhDialog.findViewById(R.id.landTime);
+        final DatePicker chDate=(DatePicker)fxjhDialog.findViewById(R.id.chDate);
+        final DatePicker fhDate=(DatePicker)fxjhDialog.findViewById(R.id.fhDate);
+        final TimePicker chTime=(TimePicker)fxjhDialog.findViewById(R.id.chTime);
+        final TimePicker fhTime=(TimePicker)fxjhDialog.findViewById(R.id.fhTime);
         final Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         landTime.setIs24HourView(true);
@@ -338,6 +385,12 @@ public class Main2Activity extends AppCompatActivity {
         flightTime.setMinute(calendar.get(Calendar.MINUTE));
         landTime.setHour(calendar.get(Calendar.HOUR_OF_DAY)+8);
         landTime.setMinute(calendar.get(Calendar.MINUTE));
+        chTime.setIs24HourView(true);
+        chTime.setHour(calendar.get(Calendar.HOUR_OF_DAY)+8);
+        chTime.setMinute(calendar.get(Calendar.MINUTE));
+        fhTime.setIs24HourView(true);
+        fhTime.setHour(calendar.get(Calendar.HOUR_OF_DAY)+8);
+        fhTime.setMinute(calendar.get(Calendar.MINUTE));
         flightCheckBox.setChecked(true);
 
         builder.setView(fxjhDialog);
@@ -371,8 +424,13 @@ public class Main2Activity extends AppCompatActivity {
                 String jzjNo=jzjNOEditText.getText().toString();
                 String stationFXY=fxyNOEditText.getText().toString();
                 station.setDisplayName(stationFXY).setID(1001);  //注意：这里id需要自增长赋值，且保证唯一
-                JZJ jzj = new JZJ(2001);  //注意：这里参数需要自增长赋值，且保证唯一
-                jzj.setDisplayName(jzjNo);
+/*                JZJ jzj = new JZJ(2001);  //注意：这里参数需要自增长赋值，且保证唯一
+                jzj.setDisplayName(jzjNo);*/
+                JZJ jzj=jzjDAO.getJZJByName(jzjNo);
+                if(jzj==null){
+                    Toast.makeText(Main2Activity.this, "输入JZJ名字错误！", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 item.setPlanName(renwuNO.getText().toString());
                 try {
                     item.setGas(Float.parseFloat(gasEditText.getText().toString()));
@@ -398,6 +456,15 @@ public class Main2Activity extends AppCompatActivity {
                     Toast.makeText(Main2Activity.this, "FJ起降时间不能相同，请重设时间!", Toast.LENGTH_LONG).show();
                     return;
                 }
+                calendar.set(chDate.getYear(),chDate.getMonth(),chDate.getDayOfMonth(),chTime.getHour(),chTime.getMinute());
+                item.setChTime(calendar.getTimeInMillis());
+                calendar.set(fhDate.getYear(),fhDate.getMonth(),fhDate.getDayOfMonth(),fhTime.getHour(),fhTime.getMinute());
+                item.setFhTime(calendar.getTimeInMillis());
+/*                if(item.getChTime()==item.getFhTime()) {
+                    Toast.makeText(Main2Activity.this, "FJ出航返航时间不能相同，请重设时间!", Toast.LENGTH_LONG).show();
+                    return;
+                } */
+                item.setFx_id(new Random().nextInt());
                 item.setStation(station).setJzj(jzj);
                 fxPlanView.addItem(item);
                 addDateItems(item,adapter);

@@ -29,6 +29,9 @@ public class JZJDAO {
     public JZJ getJZJ(int id){
         return  toInfo(db.rawQuery("select * from jzj where id = ?",new String[]{String.valueOf(id)}));
     }
+    public JZJ getJZJByName(String name){
+        return  toInfo(db.rawQuery("select * from jzj where name = ?",new String[]{String.valueOf(name)}));
+    }
     public void addInfo(JZJ info){
         db.execSQL("insert into jzj(id,name,type) values(?,?,?)",
                 new String[]{
@@ -49,6 +52,9 @@ public class JZJDAO {
         });
     }
     private JZJ toInfo(Cursor cursor){
+        if(cursor.getCount()==0){
+            return null;
+        }
         JZJ info=new JZJ();
         while(cursor.moveToNext()) {
             info.setID(cursor.getInt(cursor.getColumnIndex("id")));

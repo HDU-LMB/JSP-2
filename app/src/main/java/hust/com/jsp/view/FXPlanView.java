@@ -40,6 +40,7 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
 
     private SurfaceHolder holder;
     private Canvas canvas;
+    private int displayType=0;
     private int numOfDisHour=10;
     private int numOfDisRow=13;
     private long startViewTime;
@@ -268,49 +269,60 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
         float relativeY = this.sepTopTitle+this.sepRowNorm*(yOffset+move);
         float itemExpand = this.sepPerTime*itemSelfExpand;
 
-        float leng3 = paint.measureText(fxPlanItem.getJzj().getDisplayName());//画JZJ编号
-        canvas.drawText(fxPlanItem.getJzj().getDisplayName(),(this.sepLeftTitle-leng3)/2.0f,relativeY+this.sepRowNorm*0.5f+sepRowNorm/8.0f,paint);
+        float leng3 = paint.measureText(fxPlanItem.getJzj().getDisplayName()+"  "+fxPlanItem.getJzj().getJzjType());//画JZJ编号
+        canvas.drawText(fxPlanItem.getJzj().getDisplayName()+"  "+fxPlanItem.getJzj().getJzjType(),(this.sepLeftTitle-leng3)/3.0f,relativeY+this.sepRowNorm*0.5f+sepRowNorm/8.0f,paint);
+
 
         if(fxPlanItem.getEndTime()<(this.startViewTime))
             return;
         if(fxPlanItem.getStartTime()>(this.endViewTime))
                 return;
 
-
         // fxPlanItem.getStartTime();
-        canvas.drawLine(relativeX,relativeY+this.sepRowNorm/2.0f,relativeX+itemExpand,relativeY+this.sepRowNorm/2.0f,paint);//画起飞到降落时间段横线
-        canvas.drawLine(relativeX+itemHeight/2.0f,relativeY+(sepRowNorm-itemHeight)/2.0f,relativeX+itemHeight/2.0f,relativeY+(sepRowNorm+itemHeight)/2.0f,paint);//画竖分隔线
+        if(displayType==0){
+            canvas.drawLine(relativeX,relativeY+this.sepRowNorm/2.0f,relativeX+itemExpand,relativeY+this.sepRowNorm/2.0f,paint);//画起飞到降落时间段横线
+            canvas.drawLine(relativeX+itemHeight/2.0f,relativeY+(sepRowNorm-itemHeight)/2.0f,relativeX+itemHeight/2.0f,relativeY+(sepRowNorm+itemHeight)/2.0f,paint);//画竖分隔线
 
 
-        float leng1 = paint.measureText(fxPlanItem.getPlanName());//画任务编号
-        canvas.drawText(fxPlanItem.getPlanName(),relativeX+itemHeight/2.0f-leng1-2.0f,relativeY+sepRowNorm*0.625f-itemHeight/4.0f,paint);
-        float leng2 = paint.measureText(fxPlanItem.getStation().getDisplayName());//画FXY代号
-        canvas.drawText(fxPlanItem.getStation().getDisplayName(),relativeX+itemHeight/2.0f-leng2-2.0f,relativeY+sepRowNorm*0.625f+itemHeight/4.0f,paint);
-        //float leng3 = paint.measureText(testItem.getGasStatus());
-        canvas.drawText(fxPlanItem.getGasStatus(),relativeX+itemHeight/2.0f+2.0f,relativeY+sepRowNorm*0.625f+itemHeight/4.0f,paint);//画载油量
+            float leng1 = paint.measureText(fxPlanItem.getPlanName());//画任务编号
+            canvas.drawText(fxPlanItem.getPlanName(),relativeX+itemHeight/2.0f-leng1-2.0f,relativeY+sepRowNorm*0.625f-itemHeight/4.0f,paint);
+            float leng2 = paint.measureText(fxPlanItem.getStation().getDisplayName());//画FXY代号
+            canvas.drawText(fxPlanItem.getStation().getDisplayName(),relativeX+itemHeight/2.0f-leng2-2.0f,relativeY+sepRowNorm*0.625f+itemHeight/4.0f,paint);
+            //float leng3 = paint.measureText(testItem.getGasStatus());
+            canvas.drawText(fxPlanItem.getGasStatus(),relativeX+itemHeight/2.0f+2.0f,relativeY+sepRowNorm*0.625f+itemHeight/4.0f,paint);//画载油量
 
-        Calendar timer = Calendar.getInstance();
-        timer.setTimeInMillis(fxPlanItem.getStartTime());
-        String qfTime=timer.get(Calendar.HOUR_OF_DAY)+":"+timer.get(Calendar.MINUTE);
-        timer.setTimeInMillis(fxPlanItem.getEndTime());
-        String jlTime=timer.get(Calendar.HOUR_OF_DAY)+":"+timer.get(Calendar.MINUTE);
-        canvas.drawText(qfTime+"-"+jlTime,relativeX+itemHeight/2.0f+2.0f,relativeY+sepRowNorm*0.625f-itemHeight/4.0f,paint);//画QF-JL时间
+            Calendar timer = Calendar.getInstance();
+            timer.setTimeInMillis(fxPlanItem.getStartTime());
+            String qfTime=timer.get(Calendar.HOUR_OF_DAY)+":"+timer.get(Calendar.MINUTE);
+            timer.setTimeInMillis(fxPlanItem.getEndTime());
+            String jlTime=timer.get(Calendar.HOUR_OF_DAY)+":"+timer.get(Calendar.MINUTE);
+            canvas.drawText(qfTime+"-"+jlTime,relativeX+itemHeight/2.0f+2.0f,relativeY+sepRowNorm*0.625f-itemHeight/4.0f,paint);//画QF-JL时间
 
-        if(fxPlanItem.getType()== FXPlanItem.FXPlanType.land){//在本舰JL
-            canvas.drawLine(relativeX+itemExpand,relativeY+this.sepRowNorm/2.0f,relativeX+itemExpand+itemHeight/2.0f,relativeY+(sepRowNorm+itemHeight/2)/2.0f,paint);
+            if(fxPlanItem.getType()== FXPlanItem.FXPlanType.land){//在本舰JL
+                canvas.drawLine(relativeX+itemExpand,relativeY+this.sepRowNorm/2.0f,relativeX+itemExpand+itemHeight/2.0f,relativeY+(sepRowNorm+itemHeight/2)/2.0f,paint);
+            }
+            else if(fxPlanItem.getType()== FXPlanItem.FXPlanType.flight){//QF
+                canvas.drawLine(relativeX+itemExpand,relativeY+this.sepRowNorm/2.0f,relativeX+itemExpand+itemHeight/2.0f,relativeY+(sepRowNorm-itemHeight/2)/2.0f,paint);
+            }
+            else if(fxPlanItem.getType()== FXPlanItem.FXPlanType.both){//两者
+                canvas.drawLine(relativeX+itemExpand,relativeY+this.sepRowNorm/2.0f,relativeX+itemExpand+itemHeight/2.0f,relativeY+(sepRowNorm+itemHeight/2)/2.0f,paint);
+                canvas.drawLine(relativeX+itemExpand,relativeY+this.sepRowNorm/2.0f,relativeX+itemExpand+itemHeight/2.0f,relativeY+(sepRowNorm-itemHeight/2)/2.0f,paint);
+            }
+
         }
-        else if(fxPlanItem.getType()== FXPlanItem.FXPlanType.flight){//QF
-            canvas.drawLine(relativeX+itemExpand,relativeY+this.sepRowNorm/2.0f,relativeX+itemExpand+itemHeight/2.0f,relativeY+(sepRowNorm-itemHeight/2)/2.0f,paint);
-        }
-        else if(fxPlanItem.getType()== FXPlanItem.FXPlanType.both){//两者
-            canvas.drawLine(relativeX+itemExpand,relativeY+this.sepRowNorm/2.0f,relativeX+itemExpand+itemHeight/2.0f,relativeY+(sepRowNorm+itemHeight/2)/2.0f,paint);
-            canvas.drawLine(relativeX+itemExpand,relativeY+this.sepRowNorm/2.0f,relativeX+itemExpand+itemHeight/2.0f,relativeY+(sepRowNorm-itemHeight/2)/2.0f,paint);
-        }
+        else{
+            float time1=(fxPlanItem.getChTime()-fxPlanItem.getStartTime())*sepPerTime;
+            float time2=(fxPlanItem.getFhTime()-fxPlanItem.getChTime())*sepPerTime;
+            float time3=(fxPlanItem.getEndTime()-fxPlanItem.getFhTime())*sepPerTime;
+            canvas.drawLine(relativeX,relativeY+this.sepRowNorm/6*5,relativeX+time1,relativeY+this.sepRowNorm/6*1,paint);
+            canvas.drawLine(relativeX+time1,relativeY+this.sepRowNorm/6*1,relativeX+time1+time2,relativeY+this.sepRowNorm/6*1,paint);
+            canvas.drawLine(relativeX+time1+time2,relativeY+this.sepRowNorm/6*1,relativeX+time1+time2+time3,relativeY+this.sepRowNorm/6*5,paint);
 
+        }
         Paint paint1 = new Paint();
         paint1.setColor(Color.WHITE);//清除覆盖编号区域，重新画任务编号
         canvas.drawRect(0.0f,relativeY+1.0f,this.sepLeftTitle-1.0f,relativeY+sepRowNorm-1.0f,paint1);
-        canvas.drawText(fxPlanItem.getJzj().getDisplayName(),(this.sepLeftTitle-leng3)/2.0f,relativeY+this.sepRowNorm*0.5f+sepRowNorm/8.0f,paint);
+        canvas.drawText(fxPlanItem.getJzj().getDisplayName()+"  "+fxPlanItem.getJzj().getJzjType(),(this.sepLeftTitle-leng3)/2.0f,relativeY+this.sepRowNorm*0.5f+sepRowNorm/8.0f,paint);
 
 
     }
@@ -398,5 +410,9 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
         return num;
+    }
+    public void setDisplayType(int type){
+        displayType=type;
+        refresh();
     }
 }
