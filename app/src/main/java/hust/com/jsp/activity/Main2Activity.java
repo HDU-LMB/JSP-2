@@ -25,6 +25,8 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import hust.com.jsp.bean.FXPlanItem;
+import hust.com.jsp.bean.Location;
+import hust.com.jsp.dao.LocationDAO;
 import hust.com.jsp.view.FXPlanView;
 import hust.com.jsp.bean.JZJ;
 import hust.com.jsp.bean.Station;
@@ -39,7 +41,7 @@ import java.util.TreeSet;
 
 import hust.com.jsp.R;
 public class Main2Activity extends AppCompatActivity {
-
+    private LocationDAO locationDAO;
     FXPlanView fxPlanView;
     private  Spinner sp;
     List<String> listDateItems=new ArrayList<>();//spinner数据源，存储日期(年-月-日)
@@ -69,7 +71,7 @@ public class Main2Activity extends AppCompatActivity {
         fxPlanView = (FXPlanView)findViewById(R.id.FXPlanView);
         //SurfaceView surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
         //SurfaceHolder surfaceHolder
-
+        locationDAO=new LocationDAO(this);
         Calendar timer = Calendar.getInstance();
 
         sp = (Spinner)findViewById(R.id.spinner2);
@@ -460,6 +462,13 @@ public class Main2Activity extends AppCompatActivity {
         }
     }
 
-
+    private Station toStation(Location location){
+        Station station=new Station();
+        station.setID(location.getId());
+        station.setAngle(location.getAngle());
+        station.setDisplayName(location.getName());
+        station.setLocation(location.getPoint());
+        return station;
+    }
 
 }

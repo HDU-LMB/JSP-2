@@ -29,6 +29,25 @@ public class JZJDAO {
     public JZJ getJZJ(int id){
         return  toInfo(db.rawQuery("select * from jzj where id = ?",new String[]{String.valueOf(id)}));
     }
+    public void addInfo(JZJ info){
+        db.execSQL("insert into jzj(id,name,type) values(?,?,?)",
+                new String[]{
+                        String.valueOf(info.getId()),
+                        String.valueOf(info.getDisplayName()),
+                        String.valueOf(info.getJzjType())
+                });
+    }
+    private void deleteInfo(int id){
+        db.execSQL("delete from jzj where id=?",new String[]{String.valueOf(id)});
+    }
+    private void updateInfo(JZJ info){
+        db.execSQL("update jzj set name =?,type=? where id=?",
+                new String[]{
+                        String.valueOf(info.getDisplayName()),
+                        String.valueOf(info.getJzjType()),
+                        String.valueOf(info.getId())
+        });
+    }
     private JZJ toInfo(Cursor cursor){
         JZJ info=new JZJ();
         while(cursor.moveToNext()) {

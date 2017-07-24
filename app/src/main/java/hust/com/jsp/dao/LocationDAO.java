@@ -27,6 +27,33 @@ public class LocationDAO {
         return  list;
 
     }
+    public void addInfo(Location info){
+        db.execSQL("insert into location(id,name,x,y,angle) values(?,?,?,?,?)",
+                new String[]{
+                        String.valueOf(info.getId()),
+                        String.valueOf(info.getName()),
+                        String.valueOf(info.getX()),
+                        String.valueOf(info.getY()),
+                        String.valueOf(info.getAngle())
+                });
+    }
+    private void deleteInfo(int id){
+        db.execSQL("delete from location where id=?",new String[]{String.valueOf(id)});
+    }
+    private void updateInfo(Location info){
+        db.execSQL("update location set name =?,x=?,y=?,angle=? where id=?",
+                new String[]{
+                        String.valueOf(info.getName()),
+                        String.valueOf(info.getX()),
+                        String.valueOf(info.getY()),
+                        String.valueOf(info.getAngle()),
+                        String.valueOf(info.getId())});
+    }
+    public Location getInfoByName(String name){
+        Cursor cursor=db.rawQuery("select * from location where name=?",new String[]{String.valueOf(name)});
+        Location info=toInfo(cursor);
+        return  info;
+    }
     public Location getInfoByPonit(float x,float y){
         Cursor cursor=db.rawQuery("select * from location where x=? and y=?",new String[]{String.valueOf(x),String.valueOf(y)});
         Location info=toInfo(cursor);
