@@ -77,9 +77,12 @@ public class BCDetailActivity extends AppCompatActivity {
     private JZJDAO jzjDAO;
     private BLDAO blDAO;
     private BCDAO bcDAO;
+    private static BCDetailActivity instance;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.v("asd","create"+BCDetailActivity.this);
+        if(instance==null){
+            instance=this;
+        }
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -301,6 +304,19 @@ public class BCDetailActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.v("bc","start");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.v("bc","resume");
+    }
+
     private void deleteBL(int bcID){
         blDAO.deleteByBCID(bcID);
     }
@@ -384,6 +400,15 @@ public class BCDetailActivity extends AppCompatActivity {
             blMap.put(info.getId(),blInfoList);
         }
     }
+    public void refreshDate(){
+        bcInfoList.clear();
+        bcInfoList.addAll(bcDAO.getAll());
+        for(BCInfo info:bcInfoList){
+            List<BLInfo> blInfoList=blDAO.getById(info.getId());
+            blMap.put(info.getId(),blInfoList);
+        }
+        bchListAdapter.notifyDataSetChanged();
+    }
     private void addBCInfo()
     {
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -426,5 +451,8 @@ public class BCDetailActivity extends AppCompatActivity {
         else{
             clickType++;
         }
+    }
+    public static BCDetailActivity getInstance(){
+        return instance;
     }
 }

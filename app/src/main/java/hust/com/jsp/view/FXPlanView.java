@@ -181,6 +181,10 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
         this.itemList.add(item);
         return this;
     }
+    public void setFXPlanList(List<FXPlanItem> list){
+        this.itemList.clear();
+        this.itemList.addAll(list);
+    }
     public void removeItem(FXPlanItem item){
         itemList.remove(item);
     }

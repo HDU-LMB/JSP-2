@@ -85,11 +85,37 @@ public class FXPlanItem {
     public FXPlanType getType(){
         return this.type;
     }
-
+    public void setType(int type){
+        switch (type){
+            case 1:
+                this.type=FXPlanType.land;
+                break;
+            case 2:
+                this.type=FXPlanType.flight;
+                break;
+            case 3:
+                this.type=FXPlanType.both;
+                break;
+        }
+    }
+    public int getIntType(){
+        int type=0;
+        switch (getType()){
+            case land:
+                type=1;
+                break;
+            case flight:
+                type=2;
+                break;
+            case both:
+                type=3;
+                break;
+        }
+        return type;
+    }
     public enum FXPlanType {
         land,flight,both
     }
-
     public String getPlanName(){return this.planName;}
 
     public float getGas(){
@@ -99,7 +125,11 @@ public class FXPlanItem {
     public JZJ getJzj(){
         return this.jzj;
     }
-
+    public void setStationName(String name){
+        Station station=new Station();
+        station.setDisplayName(name);
+        this.station=station;
+    }
     public Station getStation(){
         return this.station;
     }

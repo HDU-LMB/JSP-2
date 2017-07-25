@@ -71,6 +71,9 @@ public class ScheduleActivity extends AppCompatActivity {
                         if(fxPlanView != null) fxPlanView.setVisibility(View.INVISIBLE);
                         if(mapView != null) mapView.setVisibility(View.INVISIBLE);
                         if(mapView1 != null) mapView1.setVisibility(View.VISIBLE);
+                        BCDetailActivity bcDetailActivity=BCDetailActivity.getInstance();
+                        if(bcDetailActivity!=null)
+                           bcDetailActivity.refreshDate();
                         break;
                     case "编辑BZJH":
                         if(fxPlanView != null) fxPlanView.setVisibility(View.INVISIBLE);

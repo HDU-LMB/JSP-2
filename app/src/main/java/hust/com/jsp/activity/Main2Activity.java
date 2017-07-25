@@ -27,6 +27,8 @@ import android.widget.Toast;
 import hust.com.jsp.bean.BCInfo;
 import hust.com.jsp.bean.FXPlanItem;
 import hust.com.jsp.bean.Location;
+import hust.com.jsp.dao.BCDAO;
+import hust.com.jsp.dao.FXPlanDAO;
 import hust.com.jsp.dao.JZJDAO;
 import hust.com.jsp.view.FXPlanView;
 import hust.com.jsp.bean.JZJ;
@@ -48,6 +50,11 @@ public class Main2Activity extends AppCompatActivity {
     private  Spinner sp;
     private Button btnExchange;
     private int displayType=0;
+    private BCDAO bcDAO;
+    private FXPlanDAO fxPlanDAO;
+    private List<BCInfo> bcInfoList=new ArrayList<>();
+    private List<FXPlanItem> fxPlanItemList=new ArrayList<>();
+    private ArrayAdapter adapter;
     List<String> listDateItems=new ArrayList<>();//spinner数据源，存储日期(年-月-日)
 //    @Override
 //    protected void onResume(){
@@ -76,60 +83,17 @@ public class Main2Activity extends AppCompatActivity {
         //SurfaceView surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
         //SurfaceHolder surfaceHolder
         jzjDAO=new JZJDAO(this);
-        Calendar timer = Calendar.getInstance();
+        bcDAO=new BCDAO(this);
+        fxPlanDAO=new FXPlanDAO(this);
 
         sp = (Spinner)findViewById(R.id.spinner2);
-        final ArrayAdapter adapter=new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,listDateItems);
+        adapter=new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,listDateItems);
         btnExchange= (Button) findViewById(R.id.btn_exchange);
-        Station testStation1 = new Station();
-        testStation1.setDisplayName("CR1").setID(123);
 
-        Station testStation2 = new Station();
-        testStation2.setDisplayName("CR2").setID(124);
-
-        JZJ testjzj1 = new JZJ(321);
-        testjzj1.setID(321).setDisplayName("101");
-
-        JZJ testjzj2 = new JZJ(322);
-        testjzj2.setID(322).setDisplayName("102");
-
-        FXPlanItem testItem1 = new FXPlanItem().setType(FXPlanItem.FXPlanType.both);
-        timer.set(2016, 12, 28, 10, 10, 0);
-        testItem1.setStartTime(timer.getTimeInMillis());
-        timer.set(2016, 12, 28, 11, 10, 0);
-        testItem1.setChTime(timer.getTimeInMillis());
-        timer.set(2016, 12, 28, 12, 10, 0);
-        testItem1.setFhTime(timer.getTimeInMillis());
-        timer.set(2016, 12, 28, 14, 45, 0);
-        testItem1.setEndTime(timer.getTimeInMillis());
-        testItem1.setGas(7).setStation(testStation1).setJzj(testjzj1).setPlanName("1101");
-
-        FXPlanItem testItem2 = new FXPlanItem().setType(FXPlanItem.FXPlanType.land);
-        timer.set(2016, 12, 28, 10, 40, 0);
-        testItem2.setStartTime(timer.getTimeInMillis());
-        timer.set(2016, 12, 28, 11, 40, 0);
-        testItem2.setChTime(timer.getTimeInMillis());
-        timer.set(2016, 12, 28, 12, 0, 0);
-        testItem2.setFhTime(timer.getTimeInMillis());
-        timer.set(2016, 12, 28, 13, 45, 0);
-        testItem2.setEndTime(timer.getTimeInMillis());
-        testItem2.setGas(5.0f).setStation(testStation2).setJzj(testjzj2).setPlanName("1102");
 
         Button buttonLeft = (Button)findViewById(R.id.button3);
         Button buttonRight = (Button)findViewById(R.id.button4);
-
-/*        BCInfo bcInfo=new BCInfo();
-        timer.set(2016, 12, 28, 12, 0, 0);
-        bcInfo.setStartTime(timer.getTimeInMillis());
-        timer.set(2016, 12, 28, 13, 45, 0);
-        bcInfo.setEndTime(timer.getTimeInMillis());
-        bcInfo.setName("BC1");
-        fxPlanView.addBCInfo(bcInfo);*/
-
-        fxPlanView.addItem(testItem1);
-        fxPlanView.addItem(testItem2);
-        addDateItems(testItem1,adapter);
-        addDateItems(testItem2,adapter);
+        testExample(adapter);
         sp.setAdapter(adapter);
         fxPlanView.setSelectedDate((String) (sp.getSelectedItem()));
         sp.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
@@ -144,7 +108,7 @@ public class Main2Activity extends AppCompatActivity {
             }
         });
 
-
+        refreshData();
         fxPlanView.refresh();
 
 
@@ -216,6 +180,45 @@ public class Main2Activity extends AppCompatActivity {
         });
 
     }
+    private void testExample(ArrayAdapter adapter){
+        Station testStation1 = new Station();
+        testStation1.setDisplayName("CR1").setID(123);
+
+        Station testStation2 = new Station();
+        testStation2.setDisplayName("CR2").setID(124);
+
+        JZJ testjzj1 = new JZJ(321);
+        testjzj1.setID(321).setDisplayName("101");
+
+        JZJ testjzj2 = new JZJ(322);
+        testjzj2.setID(322).setDisplayName("102");
+        Calendar timer = Calendar.getInstance();
+        FXPlanItem testItem1 = new FXPlanItem().setType(FXPlanItem.FXPlanType.both);
+        timer.set(2016, 12, 28, 10, 10, 0);
+        testItem1.setStartTime(timer.getTimeInMillis());
+        timer.set(2016, 12, 28, 11, 10, 0);
+        testItem1.setChTime(timer.getTimeInMillis());
+        timer.set(2016, 12, 28, 12, 10, 0);
+        testItem1.setFhTime(timer.getTimeInMillis());
+        timer.set(2016, 12, 28, 14, 45, 0);
+        testItem1.setEndTime(timer.getTimeInMillis());
+        testItem1.setGas(7).setStation(testStation1).setJzj(testjzj1).setPlanName("1101");
+
+        FXPlanItem testItem2 = new FXPlanItem().setType(FXPlanItem.FXPlanType.land);
+        timer.set(2016, 12, 28, 10, 40, 0);
+        testItem2.setStartTime(timer.getTimeInMillis());
+        timer.set(2016, 12, 28, 11, 40, 0);
+        testItem2.setChTime(timer.getTimeInMillis());
+        timer.set(2016, 12, 28, 12, 0, 0);
+        testItem2.setFhTime(timer.getTimeInMillis());
+        timer.set(2016, 12, 28, 13, 45, 0);
+        testItem2.setEndTime(timer.getTimeInMillis());
+        testItem2.setGas(5.0f).setStation(testStation2).setJzj(testjzj2).setPlanName("1102");
+/*        fxPlanView.addItem(testItem1);
+        fxPlanView.addItem(testItem2);*/
+        addDateItems(testItem1,adapter);
+        addDateItems(testItem2,adapter);
+    }
     private void addBCInfo()
     {
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -245,6 +248,7 @@ public class Main2Activity extends AppCompatActivity {
                 bcInfo.setStartTime(calendar.getTimeInMillis());
                 calendar.set(dpEndTime.getYear(),dpEndTime.getMonth(),dpEndTime.getDayOfMonth(),tpEndTime.getHour(),tpEndTime.getMinute());
                 bcInfo.setEndTime(calendar.getTimeInMillis());
+                saveBCInfo(bcInfo);
                 fxPlanView.addBCInfo(bcInfo);
             }
         });
@@ -384,7 +388,8 @@ public class Main2Activity extends AppCompatActivity {
                     return;
                 } */
                 addDateItems(item,adapter);
-
+                fxPlanDAO.deleteFXPlan(item.getFx_id());
+                fxPlanDAO.addInfo(item);
                // fxPlanView.updateListDateItems();
                 fxPlanView.refresh();
             }
@@ -396,6 +401,7 @@ public class Main2Activity extends AppCompatActivity {
                     removeDateItems(sp,adapter);
                 }
                 fxPlanView.removeItem(item);
+                fxPlanDAO.deleteFXPlan(item.getFx_id());
                 fxPlanView.refresh();
             }
         });
@@ -517,6 +523,7 @@ public class Main2Activity extends AppCompatActivity {
                 item.setFx_id(new Random().nextInt());
                 item.setStation(station).setJzj(jzj);
                 fxPlanView.addItem(item);
+                fxPlanDAO.addInfo(item);
                 addDateItems(item,adapter);
 
                // fxPlanView.updateListDateItems();
@@ -578,7 +585,26 @@ public class Main2Activity extends AppCompatActivity {
            // adapter.notifyDataSetChanged();
         }
     }
+    public void refreshData(){
+        bcInfoList=getAllBCInfo();
+        fxPlanItemList=getAllFXPlan();
+        fxPlanView.setBcInfoList(bcInfoList);
+        fxPlanView.setFXPlanList(fxPlanItemList);
+        for(FXPlanItem info:fxPlanItemList){
+            addDateItems(info,adapter);
+        }
 
+    }
+    private List<FXPlanItem> getAllFXPlan(){
+        return fxPlanDAO.getAll();
+    }
+    private List<BCInfo> getAllBCInfo(){
+        return bcDAO.getAll();
+    }
+    private void saveBCInfo(BCInfo info){
+        bcDAO.deleteBC(info.getId());
+        bcDAO.addInfo(info);
+    }
     private Station toStation(Location location){
         Station station=new Station();
         station.setID(location.getId());

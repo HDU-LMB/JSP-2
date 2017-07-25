@@ -64,11 +64,23 @@ public class JSPDBHelper extends SQLiteOpenHelper {
                 "guide integer," +
                 "cool integer," +
                 "oxygen integer)";
+        String CREATE_FXPLAN="create table fxplan(" +
+                "fxid integer," +
+                "jzjid integer," +
+                "planname text," +
+                "fxyname text," +
+                "starttime real," +
+                "endtime real," +
+                "chtime real," +
+                "fhtime real," +
+                "gas real," +
+                "type integer)";
         db.execSQL(CREATE_LOCATION);
         db.execSQL(CREATE_JZJ);
         db.execSQL(CREATE_BLINFO);
         db.execSQL(CREATE_BCINFO);
         db.execSQL(CREATE_BZPLANITEM);
+        db.execSQL(CREATE_FXPLAN);
     }
     private void addData(){
         //添加站位
