@@ -923,4 +923,8 @@ public class MainActivity extends AppCompatActivity {
         jzjList=jzjDAO.getAllJZJ();
         return  jzjList;
     }
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }

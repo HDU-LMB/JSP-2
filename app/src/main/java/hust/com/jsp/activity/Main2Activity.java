@@ -613,5 +613,8 @@ public class Main2Activity extends AppCompatActivity {
         station.setLocation(location.getPoint());
         return station;
     }
-
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }

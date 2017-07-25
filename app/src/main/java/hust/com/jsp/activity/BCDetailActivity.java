@@ -455,4 +455,8 @@ public class BCDetailActivity extends AppCompatActivity {
     public static BCDetailActivity getInstance(){
         return instance;
     }
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }

@@ -88,6 +88,7 @@ public class ScheduleActivity extends AppCompatActivity {
         });
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
