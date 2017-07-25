@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import hust.com.jsp.bean.BCInfo;
 import hust.com.jsp.bean.FXPlanItem;
 import hust.com.jsp.bean.Location;
 import hust.com.jsp.dao.JZJDAO;
@@ -116,6 +117,14 @@ public class Main2Activity extends AppCompatActivity {
 
         Button buttonLeft = (Button)findViewById(R.id.button3);
         Button buttonRight = (Button)findViewById(R.id.button4);
+
+        BCInfo bcInfo=new BCInfo();
+        timer.set(2016, 12, 28, 12, 0, 0);
+        bcInfo.setStartTime(timer.getTimeInMillis());
+        timer.set(2016, 12, 28, 13, 45, 0);
+        bcInfo.setEndTime(timer.getTimeInMillis());
+        bcInfo.setName("BC1");
+        fxPlanView.addBCInfo(bcInfo);
 
         fxPlanView.addItem(testItem1);
         fxPlanView.addItem(testItem2);

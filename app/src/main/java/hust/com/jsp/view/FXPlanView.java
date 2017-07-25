@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import hust.com.jsp.activity.Main2Activity;
+import hust.com.jsp.bean.BCInfo;
 import hust.com.jsp.bean.FXPlan;
 import hust.com.jsp.bean.FXPlanItem;
 import hust.com.jsp.R;
@@ -69,7 +70,8 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
         return sepRowNorm;
     }
     private FXPlanItem testItem;
-
+    private List<BCInfo> bcInfoList=new ArrayList<>();
+    private List<BCLineLayer> bcLayerList=new ArrayList<>();
     public String getSelectedDate() {
         return selectedDate;
     }
@@ -164,6 +166,9 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
                 //        addDateItems(item, listDateItems);
                     }
                 }
+                for(BCLineLayer layer : bcLayerList){
+                    drawBCLine(layer);
+                }
                 //drawFXPlan(testItem,0);
                 //drawFXPlan(testItem,1);
                 holder.unlockCanvasAndPost(canvas);
@@ -250,7 +255,14 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
             canvas.drawLine(0.0f,sepddr,width,sepddr,paint);
         }
     }
-
+    private void drawBCLine(BCLineLayer layer){
+        BCInfo info=layer.getBcInfo();
+        if(info.getLongStartTime()>this.endViewTime) return;
+        if(info.getLongEndTime()<this.startViewTime) return;
+        float x1 = this.sepPerTime*(info.getLongStartTime()-this.startViewTime)+this.sepLeftTitle;
+        float x2=this.sepPerTime*(info.getLongEndTime()-this.startViewTime)+this.sepLeftTitle;
+        layer.draw(canvas,x1,x2,this.sepTopTitle,this.height);
+    }
     private void drawFXPlan(FXPlanItem fxPlanItem,int yOffset){
         //  long viewExpand = this.endViewTime-this.startViewTime;
         Paint paint = new Paint();
@@ -371,7 +383,9 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
                 Log.v("fx","up"+String.valueOf(move));
                 break;
             case MotionEvent.ACTION_UP:
-
+                for(BCLineLayer layer:bcLayerList){
+                    layer.onTouch(event);
+                }
                 mScrolling=(mScrolling==0)?3:4;
         }
         Log.v("scroll",mScrolling+"");
@@ -414,5 +428,24 @@ public class FXPlanView extends SurfaceView implements SurfaceHolder.Callback {
     public void setDisplayType(int type){
         displayType=type;
         refresh();
+    }
+
+    public List<BCInfo> getBcInfoList() {
+        return bcInfoList;
+    }
+
+    public void setBcInfoList(List<BCInfo> bcInfoList) {
+        this.bcInfoList = bcInfoList;
+        for(BCInfo info:bcInfoList){
+            BCLineLayer layer=new BCLineLayer();
+            layer.setBcInfo(info);
+            bcLayerList.add(layer);
+        }
+    }
+    public void addBCInfo(BCInfo info){
+        this.bcInfoList.add(info);
+        BCLineLayer layer=new BCLineLayer();
+        layer.setBcInfo(info);
+        bcLayerList.add(layer);
     }
 }
