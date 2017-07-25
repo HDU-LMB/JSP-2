@@ -51,6 +51,15 @@
             android:text="X"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true" />
+
+        <Button
+            android:id="@+id/btn_addbc"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:text="BC"
+            android:layout_alignTop="@+id/btn_exchange"
+            android:layout_toStartOf="@+id/btn_exchange" />
+
     </RelativeLayout>
 
 <!--    <LinearLayout

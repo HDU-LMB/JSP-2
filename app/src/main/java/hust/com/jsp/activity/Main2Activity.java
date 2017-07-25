@@ -118,13 +118,13 @@ public class Main2Activity extends AppCompatActivity {
         Button buttonLeft = (Button)findViewById(R.id.button3);
         Button buttonRight = (Button)findViewById(R.id.button4);
 
-        BCInfo bcInfo=new BCInfo();
+/*        BCInfo bcInfo=new BCInfo();
         timer.set(2016, 12, 28, 12, 0, 0);
         bcInfo.setStartTime(timer.getTimeInMillis());
         timer.set(2016, 12, 28, 13, 45, 0);
         bcInfo.setEndTime(timer.getTimeInMillis());
         bcInfo.setName("BC1");
-        fxPlanView.addBCInfo(bcInfo);
+        fxPlanView.addBCInfo(bcInfo);*/
 
         fxPlanView.addItem(testItem1);
         fxPlanView.addItem(testItem2);
@@ -207,9 +207,50 @@ public class Main2Activity extends AppCompatActivity {
                  addFXJHInfo(adapter);
             }
         });
+        Button btnAddBC = (Button) findViewById(R.id.btn_addbc);
+        btnAddBC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addBCInfo();
+            }
+        });
 
     }
+    private void addBCInfo()
+    {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View bcDialog = inflater.inflate(R.layout.new_bc_dialog, null);
+        final EditText etBCName = (EditText) bcDialog.findViewById(R.id.et_bc_name);
+        final TimePicker tpTime = (TimePicker) bcDialog.findViewById(R.id.tp_time);
+        final DatePicker dpTime = (DatePicker) bcDialog.findViewById(R.id.dp_time);
+        final TimePicker tpEndTime = (TimePicker) bcDialog.findViewById(R.id.tp_end_time);
+        final DatePicker dpEndTime = (DatePicker) bcDialog.findViewById(R.id.dp_end_time);
+        final Calendar calendar = Calendar.getInstance();
+        tpTime.setIs24HourView(true);
+        tpTime.setHour(calendar.get(Calendar.HOUR_OF_DAY)+8);
+        tpEndTime.setIs24HourView(true);
+        tpEndTime.setHour(calendar.get(Calendar.HOUR_OF_DAY)+8);
+        builder.setView(bcDialog);
+        builder.setTitle("ADD BC");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
+                BCInfo bcInfo=new BCInfo();
+                String bcName=etBCName.getText().toString();
+                bcInfo.setName(bcName);
+                bcInfo.setID(new Random().nextInt());
+                calendar.set(dpTime.getYear(),dpTime.getMonth(),dpTime.getDayOfMonth(),tpTime.getHour(),tpTime.getMinute());
+                bcInfo.setStartTime(calendar.getTimeInMillis());
+                calendar.set(dpEndTime.getYear(),dpEndTime.getMonth(),dpEndTime.getDayOfMonth(),tpEndTime.getHour(),tpEndTime.getMinute());
+                bcInfo.setEndTime(calendar.getTimeInMillis());
+                fxPlanView.addBCInfo(bcInfo);
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+        builder.create().show();
+    }
     private void deleterFXJHInfo(final FXPlanItem item){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("删除任务");
